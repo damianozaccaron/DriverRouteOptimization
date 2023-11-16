@@ -41,7 +41,7 @@ def generate_standard_routes(sr_count, provinces_count, n_merch, tot_merch):
         else:
             cacca = n_merch + 2
         for j in range(pupu):
-            merch = merchandise[random.randint(0, tot_merch)]
+            merch = merchandise[random.randint(0, pupu)]
             if merch not in selected_merch:
                 selected_merch.append(merch)
         selected_merch_values = {}

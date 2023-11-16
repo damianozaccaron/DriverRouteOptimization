@@ -16,7 +16,7 @@ sr_count = os.environ.get("STANDARD_ROUTES_COUNT", 1)
 # number of provinces to choose for the routes
 provinces_count = os.environ.get("PROVINCES_TO_PICK", 10)
 
-generate_standard_routes(int(sr_count), int(provinces_count))
+generate_standard_routes(int(sr_count), int(provinces_count), n_merch = 5, tot_merch = 20)
 
 # 2. randomize standard routes to get actual routes
 
