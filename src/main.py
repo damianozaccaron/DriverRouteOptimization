@@ -15,8 +15,12 @@ load_dotenv()
 sr_count = os.environ.get("STANDARD_ROUTES_COUNT", 1)
 # number of provinces to choose for the routes
 provinces_count = os.environ.get("PROVINCES_TO_PICK", 10)
+# extimated value of number of items per trip
+n_merchandise = os.environ.get("NUMBER_OF_ITEMS_PER_TRIP")
+# total number of different items 
+tot_merchandise = os.environ.get("TOTAL_NUMBER_OF_ITEMS")
 
-generate_standard_routes(int(sr_count), int(provinces_count), n_merch = 5, tot_merch = 20)
+stand_routes = generate_standard_routes(int(sr_count), int(provinces_count), int(n_merchandise), int(tot_merchandise))
 
 # 2. randomize standard routes to get actual routes
 

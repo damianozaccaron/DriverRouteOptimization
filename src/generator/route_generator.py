@@ -55,3 +55,20 @@ def generate_standard_routes(sr_count, provinces_count, n_merch, tot_merch):
 
         standard_routes.append(standard_route)
     print(standard_routes)
+    return(standard_routes)
+
+def generate_actual_routes(standard_routes):
+    
+    with open("src/generator/data/province.csv", "r") as csv_file:
+        provinces = csv_file.readlines()
+    provinces = provinces[0].split(",")
+    
+    actual_routes = []
+    for sr in standard_routes:
+        actual_route = sr
+        cacca = random.randint(0,10)
+        if cacca == 10:
+            actual_route["from"] = provinces[random.randint(0,len(provinces))]
+        actual_routes.append(actual_route)
+    
+    print(actual_routes)
