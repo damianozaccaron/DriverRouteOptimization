@@ -1,10 +1,11 @@
 import random
 import string
 
-def generate_standard_routes(): 
+def generate_standard_routes(sr_count, provinces_count): 
     with open("src/generator/data/province.csv", "r") as csv_file:
         provinces = csv_file.readlines()
     provinces = provinces[0].split(",")
+    random_provinces = random.choices(provinces, k = provinces_count)
 
     merchandise = []
     for i in range(10):
@@ -13,14 +14,14 @@ def generate_standard_routes():
         merchandise.append(merch)
     
     standard_routes = []
-    previous_end_index = random.randint(0, len(provinces) - 1)
-    for i in range(10):
+    previous_end_index = random.randint(0, provinces_count - 1)
+    for i in range(sr_count):
         standard_route = {}
-        start_province = provinces[previous_end_index]
-        end_province_index = random.randint(0, len(provinces) - 1)
+        start_province = random_provinces[previous_end_index]
+        end_province_index = random.randint(0, provinces_count - 1)
         while end_province_index == previous_end_index:
-            end_province_index = random.randint(0, len(provinces) - 1)
-        end_province = provinces[end_province_index]
+            end_province_index = random.randint(0, provinces_count - 1)
+        end_province = random_provinces[end_province_index]
         previous_end_index = end_province_index
 
         selected_merch = []
