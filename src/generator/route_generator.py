@@ -57,6 +57,8 @@ def generate_standard_routes(sr_count, provinces_count, n_merch, tot_merch):
     print(standard_routes)
     return(standard_routes)
 
+
+
 def generate_actual_routes(standard_routes):
     
     with open("src/generator/data/province.csv", "r") as csv_file:
@@ -66,9 +68,75 @@ def generate_actual_routes(standard_routes):
     actual_routes = []
     for sr in standard_routes:
         actual_route = sr
-        cacca = random.randint(0,10)
+        cacca = random.randint(0,11)
         if cacca == 10:
             actual_route["from"] = provinces[random.randint(0,len(provinces))]
         actual_routes.append(actual_route)
     
+
     print(actual_routes)
+
+
+
+
+# Provo un altro approccio
+
+def provinces_reader():
+    with open("src/generator/data/province.csv", "r") as csv_file:
+        provinces = csv_file
+    provinces = provinces[0].split(",")
+    return(provinces)
+
+def trip_generator(province_set, merchandise, start_province, n_obj, n_sr):
+
+    while end_province != start_province:    
+        end_province = province_set[random.randint(0,len(province_set))]
+
+    selected_merch = []
+    for j in range(n_obj):
+        merch = merchandise[random.randint(0, n_obj)]
+        if merch not in selected_merch:
+            selected_merch.append(merch)
+    selected_merch_values = {}
+    for m in selected_merch:
+        selected_merch_values[m] = random.randint(1, 30)    
+
+    trip = {}
+    trip["id"] = "sr_" + str(n_sr)
+    trip["from"] = start_province
+    trip["to"] = end_province
+    trip["merchandise"] = selected_merch_values
+
+    return(trip)
+
+
+def merchandise_generator(tot_merch):
+    
+    merchandise = []
+    for i in range(tot_merch):
+        merch = "".join(random.choices(string.ascii_lowercase, k = random.randint(3, 9)))
+        merchandise.append(merch)
+    
+    return(merchandise)
+
+def single_sr_generator(province_set, merchandise, n_obj, n_sr, n_trip):
+
+    start_province = province_set[random.randint(0,len(province_set))]
+    standard_route = {}
+    for i in range(n_trip):
+        trip = trip_generator(province_set, merchandise, start_province, n_obj, n_sr)
+        standard_route.append(trip)
+    
+    return(standard_route)
+
+
+def standard_routes_generator(sr_count, provinces_count, n_merch, tot_merch, n_trip):
+
+    provinces = provinces_reader()
+    random_provinces = random.choices(provinces, k = provinces_count)
+
+    merchandise = merchandise_generator(tot_merch)
+
+    #for i in range(sr_count):
+        
+
