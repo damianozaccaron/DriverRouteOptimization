@@ -2,6 +2,7 @@
 import os
 from dotenv import load_dotenv
 from generator.route_generator import generate_standard_routes
+#from generator.route_generator import standard_routes_generator
 
 load_dotenv()
 
@@ -12,18 +13,22 @@ load_dotenv()
 # the second parameter is the default value if the environment variable is not defined
 
 # number of standard routes generated
-sr_count = os.environ.get("STANDARD_ROUTES_COUNT", 1)
+sr_count = int(os.environ.get("STANDARD_ROUTES_COUNT", 1))
 # number of provinces to choose for the routes
-provinces_count = os.environ.get("PROVINCES_TO_PICK", 10)
+provinces_count = int(os.environ.get("PROVINCES_TO_PICK", 10))
 # extimated value of number of items per trip
-n_merchandise = os.environ.get("NUMBER_OF_ITEMS_PER_TRIP")
+n_merchandise = int(os.environ.get("NUMBER_OF_ITEMS_PER_TRIP"))
 # total number of different items 
-tot_merchandise = os.environ.get("TOTAL_NUMBER_OF_ITEMS")
+tot_merchandise = int(os.environ.get("TOTAL_NUMBER_OF_ITEMS"))
 
 stand_routes = generate_standard_routes(int(sr_count), int(provinces_count), int(n_merchandise), int(tot_merchandise))
+#standard_routes_generator(sr_count, provinces_count, n_merchandise, tot_merchandise, 5)
 
 # 2. randomize standard routes to get actual routes
+
+
 
 # 3. generate output 1
 # 4. generate output 2
 # 5. generate output 3
+
