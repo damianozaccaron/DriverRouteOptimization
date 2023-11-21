@@ -30,19 +30,20 @@ def generate_standard_routes(sr_count, provinces_count, n_merch, tot_merch):
 
         selected_merch = []
         # inserisco un po' di randomicità nel numero di oggetti
-        cacca = random.randint(0,10)
-        if cacca == 0:
-            pupu = n_merch - 2
-        elif cacca < 3:
-            pupu = n_merch - 1
-        elif cacca < 8:
-            pupu = n_merch
-        elif cacca < 10:
-            pupu = n_merch + 1
+        changer = random.randint(0, 10)
+        actual_merch_count = n_merch
+        if changer == 0:
+            actual_merch_count = n_merch - 2
+        elif changer < 3:
+            actual_merch_count = n_merch - 1
+        elif changer < 8:
+            actual_merch_count = n_merch
+        elif changer < 10:
+            actual_merch_count = n_merch + 1
         else:
-            cacca = n_merch + 2
-        for j in range(pupu):
-            merch = merchandise[random.randint(0, pupu)]
+            actual_merch_count = n_merch + 2
+        for j in range(actual_merch_count):
+            merch = merchandise[random.randint(0, actual_merch_count)]
             if merch not in selected_merch:
                 selected_merch.append(merch)
         selected_merch_values = {}

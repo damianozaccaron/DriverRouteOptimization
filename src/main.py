@@ -19,9 +19,9 @@ sr_count = int(os.environ.get("STANDARD_ROUTES_COUNT", 1))
 # number of provinces to choose for the routes
 provinces_count = int(os.environ.get("PROVINCES_TO_PICK", 10))
 # extimated value of number of items per trip
-n_merchandise = int(os.environ.get("NUMBER_OF_ITEMS_PER_TRIP"))
+n_merchandise = int(os.environ.get("NUMBER_OF_ITEMS_PER_TRIP", 3))
 # total number of different items 
-tot_merchandise = int(os.environ.get("TOTAL_NUMBER_OF_ITEMS"))
+tot_merchandise = int(os.environ.get("TOTAL_NUMBER_OF_ITEMS", 10))
 
 #stand_routes = generate_standard_routes(int(sr_count), int(provinces_count), int(n_merchandise), int(tot_merchandise))
 
