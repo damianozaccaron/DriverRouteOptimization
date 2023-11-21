@@ -1,5 +1,6 @@
 import random
 import string
+import json
 
 # Ho aggiunto 2 nuovi argomenti: 
 # n_merc numero di oggetti di merchandise da mettere in ogni camion
@@ -141,6 +142,7 @@ def merchandise_generator(tot_merch):
     while i < tot_merch:
         merch = "".join(random.choices(string.ascii_lowercase, k = random.randint(3, 9)))
         merchandise.append(merch)
+        i = i+1
     
     return(merchandise)
 
@@ -162,17 +164,22 @@ def single_sr_generator(province_set, merchandise, n_obj, n_sr, n_trip):
 def standard_routes_generator(sr_count, provinces_count, n_obj, tot_merch, n_trip):
 
     provinces = provinces_reader()
-    random_provinces = provinces_cutter(provinces, 80)
+    random_provinces = provinces_cutter(provinces, provinces_count)
 
     merchandise = merchandise_generator(tot_merch)
 
-    file_path = "src/generator/data/standard_routes.json"
-    with open(file_path, "w") as json_file:
-        json_file.dump({}, json_file)
-
+    standard_routes = []
     for i in range(sr_count):
-        sr = single_sr_generator(random_provinces, merchandise, n_obj, i, n_trip + randomizer())
-        with open(file_path, "w") as json_file:
-            json_file.dump(sr, json_file, indent=2)
+        sr = single_sr_generator(random_provinces, merchandise, n_obj, i+1, n_trip + randomizer())
+        standard_routes.append(sr)
     
+    return(standard_routes)
+    
+def json_writer(routes, file_path):
+    
+    with open(file_path, "w") as json_file:
+        json.dump({}, json_file)
+
+    with open(file_path, "w") as json_file:
+        json.dump(routes, json_file, indent=4)
 

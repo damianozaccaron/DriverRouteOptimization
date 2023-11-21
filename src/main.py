@@ -1,8 +1,10 @@
 # imports
 import os
 from dotenv import load_dotenv
+
 from generator.route_generator import generate_standard_routes
-#from generator.route_generator import standard_routes_generator
+from generator.route_generator import standard_routes_generator
+from generator.route_generator import json_writer
 
 load_dotenv()
 
@@ -21,8 +23,10 @@ n_merchandise = int(os.environ.get("NUMBER_OF_ITEMS_PER_TRIP"))
 # total number of different items 
 tot_merchandise = int(os.environ.get("TOTAL_NUMBER_OF_ITEMS"))
 
-stand_routes = generate_standard_routes(int(sr_count), int(provinces_count), int(n_merchandise), int(tot_merchandise))
-#standard_routes_generator(sr_count, provinces_count, n_merchandise, tot_merchandise, 5)
+#stand_routes = generate_standard_routes(int(sr_count), int(provinces_count), int(n_merchandise), int(tot_merchandise))
+
+standard_routes = standard_routes_generator(sr_count, provinces_count, n_merchandise, tot_merchandise, 5)
+json_writer(standard_routes, "src/generator/data/standard_routes.json")
 
 # 2. randomize standard routes to get actual routes
 
@@ -31,4 +35,7 @@ stand_routes = generate_standard_routes(int(sr_count), int(provinces_count), int
 # 3. generate output 1
 # 4. generate output 2
 # 5. generate output 3
+
+
+
 
