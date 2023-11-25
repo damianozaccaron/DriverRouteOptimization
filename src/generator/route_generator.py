@@ -173,17 +173,15 @@ def merchandise_generator(tot_merch):
     
     return merchandise
 
-def single_sr_generator(province_set, merchandise, n_obj, n_sr, n_trip):
+def single_sr_generator(province_set, merchandise, n_obj, n_trip):
 
     start_province = province_set[random.randint(0, len(province_set) - 1)]
-    standard_route = {}
-    standard_route["id"] = "sr_" + str(n_sr)
-    standard_route["trips"] = []
+    standard_route = []
 
     i = 0
     while i < n_trip:
         trip = trip_generator(province_set, merchandise, start_province, n_obj + randomizer())
-        standard_route["trips"].append(trip)
+        standard_route.append(trip)
         start_province = trip["to"]
         i = i + 1
 
@@ -197,8 +195,10 @@ def standard_routes_generator(sr_count, provinces_count, n_obj, merchandise, n_t
 
     standard_routes = []
     for i in range(sr_count):
-        sr = single_sr_generator(random_provinces, merchandise, n_obj, i + 1, n_trip + randomizer())
-        standard_routes.append(sr)
+        standard_route = {}
+        standard_route["id"] = "s" + str(i+1)
+        standard_route["route"] = single_sr_generator(random_provinces, merchandise, n_obj, n_trip + randomizer())
+        standard_routes.append(standard_route)
     
     return(standard_routes)
 
@@ -237,35 +237,59 @@ def t_merchandise_randomizer(merch, merchandise):
         new_merch_ind = merchandise[random.randint(0, len(merchandise)-1)]
         if new_merch_ind not in merch.keys():
             merch[new_merch_ind] = random.randint(1, 10)
-    if cacca < 0:
+    if cacca < 0 and len(merch) > 0:
         merch.popitem()
-    if cacca < 1:
+    if cacca < 1 and len(merch) > 0:
         merch.popitem()
     return(merch)
 
 def single_ar_generator(sr, province_set, merchandise):
 
-    trip_ind = [random.choice([True, False]) for _ in range(len(sr))]
+    trip_ind = random.choices([True, False], weights=[0.8, 0.2], k=len(sr))
     start_ind = random.choice([True, False])
     ar = sr
+    vec_from = [step['from'] for step in sr]
+    vec_to = [step['to'] for step in sr]
 
     if start_ind == True:
-        ar[1]["from"] = random.choice(province_set)
-    ar[trip_ind]["to"] = random.choice(province_set)
-    ar[1:]["from"] = ar[:-1]["to"]
+        vec_from[1] = random.choice(province_set)
+    for i in trip_ind:
+        vec_to[i] = random.choice(province_set)
+    vec_from[1:] = vec_to[:-1]
 
-    ar["merchandise"] = t_merchandise_randomizer(sr["merchandise"], merchandise)
-    ar["merchandise"] = n_merchandise_randomizer(ar["merchandise"], merchandise)
+    for i, step in enumerate(ar):
+        step['from'] = vec_from[i]
+        step['to'] = vec_to[i]
+        step["merchandise"] = t_merchandise_randomizer(step["merchandise"], merchandise)
+        step["merchandise"] = n_merchandise_randomizer(step["merchandise"])
 
     return(ar)
 
-def actual_routes_generator(standard_routes, merchandise):
+def actual_routes_generator(standard_routes, merchandise, n_drivers, n_route_4d):
     
     province_set = provinces_reader()
     actual_routes = []
 
-    for sr in standard_routes:
-        ar = single_ar_generator(sr,province_set, merchandise)
-        actual_routes.append(ar)
+    driver_names = []
+    for i in range(n_drivers):
+        driver_name = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
+        if driver_name in driver_names: 
+            driver_name = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
+        driver_names.append(driver_name)
+
+    ac_id = 1
+
+    for driver in driver_names:
+        nr = n_route_4d + randomizer()
+        for r in range(nr):
+            actual_route = {}
+            sroute = random.choice(standard_routes)
+            ar = single_ar_generator(sroute["route"], province_set, merchandise)
+            actual_route["id"] = "a" + str(ac_id)
+            actual_route["driver"] = driver
+            actual_route["sroute"] = sroute["id"]
+            actual_route["route"] = ar
+            ac_id = ac_id + 1
+            actual_routes.append(actual_route)
 
     return(actual_routes)
