@@ -38,7 +38,7 @@ standard_routes = standard_routes_generator(sr_count, provinces_count, n_merchan
 json_writer(standard_routes, "src/generator/data/standard_routes.json")
 
 # 2. randomize standard routes to get actual routes
-actual_routes = actual_routes_generator(standard_routes, merchandise, 20, 8)
+actual_routes = actual_routes_generator(standard_routes, merchandise, 20, 15)
 
 # write actual routes on a json file
 json_writer(actual_routes, "src/generator/data/actual_routes.json")
@@ -51,7 +51,6 @@ json_writer(actual_routes, "src/generator/data/actual_routes.json")
 # 3. generate output 1
 # 4. generate output 2
 # 5. generate output 3
-
 
 
 
