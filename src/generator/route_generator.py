@@ -265,6 +265,9 @@ def single_ar_generator(sr, province_set, merchandise):
 
     return(ar)
 
+def is_subset(vector1, vector2):
+    return all(elem in vector2 for elem in vector1)
+
 def actual_routes_generator(standard_routes, merchandise, n_drivers, n_route_4d):
     
     province_set = provinces_reader()
@@ -284,6 +287,21 @@ def actual_routes_generator(standard_routes, merchandise, n_drivers, n_route_4d)
         for r in range(nr):
             actual_route = {}
             sroute = random.choice(standard_routes)
+            ar = single_ar_generator(sroute["route"], province_set, merchandise)
+            actual_route["id"] = "a" + str(ac_id)
+            actual_route["driver"] = driver
+            actual_route["sroute"] = sroute["id"]
+            actual_route["route"] = ar
+            ac_id = ac_id + 1
+            actual_routes.append(actual_route)
+
+    # check if there are every sr in ar
+    if not(is_subset([d["sroute"] for d in actual_routes], [d["id"] for d in standard_routes])):
+        id_missing = [d["id"] for d in standard_routes] - [d["sroute"] for d in actual_routes]
+        for code in id_missing:
+            driver = random.choice(driver_names)
+            actual_route ={}
+            sroute = next((d for d in standard_routes if d.get("id") == code), None)
             ar = single_ar_generator(sroute["route"], province_set, merchandise)
             actual_route["id"] = "a" + str(ac_id)
             actual_route["driver"] = driver

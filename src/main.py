@@ -47,6 +47,7 @@ json_writer(actual_routes, "src/generator/data/actual_routes.json")
 #actual_routes = generate_actual_routes(standard_routes, drivers_count, merchandise)
 #json_writer(actual_routes, "src/generator/data/actual_routes.json")
 
+
 # 3. generate output 1
 # 4. generate output 2
 # 5. generate output 3
