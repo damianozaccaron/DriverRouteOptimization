@@ -372,7 +372,19 @@ def single_ar_generator(sr, province_set, merchandise):
         first_trip = trip_generator(province_set, merchandise, start_province, n_obj)
         ar.insert(0, first_trip)
         ar[1]["from"] = ar[0]["to"]
-    
+
+    # Add or remove new trips (maybe)
+    j = 0
+    for i, step in enumerate(ar):
+        cacca = randomizer()
+        if cacca > 1: 
+            new_trip = trip_generator(province_set, merchandise, step["to"], max(n_obj + randomizer(), 1))
+            while new_trip["to"] == ar[j+i]["to"]:
+                new_trip = trip_generator(province_set, merchandise, step["to"], max(n_obj + randomizer(), 1))
+            ar[i+j]["from"] = new_trip["to"]
+            ar.insert(i+j, new_trip)
+            j = j+1
+
     return ar
 
 
