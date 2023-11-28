@@ -33,7 +33,8 @@ def extract_from_values(data, index):
         vector.append(element)
     return(vector)
 
-js = jaccard_similarity(set(extract_from_values(ar1["route"], "from")), set(extract_from_values(ar2["route"], "from")))
+js_r = jaccard_similarity(set(extract_from_values(ar1["route"], "from")), set(extract_from_values(ar2["route"], "from")))
 
-print(js)
+print(js_r)
+
 

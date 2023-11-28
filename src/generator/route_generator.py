@@ -124,11 +124,11 @@ def provinces_cutter(provinces, provinces_count):
 
 def randomizer():
 
-    changer = random.randint(0, 10)
+    changer = random.randint(0, 11)
     result = 0
     if changer == 0:
         result = -2
-    elif changer < 3:
+    elif changer < 2:
         result = -1
     elif changer < 8:
         result = 0
@@ -219,10 +219,10 @@ def json_writer(routes, file_path):
 def n_merchandise_randomizer(merch):
 
     for obj in merch.keys():
-        merch[obj] = merch[obj] + randomizer()
+        merch[obj] = merch[obj] + randomizer() + randomizer()
 
         while merch[obj] < 0:
-            merch[obj] = merch[obj] + randomizer()
+            merch[obj] = merch[obj] + randomizer() +2
 
     return(merch)
 
@@ -231,14 +231,14 @@ def t_merchandise_randomizer(merch, merchandise):
     cacca = randomizer()
     if cacca > 0:
         new_merch_ind = merchandise[random.randint(0, len(merchandise)-1)]
-        if new_merch_ind not in merch.keys():
-            merch[new_merch_ind] = random.randint(1, 10)
+        while new_merch_ind in merch.keys():
+            new_merch_ind = merchandise[random.randint(0, len(merchandise)-1)]
+        merch[new_merch_ind] = random.randint(1, 10)
     if cacca > 1:
         new_merch_ind = merchandise[random.randint(0, len(merchandise)-1)]
-        if new_merch_ind not in merch.keys():
-            merch[new_merch_ind] = random.randint(1, 10)
-    if cacca < 0 and len(merch) > 0:
-        merch.popitem()
+        while new_merch_ind in merch.keys():
+            new_merch_ind = merchandise[random.randint(0, len(merchandise)-1)]
+        merch[new_merch_ind] = random.randint(1, 10)
     if cacca < 1 and len(merch) > 0:
         merch.popitem()
     return(merch)
@@ -311,3 +311,4 @@ def actual_routes_generator(standard_routes, merchandise, n_drivers, n_route_4d)
             actual_routes.append(actual_route)
 
     return(actual_routes)
+

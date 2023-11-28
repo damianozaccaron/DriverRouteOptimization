@@ -53,4 +53,14 @@ json_writer(actual_routes, "src/generator/data/actual_routes.json")
 # 5. generate output 3
 
 
+count_empty_merchandise = 0
+count_merchandise = 0
+
+for ar in actual_routes:
+    count_empty_merchandise = sum(1 for stop in ar["route"] if not stop["merchandise"]) + count_empty_merchandise
+    count_merchandise = len(ar["route"]) + count_merchandise
+
+print(count_empty_merchandise)
+print(count_merchandise)
+
 
