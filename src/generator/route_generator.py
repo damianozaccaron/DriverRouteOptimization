@@ -161,7 +161,6 @@ def trip_generator(province_set, merchandise, start_province, n_obj):
 
     return trip 
 
-
 def merchandise_generator(tot_merch):
     
     merchandise = []
@@ -227,21 +226,25 @@ def n_merchandise_randomizer(merch):
     return(merch)
 
 def t_merchandise_randomizer(merch, merchandise):
-
     cacca = randomizer()
+
     if cacca > 0:
-        new_merch_ind = merchandise[random.randint(0, len(merchandise)-1)]
-        while new_merch_ind in merch.keys():
-            new_merch_ind = merchandise[random.randint(0, len(merchandise)-1)]
+        new_merch_ind = random.choice(merchandise)
+        while new_merch_ind in merch:
+            new_merch_ind = random.choice(merchandise)
         merch[new_merch_ind] = random.randint(1, 10)
+
     if cacca > 1:
-        new_merch_ind = merchandise[random.randint(0, len(merchandise)-1)]
-        while new_merch_ind in merch.keys():
-            new_merch_ind = merchandise[random.randint(0, len(merchandise)-1)]
+        new_merch_ind = random.choice(merchandise)
+        while new_merch_ind in merch:
+            new_merch_ind = random.choice(merchandise)
         merch[new_merch_ind] = random.randint(1, 10)
-    if cacca < 1 and len(merch) > 0:
+    if cacca < 0 and len(merch) > 0:
         merch.popitem()
-    return(merch)
+    if cacca < -1 and len(merch) > 0:
+        merch.popitem()
+
+    return merch
 
 def single_ar_generator(sr, province_set, merchandise):
 
@@ -262,6 +265,14 @@ def single_ar_generator(sr, province_set, merchandise):
         step['to'] = vec_to[i]
         step["merchandise"] = t_merchandise_randomizer(step["merchandise"], merchandise)
         step["merchandise"] = n_merchandise_randomizer(step["merchandise"])
+
+    cacca = randomizer()
+    n_obj = len(ar[random.randint(0, len(ar)-1)]["merchandise"]) + randomizer()
+    if cacca > 1:
+        start_province = province_set[random.randint(0, len(province_set) - 1)]
+        first_trip = trip_generator(province_set, merchandise, start_province, n_obj)
+        ar.insert(1, first_trip)
+        ar[2]["from"] = ar[1]["to"]
 
     return(ar)
 
