@@ -1,4 +1,4 @@
-# File where I'm trying to define 
+# File where I'm trying to define a metric to confrontare sr and ar
 
 import random
 
@@ -23,7 +23,7 @@ ar2 = random.choice(actual_routes)
 while ar1 == ar2:
     ar2 = random.choice(actual_routes)
 
-print(ar1, ar2)
+print(ar1, "\n", ar2)
 
 
 def extract_from_values(data, index):

@@ -1,7 +1,16 @@
+# DATA GENERATION
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+# os.environ.get
+# load the value of the variable in the first argument defined in the .env file
+# the second parameter is the default value if the environment variable is not defined
+
 import random
 import string
 import json
-import numpy as np
 
 merchandise = []
 # Ho aggiunto 2 nuovi argomenti: 
@@ -12,8 +21,6 @@ def generate_standard_routes(sr_count, provinces_count, n_merch, tot_merch):
         provinces = csv_file.readlines()
     provinces = provinces[0].split(",")
     random_provinces = random.choices(provinces, k = provinces_count)
-
-
 
     standard_routes = []
     previous_end_index = random.randint(0, provinces_count - 1)
@@ -150,7 +157,7 @@ def randomizer():
 
     if changer == 0:
         result = -2
-    elif changer < 2:
+    elif changer < 3:
         result = -1
     elif changer < 8:
         result = 0
@@ -278,10 +285,7 @@ def n_merchandise_randomizer(merch):
     - dict: Modified merchandise dictionary.
     """
     for obj in merch.keys():
-        merch[obj] = merch[obj] + randomizer() + randomizer()
-
-        while merch[obj] < 0:
-            merch[obj] = merch[obj] + randomizer() + 2
+        merch[obj] = max(merch[obj] + randomizer() + randomizer(), 1)
 
     return merch
 
@@ -332,7 +336,7 @@ def single_ar_generator(sr, province_set, merchandise):
     trip_ind = random.choices([True, False], weights=[0.8, 0.2], k=len(sr))
     
     # Decide whether to change the starting province
-    start_ind = random.choice([True, False], weights = [0.8, 0.2])
+    start_ind = random.choices([True, False], weights = [0.8, 0.2])
 
     # Create a copy of sr to avoid modifying the original list
     ar = sr.copy()
@@ -462,3 +466,33 @@ def actual_routes_generator(standard_routes, merchandise, n_drivers, n_route_4d)
 
     return actual_routes
 
+
+
+# ------------------ #
+# REAL DATA GENERATION
+# ------------------ #
+
+# number of standard routes generated
+sr_count = int(os.environ.get("STANDARD_ROUTES_COUNT", 1))
+# number of provinces to choose for the routes
+provinces_count = int(os.environ.get("PROVINCES_TO_PICK", 10))
+# extimated value of number of items per trip
+n_merchandise = int(os.environ.get("NUMBER_OF_ITEMS_PER_TRIP", 3))
+# total number of different items 
+tot_merchandise = int(os.environ.get("TOTAL_NUMBER_OF_ITEMS", 10))
+
+
+# generation of merchandise
+merchandise = merchandise_generator(20)
+
+# generation of standard routes
+standard_routes = standard_routes_generator(sr_count, provinces_count, n_merchandise, merchandise, 5)
+
+# write standard routes on a json file
+json_writer(standard_routes, "src/generator/data/standard_routes.json")
+
+# 2. randomize standard routes to get actual routes
+actual_routes = actual_routes_generator(standard_routes, merchandise, 20, 15)
+
+# write actual routes on a json file
+json_writer(actual_routes, "src/generator/data/actual_routes.json")
