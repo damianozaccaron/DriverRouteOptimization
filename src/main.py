@@ -1,6 +1,9 @@
 # imports
 import os
 from dotenv import load_dotenv
+import json
+import numpy as np
+
 
 
 load_dotenv()
@@ -11,7 +14,157 @@ load_dotenv()
 
 
 
+# Class definition
+
+
+class Merchandise:
+
+    def __init__(self, data: dict):
+        self.item = list(data.keys())
+        self.quantity = list(data.values())
+
+    def __add__(self, other: 'Merchandise') -> 'Merchandise':
+        if other is None:
+            return Merchandise(dict(zip(self.item, self.quantity)))
+        result_data = {}
+        for item, quantity in zip(self.item, self.quantity):
+            result_data[item] = result_data.get(item, 0) + quantity
+        for item, quantity in zip(other.item, other.quantity):
+            result_data[item] = result_data.get(item, 0) + quantity
+        result_merchandise = Merchandise(result_data)
+        return result_merchandise
+
+
+class Trip:
+
+    def __init__(self, data):
+        self.city_from = data.get('from', '')
+        self.city_to = data.get('to', '')
+        self.merchandise = Merchandise(data.get('merchandise', {}))
+
+
+class StandardRoute:
+
+    def __init__(self, data):
+        self.id = data.get('id', '')
+        self.route = [Trip(trip_data) for trip_data in data.get('route', [])]
+
+    def extract_city(self) -> list:
+        city_vec = [self.route[0].city_from]
+        for i in range(len(self.route)):
+            city_vec.append(self.route[i].city_to)
+        return city_vec
+
+    def trip_without_merch(self) -> list:
+        new_route = self.route.copy()
+        for trip in new_route:
+            trip.merchandise = None
+        return new_route
+
+    def extract_merch(self) -> Merchandise:
+        merch = Merchandise({})
+        for trip in self.route:
+            merch += trip.merchandise
+        return merch
+
+
+class ActualRoute(StandardRoute):
+
+    def __init__(self, data):
+        super().__init__(data)
+        self.driver = data.get('driver', '')
+        self.sroute = data.get('sroute', '')
+
+
+class Preferences:
+
+    def __init__(self, freq_city, freq_city_in_route, freq_trip, freq_trip_in_route, n_trip,
+                 n_merch, freq_merch_per_trip, freq_merch_avg):
+        self.freq_city = freq_city
+        self.freq_city_in_route = freq_city_in_route
+        self.freq_trip = freq_trip
+        self.freq_trip_in_route = freq_trip_in_route
+        self.n_trip = n_trip
+        self.freq_merch_avg = freq_merch_avg
+        self.n_merch = n_merch
+        self.freq_merch_per_trip = freq_merch_per_trip
+
+class Driver:
+
+    def __init__(self, id: str):
+        self.id = id
+
+    def route_for_driver(self, actual_route: ActualRoute):
+        pass
+
+    def preferences(self, driver_route: ActualRoute) -> Preferences:
+        pass
+
+
+# Import data
+
+with open('standard_routes.json', 'r') as json_file:
+    standard_route_data = json.load(json_file)
+standard_routes = [StandardRoute(route_data_item) for route_data_item in standard_route_data]
+
+with open('actual_routes.json', 'r') as json_file:
+    actual_route_data = json.load(json_file)
+actual_routes = [ActualRoute(route_data_item) for route_data_item in actual_route_data]
+
+
+
 # 3. generate output 1
+
+
+# something maybe useful for distance
+
+def same_trip(trip_1: Trip, trip_2: Trip) -> int:
+    if trip_1.city_from == trip_2.city_from and trip_1.city_to == trip_2.city_to:
+        return 1
+    else:
+        return 0
+
+def jaccard_similarity(list1, list2):
+    set1 = set(list1)
+    set2 = set(list2)
+    intersection = len(set1.intersection(set2))
+    union = len(set1.union(set2))
+    return intersection / union
+
+def merch_distance(first_merch: Merchandise, second_merch: Merchandise) -> float:
+    count = sum(second_merch.quantity)
+    sim = 0
+    for i in range(len(first_merch.item)):
+        count += first_merch.quantity[i]
+        for j in range(len(second_merch.item)):
+            if first_merch.item[i] == second_merch.item[j]:
+                sim += abs(first_merch.quantity[i] - second_merch.quantity[j])
+    return (count - sim) / count
+
+def route_distance(route_1: StandardRoute, route_2: StandardRoute) -> float:
+    distance_route = 0
+    # jaccard distance between city list
+    distance_route += 1 - jaccard_similarity(route_1.extract_city(), route_2.extract_city())
+    # jaccard distance between trip
+    # distance_route += 1 - jaccard_similarity(route_1.trip_without_merch(), route_2.trip_without_merch())
+    # distance between merch
+    distance_route += merch_distance(route_1.extract_merch(), route_2.extract_merch())
+    return distance_route / 3
+
+def route_similarity(route_1: StandardRoute, route_2: StandardRoute) -> float:
+    return 1 - route_distance(route_1, route_2)
+
+def compute_distance_matrix(data: list):
+    n = len(data)
+    distance_matrix = np.zeros((n, n))
+    for i in range(n):
+        for j in range(n):
+            distance_matrix[i, j] = route_distance(data[i], data[j])
+    return distance_matrix
+
+print(compute_distance_matrix(standard_routes))
+
+
 # 4. generate output 2
 # 5. generate output 3
 
