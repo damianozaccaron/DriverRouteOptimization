@@ -103,11 +103,11 @@ class Driver:
 
 # Import data
 
-with open('standard_routes.json', 'r') as json_file:
+with open('src/generator/data/standard_routes.json', 'r') as json_file:
     standard_route_data = json.load(json_file)
 standard_routes = [StandardRoute(route_data_item) for route_data_item in standard_route_data]
 
-with open('actual_routes.json', 'r') as json_file:
+with open('src/generator/data/actual_routes.json', 'r') as json_file:
     actual_route_data = json.load(json_file)
 actual_routes = [ActualRoute(route_data_item) for route_data_item in actual_route_data]
 
