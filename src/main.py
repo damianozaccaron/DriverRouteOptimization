@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 import json
 import numpy as np
-
+import copy
 
 
 load_dotenv()
@@ -33,6 +33,9 @@ class Merchandise:
             result_data[item] = result_data.get(item, 0) + quantity
         result_merchandise = Merchandise(result_data)
         return result_merchandise
+    
+    def __str__(self) -> str:
+        return f'Merchandise: {dict(zip(self.item, self.quantity))}'
 
 
 class Trip:
@@ -56,7 +59,7 @@ class StandardRoute:
         return city_vec
 
     def trip_without_merch(self) -> list:
-        new_route = self.route.copy()
+        new_route = copy.deepcopy(self.route)
         for trip in new_route:
             trip.merchandise = None
         return new_route
@@ -66,7 +69,7 @@ class StandardRoute:
         for trip in self.route:
             merch += trip.merchandise
         return merch
-
+    
 
 class ActualRoute(StandardRoute):
 
@@ -142,14 +145,14 @@ def merch_distance(first_merch: Merchandise, second_merch: Merchandise) -> float
     return (count - sim) / count
 
 def route_distance(route_1: StandardRoute, route_2: StandardRoute) -> float:
-    distance_route = 0
     # jaccard distance between city list
-    distance_route += 1 - jaccard_similarity(route_1.extract_city(), route_2.extract_city())
+    d1 = 1 - jaccard_similarity(route_1.extract_city(), route_2.extract_city())
     # jaccard distance between trip
-    # distance_route += 1 - jaccard_similarity(route_1.trip_without_merch(), route_2.trip_without_merch())
+    d2 = 1 - jaccard_similarity(route_1.trip_without_merch(), route_2.trip_without_merch())
     # distance between merch
-    distance_route += merch_distance(route_1.extract_merch(), route_2.extract_merch())
-    return distance_route / 3
+    d3 = merch_distance(route_1.extract_merch(), route_2.extract_merch())
+    return d2
+    #return (3 * d1 + 6 * d2 + d3) / 10
 
 def route_similarity(route_1: StandardRoute, route_2: StandardRoute) -> float:
     return 1 - route_distance(route_1, route_2)
@@ -163,6 +166,7 @@ def compute_distance_matrix(data: list):
     return distance_matrix
 
 print(compute_distance_matrix(standard_routes))
+
 
 
 # 4. generate output 2
