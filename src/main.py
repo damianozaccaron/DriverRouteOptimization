@@ -1,9 +1,8 @@
 # imports
-import os
 from dotenv import load_dotenv
 import json
 import numpy as np
-import copy
+from sklearn import AgglomerativeClustering
 
 
 load_dotenv()
@@ -59,9 +58,7 @@ class StandardRoute:
         return city_vec
 
     def trip_without_merch(self) -> list:
-        new_route = copy.deepcopy(self.route)
-        for trip in new_route:
-            trip.merchandise = None
+        new_route = [(trip.city_from, trip.city_to) for trip in self.route]
         return new_route
 
     def extract_merch(self) -> Merchandise:
@@ -116,7 +113,7 @@ actual_routes = [ActualRoute(route_data_item) for route_data_item in actual_rout
 
 
 
-# 3. generate output 1
+# 1. generate output 1
 
 
 # something maybe useful for distance
@@ -141,7 +138,9 @@ def merch_distance(first_merch: Merchandise, second_merch: Merchandise) -> float
         count += first_merch.quantity[i]
         for j in range(len(second_merch.item)):
             if first_merch.item[i] == second_merch.item[j]:
-                sim += abs(first_merch.quantity[i] - second_merch.quantity[j])
+                common_part = abs(first_merch.quantity[i] - second_merch.quantity[j])
+                sim += first_merch.quantity[i] - common_part
+                sim += second_merch.quantity[j] - common_part
     return (count - sim) / count
 
 def route_distance(route_1: StandardRoute, route_2: StandardRoute) -> float:
@@ -151,8 +150,7 @@ def route_distance(route_1: StandardRoute, route_2: StandardRoute) -> float:
     d2 = 1 - jaccard_similarity(route_1.trip_without_merch(), route_2.trip_without_merch())
     # distance between merch
     d3 = merch_distance(route_1.extract_merch(), route_2.extract_merch())
-    return d2
-    #return (3 * d1 + 6 * d2 + d3) / 10
+    return (3 * d1 + 6 * d2 + d3) / 10
 
 def route_similarity(route_1: StandardRoute, route_2: StandardRoute) -> float:
     return 1 - route_distance(route_1, route_2)
@@ -165,10 +163,22 @@ def compute_distance_matrix(data: list):
             distance_matrix[i, j] = route_distance(data[i], data[j])
     return distance_matrix
 
-print(compute_distance_matrix(standard_routes))
+
+distance_matrix = compute_distance_matrix(standard_routes)
+
+print(distance_matrix)
+
+
+# Let's create clusters fuck yeah
+
+clustering = AgglomerativeClustering(affinity="precomputed", linkage="complete")
+
+clustering.fit(distance_matrix)
+
+labels = clustering.labels_
 
 
 
-# 4. generate output 2
-# 5. generate output 3
+# 2. generate output 2
+# 3. generate output 3
 
