@@ -1,10 +1,6 @@
 # imports
 from dotenv import load_dotenv
 import json
-import numpy as np
-from sklearn.cluster import AgglomerativeClustering
-from sklearn import metrics
-from sklearn.preprocessing import StandardScaler
 
 
 
@@ -116,7 +112,16 @@ actual_routes = [ActualRoute(route_data_item) for route_data_item in actual_rout
 
 
 
-# 1. generate output 1
+# Output 1 generation
+
+
+# Libraries:
+
+import numpy as np
+import sklearn.cluster 
+from sklearn import metrics
+from sklearn.preprocessing import StandardScaler
+
 
 
 # something maybe useful for distance
@@ -174,33 +179,61 @@ distance_matrix = compute_distance_matrix(actual_routes)
 
 # Let's create clusters fuck yeah
 
+print('\n AGGLOMERATIVE CLUSTERING \n')
+
 n = len(standard_routes)
-clustering = AgglomerativeClustering(n_clusters=n, metric="precomputed", linkage="complete")
-clustering.fit(distance_matrix)
+clustering = sklearn.cluster.AgglomerativeClustering(n_clusters=n, metric="precomputed", linkage="complete").fit(distance_matrix)
 labels = clustering.labels_
 
 standard_distance_matrix = StandardScaler().fit_transform(distance_matrix)
-standard_clustering = AgglomerativeClustering(n_clusters=n, metric="precomputed", linkage="complete")
-standard_clustering.fit(standard_distance_matrix)
+standard_clustering = sklearn.cluster.AgglomerativeClustering(n_clusters=n, metric="precomputed", linkage="complete").fit(standard_distance_matrix)
 standard_labels = standard_clustering.labels_
 
 # Compute and print cluster statistics
 print('Silhouette Score using Distance Matrix:', metrics.silhouette_score(distance_matrix, clustering.labels_))
 print('Silhouette Score using Standardized Distance Matrix:',
-       metrics.silhouette_score(standard_distance_matrix, standard_clustering.labels_))
+       metrics.silhouette_score(standard_distance_matrix, standard_clustering.labels_), '\n')
 
 # Some indexes for cluster evaluation
-
 db_index = metrics.davies_bouldin_score(distance_matrix, labels)
-print('Davies-Bouldin Index:',db_index) # lower -> better
-
+print('Davies-Bouldin Index:',db_index,'\n') # lower -> better
 ch_index = metrics.calinski_harabasz_score(distance_matrix, labels)
-print('Calinski-Harabasz Index',ch_index) # higher -> better
+print('Calinski-Harabasz Index',ch_index,'\n') # higher -> better
+
+# Try k-means clusteing, same indexes
+
+similarity_matrix = 1 - distance_matrix
+
+print('\n KMEANS CLUSTERING \n')
+
+kmeans = sklearn.cluster.KMeans(n_clusters=n, random_state=0, n_init=10).fit(similarity_matrix)
+print('Silhouette Score using Similarity Matrix:', metrics.silhouette_score(similarity_matrix, kmeans.labels_),'\n')
+db_index = metrics.davies_bouldin_score(similarity_matrix, kmeans.labels_)
+print('Davies-Bouldin Index:',db_index,'\n') # lower -> better
+ch_index = metrics.calinski_harabasz_score(similarity_matrix, kmeans.labels_)
+print('Calinski-Harabasz Index',ch_index,'\n') # higher -> better
+
+# FOR SOME REASON INDEX HAVE THE SAME VALUE :(
+
+centroids = kmeans.cluster_centers_
 
 
+# I need a coordinate system
 
+class CoordinateSystem:
 
+    def __init__(self, dimensions) -> None:
+        self.dimensions = dimensions
+        self.origin = np.zeros(dimensions)
+    
 
+class ActualRouteAsPoint:
+
+    def __init__(self) -> None:
+        pass
+
+    def from_ar_to_point(self, ar: ActualRoute) -> None:
+        pass
 
 
 
