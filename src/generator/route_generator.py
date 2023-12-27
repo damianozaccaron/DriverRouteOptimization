@@ -456,6 +456,8 @@ def actual_routes_generator(standard_routes, merchandise, n_drivers, n_route_4d)
             driver = random.choice(driver_names)
             actual_route = {}
             sroute = next((d for d in standard_routes if d.get("id") == code), None)
+            if sroute is None:
+                continue
             ar = single_ar_generator(sroute["route"], province_set, merchandise)
             actual_route["id"] = "a" + str(ac_id)
             actual_route["driver"] = driver
