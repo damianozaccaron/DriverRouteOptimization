@@ -172,6 +172,9 @@ def compute_distance_matrix(data: list):
     return distance_matrix
 
 
+# Just comment to make speeder the programm
+'''
+
 distance_matrix = compute_distance_matrix(actual_routes)
 
 #print(distance_matrix)
@@ -217,24 +220,49 @@ print('Calinski-Harabasz Index',ch_index,'\n') # higher -> better
 
 centroids = kmeans.cluster_centers_
 
+'''
 
 # I need a coordinate system
 
 class CoordinateSystem:
 
-    def __init__(self, dimensions) -> None:
-        self.dimensions = dimensions
-        self.origin = np.zeros(dimensions)
+    def __init__(self, all_city_vec: list, all_merch: list, all_trip: list) -> None:
+        self.dimensions = len(all_city_vec) + len(all_merch) + len(all_trip)
+        self.all_city_vec = all_city_vec
+        self.all_merch = all_merch
+        self.all_trip = all_trip
+        self.origin = np.zeros(self.dimensions)
     
 
 class ActualRouteAsPoint:
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, ar: ActualRoute, space: CoordinateSystem) -> None:
+        self.space = space
+        v1 = [1 if city in ar.extract_city() else 0 for city in space.all_city_vec]
+        v2 = [ar.extract_merch().quantity if merch in ar.extract_merch().item else 0 for merch in space.all_merch]
+        v3 = [1 if trip in ar.route else 0 for trip in space.all_trip]
+        self.coordinates = v1 + v2 + v3
 
-    def from_ar_to_point(self, ar: ActualRoute) -> None:
-        pass
 
+# Need to extract city list, merch list and trip list
+city_list = []
+merch_list = []
+trip_list = []
+for actual_route in actual_routes:
+    cities = actual_route.extract_city()
+    city_list += [city for city in cities if city not in city_list]
+    merch_vec = actual_route.extract_merch().item
+    merch_list += [merch for merch in merch_vec if merch not in merch_list]
+    trips = actual_route.trip_without_merch()    
+    trip_list += [trip for trip in trips if trip not in trip_list]
+
+
+space = CoordinateSystem(city_list, merch_list, trip_list)
+actual_routes_as_points = []
+for actual_route in actual_routes:
+    actual_routes_as_points.append(ActualRouteAsPoint(actual_route, space))
+
+print(actual_routes_as_points[0].coordinates)
 
 
 
