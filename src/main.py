@@ -5,7 +5,6 @@ import numpy as np
 from sklearn.cluster import AgglomerativeClustering
 from sklearn import metrics
 from sklearn.preprocessing import StandardScaler
-from yellowbrick.cluster import gap_statistics
 
 
 
@@ -190,15 +189,16 @@ print('Silhouette Score using Distance Matrix:', metrics.silhouette_score(distan
 print('Silhouette Score using Standardized Distance Matrix:',
        metrics.silhouette_score(standard_distance_matrix, standard_clustering.labels_))
 
-# Non - standardized works better for some reason wtf
+# Some indexes for cluster evaluation
 
 db_index = metrics.davies_bouldin_score(distance_matrix, labels)
-print('Davies-Bouldin Index:',db_index)
+print('Davies-Bouldin Index:',db_index) # lower -> better
 
 ch_index = metrics.calinski_harabasz_score(distance_matrix, labels)
-print('Calinski-Harabasz Index',ch_index)
+print('Calinski-Harabasz Index',ch_index) # higher -> better
 
-gap_stats = gap_statistics(clustering, distance_matrix, cluster_range=range(n-3, n+3))
+
+
 
 
 
