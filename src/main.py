@@ -1,142 +1,23 @@
 # imports
-import os
-from dotenv import load_dotenv
 import json
-
 import findspark
-
-from generator.route_generator import actual_routes_generator, json_writer, merchandise_generator, standard_routes_generator
-
-findspark.init()
+from entities.actual_route import ActualRoute
+from entities.actual_route_as_point import ActualRouteAsPoint
+from entities.coordinate_system import CoordinateSystem
+from entities.merchandise import Merchandise
+from entities.standard_route import StandardRoute
+from entities.trip import Trip
 
 from pyspark.ml.clustering import KMeans
 from pyspark.sql import SparkSession
 
-load_dotenv()
-
-provinces_count = int(os.environ.get("PROVINCES_TO_PICK", 10))
-n_merchandise = int(os.environ.get("NUMBER_OF_ITEMS_PER_TRIP", 3))
-tot_merchandise = int(os.environ.get("TOTAL_NUMBER_OF_ITEMS", 10))
-sr_count = int(os.environ.get("STANDARD_ROUTES_COUNT", 1))
-
-merchandise = merchandise_generator(20)
-print("merchandise generated")
-
-standard_routes = standard_routes_generator(sr_count, provinces_count, n_merchandise, merchandise, 5)
-print("sr generated")
-
-actual_routes = actual_routes_generator(standard_routes, merchandise, 20, 15)
-json_writer(actual_routes, "src/generator/data/actual_routes.json")
-print("ac generated")
+findspark.init()
 
 spark = SparkSession.builder \
         .master("local") \
         .appName(name = "Python Spark SQL basic example") \
         .getOrCreate()
 
-dataframe = spark.read.json(path = "src/generator/data/actual_routes.json")
-data = spark.createDataFrame(data = actual_routes)
-kmeans = KMeans().setK(sr_count).setSeed(1).setFeaturesCol("route")
-model = kmeans.fit(data)
-print("model fitted")
-
-
-
-# os.environ.get
-# load the value of the variable in the first argument defined in the .env file
-# the second parameter is the default value if the environment variable is not defined
-
-
-
-# Class definition
-
-
-class Merchandise:
-
-    def __init__(self, data: dict):
-        self.item = list(data.keys())
-        self.quantity = list(data.values())
-
-    def __add__(self, other: 'Merchandise') -> 'Merchandise':
-        if other is None:
-            return Merchandise(dict(zip(self.item, self.quantity)))
-        result_data = {}
-        for item, quantity in zip(self.item, self.quantity):
-            result_data[item] = result_data.get(item, 0) + quantity
-        for item, quantity in zip(other.item, other.quantity):
-            result_data[item] = result_data.get(item, 0) + quantity
-        result_merchandise = Merchandise(result_data)
-        return result_merchandise
-    
-    def __str__(self) -> str:
-        return f'Merchandise: {dict(zip(self.item, self.quantity))}'
-
-
-class Trip:
-
-    def __init__(self, data):
-        self.city_from = data.get('from', '')
-        self.city_to = data.get('to', '')
-        self.merchandise = Merchandise(data.get('merchandise', {}))
-
-
-class StandardRoute:
-
-    def __init__(self, data):
-        self.id = data.get('id', '')
-        self.route = [Trip(trip_data) for trip_data in data.get('route', [])]
-
-    def extract_city(self) -> list:
-        city_vec = [self.route[0].city_from]
-        for i in range(len(self.route)):
-            city_vec.append(self.route[i].city_to)
-        return city_vec
-
-    def trip_without_merch(self) -> list:
-        new_route = [(trip.city_from, trip.city_to) for trip in self.route]
-        return new_route
-
-    def extract_merch(self) -> Merchandise:
-        merch = Merchandise({})
-        for trip in self.route:
-            merch += trip.merchandise
-        return merch
-    
-
-class ActualRoute(StandardRoute):
-
-    def __init__(self, data):
-        super().__init__(data)
-        self.driver = data.get('driver', '')
-        self.sroute = data.get('sroute', '')
-
-
-class Preferences:
-
-    def __init__(self, freq_city, freq_city_in_route, freq_trip, freq_trip_in_route, n_trip,
-                 n_merch, freq_merch_per_trip, freq_merch_avg):
-        self.freq_city = freq_city
-        self.freq_city_in_route = freq_city_in_route
-        self.freq_trip = freq_trip
-        self.freq_trip_in_route = freq_trip_in_route
-        self.n_trip = n_trip
-        self.freq_merch_avg = freq_merch_avg
-        self.n_merch = n_merch
-        self.freq_merch_per_trip = freq_merch_per_trip
-
-class Driver:
-
-    def __init__(self, id: str):
-        self.id = id
-
-    def route_for_driver(self, actual_route: ActualRoute):
-        pass
-
-    def preferences(self, driver_route: ActualRoute) -> Preferences:
-        pass
-
-
-# Import data
 
 with open('src/generator/data/standard_routes.json', 'r') as json_file:
     standard_route_data = json.load(json_file)
@@ -146,7 +27,10 @@ with open('src/generator/data/actual_routes.json', 'r') as json_file:
     actual_route_data = json.load(json_file)
 actual_routes = [ActualRoute(route_data_item) for route_data_item in actual_route_data]
 
-
+data = spark.createDataFrame(data = actual_routes)
+kmeans = KMeans().setK(len(standard_routes)).setSeed(1).setFeaturesCol("route")
+model = kmeans.fit(data)
+print("model fitted")
 
 # Output 1 generation
 
@@ -257,27 +141,6 @@ print('Calinski-Harabasz Index',ch_index,'\n') # higher -> better
 centroids = kmeans.cluster_centers_
 
 '''
-
-# I need a coordinate system
-
-class CoordinateSystem:
-
-    def __init__(self, all_city_vec: list, all_merch: list, all_trip: list) -> None:
-        self.dimensions = len(all_city_vec) + len(all_merch) + len(all_trip)
-        self.all_city_vec = all_city_vec
-        self.all_merch = all_merch
-        self.all_trip = all_trip
-        self.origin = np.zeros(self.dimensions)
-    
-
-class ActualRouteAsPoint:
-
-    def __init__(self, ar: ActualRoute, space: CoordinateSystem) -> None:
-        self.space = space
-        v1 = [1 if city in ar.extract_city() else 0 for city in space.all_city_vec]
-        v2 = [ar.extract_merch().quantity if merch in ar.extract_merch().item else 0 for merch in space.all_merch]
-        v3 = [1 if trip in ar.route else 0 for trip in space.all_trip]
-        self.coordinates = v1 + v2 + v3
 
 
 # Need to extract city list, merch list and trip list
