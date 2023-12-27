@@ -2,7 +2,11 @@
 from dotenv import load_dotenv
 import json
 import numpy as np
-from sklearn import AgglomerativeClustering
+from sklearn.cluster import AgglomerativeClustering
+from sklearn import metrics
+from sklearn.preprocessing import StandardScaler
+from yellowbrick.cluster import gap_statistics
+
 
 
 load_dotenv()
@@ -164,18 +168,41 @@ def compute_distance_matrix(data: list):
     return distance_matrix
 
 
-distance_matrix = compute_distance_matrix(standard_routes)
+distance_matrix = compute_distance_matrix(actual_routes)
 
-print(distance_matrix)
+#print(distance_matrix)
 
 
 # Let's create clusters fuck yeah
 
-clustering = AgglomerativeClustering(affinity="precomputed", linkage="complete")
-
+n = len(standard_routes)
+clustering = AgglomerativeClustering(n_clusters=n, metric="precomputed", linkage="complete")
 clustering.fit(distance_matrix)
-
 labels = clustering.labels_
+
+standard_distance_matrix = StandardScaler().fit_transform(distance_matrix)
+standard_clustering = AgglomerativeClustering(n_clusters=n, metric="precomputed", linkage="complete")
+standard_clustering.fit(standard_distance_matrix)
+standard_labels = standard_clustering.labels_
+
+# Compute and print cluster statistics
+print('Silhouette Score using Distance Matrix:', metrics.silhouette_score(distance_matrix, clustering.labels_))
+print('Silhouette Score using Standardized Distance Matrix:',
+       metrics.silhouette_score(standard_distance_matrix, standard_clustering.labels_))
+
+# Non - standardized works better for some reason wtf
+
+db_index = metrics.davies_bouldin_score(distance_matrix, labels)
+print('Davies-Bouldin Index:',db_index)
+
+ch_index = metrics.calinski_harabasz_score(distance_matrix, labels)
+print('Calinski-Harabasz Index',ch_index)
+
+gap_stats = gap_statistics(clustering, distance_matrix, cluster_range=range(n-3, n+3))
+
+
+
+
 
 
 
