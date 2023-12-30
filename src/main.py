@@ -1,23 +1,11 @@
 # imports
 import json
-import findspark
 from entities.actual_route import ActualRoute
 from entities.actual_route_as_point import ActualRouteAsPoint
 from entities.coordinate_system import CoordinateSystem
 from entities.merchandise import Merchandise
 from entities.standard_route import StandardRoute
 from entities.trip import Trip
-
-from pyspark.ml.clustering import KMeans
-from pyspark.sql import SparkSession
-
-findspark.init()
-
-spark = SparkSession.builder \
-        .master("local") \
-        .appName(name = "Python Spark SQL basic example") \
-        .getOrCreate()
-
 
 with open('src/generator/data/standard_routes.json', 'r') as json_file:
     standard_route_data = json.load(json_file)
@@ -26,21 +14,14 @@ standard_routes = [StandardRoute(route_data_item) for route_data_item in standar
 with open('src/generator/data/actual_routes.json', 'r') as json_file:
     actual_route_data = json.load(json_file)
 actual_routes = [ActualRoute(route_data_item) for route_data_item in actual_route_data]
-
-data = spark.createDataFrame(data = actual_routes)
-kmeans = KMeans().setK(len(standard_routes)).setSeed(1).setFeaturesCol("route")
-model = kmeans.fit(data)
-print("model fitted")
-
 # Output 1 generation
-
 
 # Libraries:
 
 import numpy as np
-import sklearn.cluster 
-from sklearn import metrics
-from sklearn.preprocessing import StandardScaler
+# import sklearn.cluster 
+# from sklearn import metrics
+# from sklearn.preprocessing import StandardScaler
 
 
 
@@ -161,14 +142,85 @@ actual_routes_as_points = []
 for actual_route in actual_routes:
     actual_routes_as_points.append(ActualRouteAsPoint(actual_route, space))
 
-print(actual_routes_as_points[0].coordinates)
+# import csv
+# header: list[str] = []
+# header.append("sroute")
+# header.extend(space.all_city_vec)
+# header.extend(space.all_merch)
+# # open the file in the write mode
+# with open("src/matrix.csv", "w") as f:
+#     writer = csv.writer(f)
+#     writer.writerow(header)
+#     for ar in actual_routes:
+#         row_result = []
+#         actual_route_cities = ar.extract_city()
+#         row_result.append(ar.sroute)
+#         for city in space.all_city_vec:
+#             row_result.append(1 if city in actual_route_cities else 0)
+#         actual_route_merch = ar.extract_merch()
+#         for merch in space.all_merch:
+#             if merch in actual_route_merch.item:
+#                 index = actual_route_merch.item.index(merch)
+#                 row_result.append(actual_route_merch.quantity[index])
+#             else:
+#                 row_result.append(0)
+#         writer.writerow(row_result)
+# f.close()
 
+import findspark
+from pyspark.ml.clustering import KMeans
+from pyspark.ml.evaluation import ClusteringEvaluator
+from pyspark.sql import SparkSession
+from pyspark.ml.feature import VectorAssembler
 
+findspark.init()
 
+spark = SparkSession.builder \
+        .master("local") \
+        .appName(name = "PySpark for data mining") \
+        .getOrCreate()
 
-# 2. generate output 2
-# 3. generate output 3
-# 3. generate output 1
-# 4. generate output 2
-# 5. generate output 3
+data = spark.read.option("header", True) \
+    .option("inferSchema", True) \
+    .csv("src/matrix.csv")
+
+data.groupBy("sroute").count().show()
+
+input_cols = data.columns[1:]
+vec_assembler = VectorAssembler(inputCols = input_cols, outputCol = "features")
+final_data = vec_assembler.transform(data)
+kmeans = KMeans().setK(len(standard_routes)).setSeed(1).setFeaturesCol("features")
+model = kmeans.fit(final_data)
+
+predictions = model.transform(final_data)
+predictions.groupBy("sroute").count().show()
+
+# Evaluate clustering by computing Silhouette score
+evaluator = ClusteringEvaluator()
+
+silhouette = evaluator.evaluate(predictions)
+print("Silhouette with squared euclidean distance = " + str(silhouette))
+
+# Shows the result.
+dimensions = space.all_city_vec
+dimensions.extend(space.all_merch)
+cluster_centers = []
+centers = model.clusterCenters()
+print("Cluster Centers: ")
+for center in centers:
+    print(center)
+    cluster_center = {}
+    for index, coord in enumerate(input_cols):
+        cluster_center[coord] = center[index]
+    cluster_centers.append(cluster_center)
+file_path = "src/cluster_centers.json"
+
+with open(file_path, "w") as json_file:
+        json.dump({}, json_file)
+
+with open(file_path, "w") as json_file:
+    json.dump(cluster_centers, json_file, indent=4)
+
+# https://www.youtube.com/watch?v=GDNNSxmAM7U
+
 

@@ -9,6 +9,8 @@ class StandardRoute:
         self.route = [Trip(trip_data) for trip_data in data.get('route', [])]
 
     def extract_city(self) -> list:
+        if len(self.route) == 0:
+            return []
         city_vec = [self.route[0].city_from]
         for i in range(len(self.route)):
             city_vec.append(self.route[i].city_to)

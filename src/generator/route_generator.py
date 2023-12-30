@@ -260,19 +260,19 @@ def standard_routes_generator(sr_count, provinces_count, n_obj, merchandise, n_t
     
     return standard_routes
 
-def json_writer(routes, file_path):
+def json_writer(objects, file_path):
     """
-    Writes a list of routes to a JSON file.
+    Writes a list of objects to a JSON file.
 
     Parameters:
-    - routes (list): A list of routes to be written to the file.
+    - objects (list): A list of objects to be written to the file.
     - file_path (str): The path to the JSON file.
     """
     with open(file_path, "w") as json_file:
         json.dump({}, json_file)
 
     with open(file_path, "w") as json_file:
-        json.dump(routes, json_file, indent=4)
+        json.dump(objects, json_file, indent=4)
 
 def n_merchandise_randomizer(merch):
     """
