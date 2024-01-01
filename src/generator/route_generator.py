@@ -300,21 +300,21 @@ def t_merchandise_randomizer(merch, merchandise):
     Returns:
     - dict: Modified merchandise dictionary.
     """
-    cacca = randomizer()
+    random_output = randomizer()
 
-    if cacca > 0:
+    if random_output > 0:
         new_merch_ind = random.choice(merchandise)
-        while new_merch_ind in merch:
+        while new_merch_ind in merch.keys():
             new_merch_ind = random.choice(merchandise)
         merch[new_merch_ind] = random.randint(1, 10)
-    if cacca > 1:
+    if random_output > 1:
         new_merch_ind = random.choice(merchandise)
-        while new_merch_ind in merch:
+        while new_merch_ind in merch.keys():
             new_merch_ind = random.choice(merchandise)
         merch[new_merch_ind] = random.randint(1, 10)
-    if cacca < 0 and len(merch) > 0:
+    if random_output < 0 and len(merch) > 0:
         merch.popitem()
-    if cacca < -1 and len(merch) > 0:
+    if random_output < -1 and len(merch) > 0:
         merch.popitem()
 
     return merch
@@ -346,11 +346,11 @@ def single_ar_generator(sr, province_set, merchandise):
     vec_to = [step['to'] for step in ar]
 
     # Change the starting province if start_ind is True
-    if not start_ind:
-        vec_from[1] = random.choice(province_set)
+    if not start_ind[0]:
+        vec_from[0] = random.choice(province_set)
 
     # Change the ending province based on trip_ind
-    for i in range(1, len(ar)):
+    for i in range(0, len(ar)):
         if not trip_ind[i]:
             vec_to[i] = random.choice(province_set)
             while vec_to[i] == vec_from[i]:
@@ -380,20 +380,22 @@ def single_ar_generator(sr, province_set, merchandise):
         ar[1]["from"] = ar[0]["to"]
 
     # Add or remove new trips (maybe)
-    sbrugna = ar.copy()
-    j = 0
-    for i, step in enumerate(sbrugna):
-        output_randomizer = randomizer()
-        if output_randomizer < 1:
-            ar.pop(i+j)
-            j -= 1
-        if output_randomizer > 1: 
-            new_trip = trip_generator(province_set, merchandise, step["to"], max(n_obj + randomizer(), 1))
-            while new_trip["to"] == ar[i+j]["to"]:
-                new_trip = trip_generator(province_set, merchandise, step["to"], max(n_obj + randomizer(), 1))
-            ar.insert(i+j, new_trip)
-            ar[i+j]["from"] = new_trip["to"]
-            j += 1
+    
+    # TODO WATCHOUT !!! THIS CODE GENERATES ERRORS (es. SAME CITY IN FROM AND TO)
+    # ar_copy = ar.copy()
+    # j = 0
+    # for i, step in enumerate(ar_copy):
+    #     output_randomizer = randomizer()
+    #     if output_randomizer < 1:
+    #         ar.pop(i+j)
+    #         j -= 1
+    #     if output_randomizer > 1: 
+    #         new_trip = trip_generator(province_set, merchandise, step["to"], max(n_obj + randomizer(), 1))
+    #         while new_trip["to"] == ar[i+j]["to"]:
+    #             new_trip = trip_generator(province_set, merchandise, step["to"], max(n_obj + randomizer(), 1))
+    #         ar.insert(i+j, new_trip)
+    #         ar[i+j]["from"] = new_trip["to"]
+    #         j += 1
 
     return ar
 
