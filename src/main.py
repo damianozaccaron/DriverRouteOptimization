@@ -189,21 +189,16 @@ data.groupBy("sroute").count().show()
 input_cols = data.columns[1:]
 vec_assembler = VectorAssembler(inputCols = input_cols, outputCol = "features")
 final_data = vec_assembler.transform(data)
-kmeans = KMeans().setK(len(standard_routes)).setSeed(1).setFeaturesCol("features")
+kmeans = KMeans() \
+    .setK(len(standard_routes)) \
+    .setSeed(1) \
+    .setFeaturesCol("features")
 model = kmeans.fit(final_data)
 
 predictions = model.transform(final_data)
 predictions.groupBy("sroute").count().show()
 
-# Evaluate clustering by computing Silhouette score
-evaluator = ClusteringEvaluator()
-
-silhouette = evaluator.evaluate(predictions)
-print("Silhouette with squared euclidean distance = " + str(silhouette))
-
 # Shows the result.
-dimensions = space.all_city_vec
-dimensions.extend(space.all_merch)
 cluster_centers = []
 centers = model.clusterCenters()
 print("Cluster Centers: ")
