@@ -1,19 +1,23 @@
 # imports
 import json
+import os
+
+from dotenv import load_dotenv
 from entities.actual_route import ActualRoute
-from entities.actual_route_as_point import ActualRouteAsPoint
-from entities.coordinate_system import CoordinateSystem
 from entities.merchandise import Merchandise
 from entities.standard_route import StandardRoute
 from entities.trip import Trip
+from spark_clustering import build_results, create_clusters, create_space, normalize_cluster_centers
+from utils.functions import get_ar_path
+from utils.route_generator import data_generation
 
-with open('src/generator/data/standard_routes.json', 'r') as json_file:
-    standard_route_data = json.load(json_file)
-standard_routes = [StandardRoute(route_data_item) for route_data_item in standard_route_data]
+# with open('src/data/standard_routes.json', 'r') as json_file:
+#     standard_route_data = json.load(json_file)
+# standard_routes = [StandardRoute(route_data_item) for route_data_item in standard_route_data]
 
-with open('src/generator/data/actual_routes.json', 'r') as json_file:
-    actual_route_data = json.load(json_file)
-actual_routes = [ActualRoute(route_data_item) for route_data_item in actual_route_data]
+# with open('src/data/actual_routes.json', 'r') as json_file:
+#     actual_route_data = json.load(json_file)
+# actual_routes = [ActualRoute(route_data_item) for route_data_item in actual_route_data]
 # Output 1 generation
 
 # Libraries:
@@ -122,3 +126,13 @@ print('Calinski-Harabasz Index',ch_index,'\n') # higher -> better
 centroids = kmeans.cluster_centers_
 
 '''
+data_generation()
+
+with open(get_ar_path(), 'r') as json_file:
+    actual_route_data = json.load(json_file)
+actual_routes = [ActualRoute(route_data_item) for route_data_item in actual_route_data]
+space = create_space(actual_routes)
+
+create_clusters(space)
+normalize_cluster_centers(space)
+build_results(space)
