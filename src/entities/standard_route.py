@@ -1,0 +1,25 @@
+from entities.merchandise import Merchandise
+from entities.trip import Trip
+
+
+class StandardRoute:
+
+    def __init__(self, data):
+        self.id = data.get('id', '')
+        self.route = [Trip(trip_data) for trip_data in data.get('route', [])]
+
+    def extract_city(self) -> list:
+        city_vec = [self.route[0].city_from]
+        for i in range(len(self.route)):
+            city_vec.append(self.route[i].city_to)
+        return city_vec
+
+    def trip_without_merch(self) -> list:
+        new_route = [(trip.city_from, trip.city_to) for trip in self.route]
+        return new_route
+
+    def extract_merch(self) -> Merchandise:
+        merch = Merchandise({})
+        for trip in self.route:
+            merch += trip.merchandise
+        return merch
