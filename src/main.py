@@ -1,46 +1,27 @@
 # imports
-import json
-import findspark
-from entities.actual_route import ActualRoute
-from entities.actual_route_as_point import ActualRouteAsPoint
-from entities.coordinate_system import CoordinateSystem
+import time
 from entities.merchandise import Merchandise
 from entities.standard_route import StandardRoute
 from entities.trip import Trip
+from spark_clustering import build_results, create_clusters, create_space, normalize_cluster_centers, perform_freq_items
+from utils.functions import get_actual_routes, save_run_parameters
+from utils.route_generator import data_generation
 
-from pyspark.ml.clustering import KMeans
-from pyspark.sql import SparkSession
+# with open('src/data/standard_routes.json', 'r') as json_file:
+#     standard_route_data = json.load(json_file)
+# standard_routes = [StandardRoute(route_data_item) for route_data_item in standard_route_data]
 
-findspark.init()
-
-spark = SparkSession.builder \
-        .master("local") \
-        .appName(name = "Python Spark SQL basic example") \
-        .getOrCreate()
-
-
-with open('src/generator/data/standard_routes.json', 'r') as json_file:
-    standard_route_data = json.load(json_file)
-standard_routes = [StandardRoute(route_data_item) for route_data_item in standard_route_data]
-
-with open('src/generator/data/actual_routes.json', 'r') as json_file:
-    actual_route_data = json.load(json_file)
-actual_routes = [ActualRoute(route_data_item) for route_data_item in actual_route_data]
-
-data = spark.createDataFrame(data = actual_routes)
-kmeans = KMeans().setK(len(standard_routes)).setSeed(1).setFeaturesCol("route")
-model = kmeans.fit(data)
-print("model fitted")
-
+# with open('src/data/actual_routes.json', 'r') as json_file:
+#     actual_route_data = json.load(json_file)
+# actual_routes = [ActualRoute(route_data_item) for route_data_item in actual_route_data]
 # Output 1 generation
-
 
 # Libraries:
 
 import numpy as np
-import sklearn.cluster 
-from sklearn import metrics
-from sklearn.preprocessing import StandardScaler
+# import sklearn.cluster 
+# from sklearn import metrics
+# from sklearn.preprocessing import StandardScaler
 
 
 
@@ -141,34 +122,31 @@ print('Calinski-Harabasz Index',ch_index,'\n') # higher -> better
 centroids = kmeans.cluster_centers_
 
 '''
+global_start = int(round(time.time() * 1000))
+save_run_parameters()
+start = int(round(time.time() * 1000))
+data_generation()
+end = int(round(time.time() * 1000))
+print(f"routes generated in {end - start} milliseconds")
 
+actual_routes = get_actual_routes()
+space = create_space(actual_routes)
 
-# Need to extract city list, merch list and trip list
-city_list = []
-merch_list = []
-trip_list = []
-for actual_route in actual_routes:
-    cities = actual_route.extract_city()
-    city_list += [city for city in cities if city not in city_list]
-    merch_vec = actual_route.extract_merch().item
-    merch_list += [merch for merch in merch_vec if merch not in merch_list]
-    trips = actual_route.trip_without_merch()    
-    trip_list += [trip for trip in trips if trip not in trip_list]
+start = int(round(time.time() * 1000))
+frequent_itemsets = perform_freq_items(actual_routes, space)
+end = int(round(time.time() * 1000))
+print(f"frequent itemsets in {end - start} milliseconds")
 
+start = int(round(time.time() * 1000))
+create_clusters(actual_routes, space)
+end = int(round(time.time() * 1000))
+print(f"clusters generated in {end - start} milliseconds")
 
-space = CoordinateSystem(city_list, merch_list, trip_list)
-actual_routes_as_points = []
-for actual_route in actual_routes:
-    actual_routes_as_points.append(ActualRouteAsPoint(actual_route, space))
+start = int(round(time.time() * 1000))
+normalize_cluster_centers(space)
+build_results(space, frequent_itemsets)
+end = int(round(time.time() * 1000))
+print(f"recStandard.json generated in {end - start} milliseconds")
 
-print(actual_routes_as_points[0].coordinates)
-
-
-
-
-# 2. generate output 2
-# 3. generate output 3
-# 3. generate output 1
-# 4. generate output 2
-# 5. generate output 3
-
+global_end = int(round(time.time() * 1000))
+print(f"total time execution: {global_end - global_start} milliseconds")

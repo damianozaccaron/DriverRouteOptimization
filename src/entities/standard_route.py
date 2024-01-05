@@ -8,7 +8,9 @@ class StandardRoute:
         self.id = data.get('id', '')
         self.route = [Trip(trip_data) for trip_data in data.get('route', [])]
 
-    def extract_city(self) -> list:
+    def extract_city(self) -> list[str]:
+        if len(self.route) == 0:
+            return []
         city_vec = [self.route[0].city_from]
         for i in range(len(self.route)):
             city_vec.append(self.route[i].city_to)
@@ -23,3 +25,10 @@ class StandardRoute:
         for trip in self.route:
             merch += trip.merchandise
         return merch
+    
+    def extract_merch_count(self, merch_label) -> int:
+        counter = 0
+        for trip in self.route:
+            if merch_label in trip.merchandise.item:
+                counter = counter + 1
+        return counter

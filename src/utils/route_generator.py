@@ -1,127 +1,22 @@
 # DATA GENERATION
-
 import os
 from dotenv import load_dotenv
 
+from utils.functions import get_ar_path, get_sr_path, json_writer
 load_dotenv()
-# os.environ.get
-# load the value of the variable in the first argument defined in the .env file
-# the second parameter is the default value if the environment variable is not defined
 
-import random
-import string
-import json
+import random, string
 
 merchandise = []
-# Ho aggiunto 2 nuovi argomenti: 
-# n_merc numero di oggetti di merchandise da mettere in ogni camion
-# tot_merc dimensione del pool degli oggetti
-def generate_standard_routes(sr_count, provinces_count, n_merch, tot_merch): 
-    with open("src/generator/data/province.csv", "r") as csv_file:
-        provinces = csv_file.readlines()
-    provinces = provinces[0].split(",")
-    random_provinces = random.choices(provinces, k = provinces_count)
-
-    standard_routes = []
-    previous_end_index = random.randint(0, provinces_count - 1)
-    for i in range(sr_count):
-        standard_route = {}
-        start_province = random_provinces[previous_end_index]
-        end_province_index = random.randint(0, provinces_count - 1)
-        while end_province_index == previous_end_index:
-            end_province_index = random.randint(0, provinces_count - 1)
-        end_province = random_provinces[end_province_index]
-        previous_end_index = end_province_index
-
-        selected_merch = []
-
-        # inserisco un po' di randomicità nel numero di oggetti
-        changer = random.randint(0, 10)
-        actual_merch_count = n_merch
-        if changer == 0:
-            actual_merch_count = n_merch - 2
-        elif changer < 3:
-            actual_merch_count = n_merch - 1
-        elif changer < 8:
-            actual_merch_count = n_merch
-        elif changer < 10:
-            actual_merch_count = n_merch + 1
-        else:
-            actual_merch_count = n_merch + 2
-        for j in range(actual_merch_count):
-            merch = merchandise[random.randint(0, actual_merch_count)]
-
-            if merch not in selected_merch:
-                selected_merch.append(merch)
-        selected_merch_values = {}
-        for m in selected_merch:
-            selected_merch_values[m] = random.randint(1, 30)
-            
-        standard_route["id"] = "sr_" + str(i)
-        standard_route["from"] = start_province
-        standard_route["to"] = end_province
-        standard_route["merchandise"] = selected_merch_values
-
-        standard_routes.append(standard_route)
-    print(standard_routes)
-    return standard_routes
-
-
-
-
-def generate_actual_routes(standard_routes, drivers_count, merchandise):
-
-    provinces = provinces_reader()
-    
-    actual_routes = []
-    for sr in standard_routes:
-        actual_route = sr
-        actual_route["driver"] = "d_" + str(random.randint(1, drivers_count))
-        new_trips = []
-        for trip in actual_route["trips"]:
-            if change_field(0, 10, treshold = 9):
-                trip["from"] = provinces[random.randint(0, len(provinces) - 1)]
-            if change_field(0, 10, treshold = 7):
-                trip["to"] = provinces[random.randint(0, len(provinces) - 1)]
-            if change_field(0, 10, treshold = 4):
-                trip["merchandise"] = randomize_merchandise(trip["merchandise"], merchandise)
-            new_trips.append(trip)
-        actual_route["trips"] = new_trips
-        actual_routes.append(actual_route)
-    
-
-    return actual_routes
-
-# takes two number to generate a value between
-# if the generated number is above the treshold it returns true
-def change_field(min, max, treshold):
-    return random.randint(min, max) > treshold
-
-def randomize_merchandise(old_merch, merchandise):
-    new_merch = {}
-    for name, quantity in old_merch.items():
-        # DONT INSERT THIS MERCH IN THE NEW ACTUAL TRIP
-        if change_field(0, 10, 9):
-            continue
-        # CHANGE NAME OF THE MERCH
-        if change_field(0, 10, 7):
-            name = merchandise[random.randint(0, len(merchandise) - 1)]
-            new_merch[name] = quantity
-        # CHANGE THE QUANTITY
-        if change_field(0, 10, 7):
-            new_merch[name] = quantity + randomizer()
-    return new_merch
-
-# Provo un altro approccio
 
 # Functions for generation of standard routes
 
-def provinces_reader(file_path="src/generator/data/province.csv"):
+def provinces_reader(file_path="src/data/province.csv"):
     """
     Reads province names from a CSV file and returns a list of provinces.
 
     Parameters:
-    - file_path (str): The path to the CSV file. Default is "src/generator/data/province.csv".
+    - file_path (str): The path to the CSV file. Default is "src/data/province.csv".
 
     Returns:
     - list: A list of province names.
@@ -167,9 +62,6 @@ def randomizer():
         result = 2
 
     return result
-
-import random
-import string
 
 def trip_generator(province_set, merchandise, start_province, n_obj):
     """
@@ -260,20 +152,6 @@ def standard_routes_generator(sr_count, provinces_count, n_obj, merchandise, n_t
     
     return standard_routes
 
-def json_writer(routes, file_path):
-    """
-    Writes a list of routes to a JSON file.
-
-    Parameters:
-    - routes (list): A list of routes to be written to the file.
-    - file_path (str): The path to the JSON file.
-    """
-    with open(file_path, "w") as json_file:
-        json.dump({}, json_file)
-
-    with open(file_path, "w") as json_file:
-        json.dump(routes, json_file, indent=4)
-
 def n_merchandise_randomizer(merch):
     """
     Randomly modifies merchandise quantities.
@@ -300,21 +178,30 @@ def t_merchandise_randomizer(merch, merchandise):
     Returns:
     - dict: Modified merchandise dictionary.
     """
-    cacca = randomizer()
+    MAX_TRIES = 5
+    i = 0
+    random_output = randomizer()
 
-    if cacca > 0:
+    if random_output > 0:
         new_merch_ind = random.choice(merchandise)
-        while new_merch_ind in merch:
+        while new_merch_ind in merch.keys() and i < MAX_TRIES:
             new_merch_ind = random.choice(merchandise)
+            i = i + 1
+        if i == MAX_TRIES:
+            return
         merch[new_merch_ind] = random.randint(1, 10)
-    if cacca > 1:
+        i = 0
+    if random_output > 1:
         new_merch_ind = random.choice(merchandise)
-        while new_merch_ind in merch:
+        while new_merch_ind in merch.keys() and i < MAX_TRIES:
             new_merch_ind = random.choice(merchandise)
+            i = i + 1
+        if i == MAX_TRIES:
+            return
         merch[new_merch_ind] = random.randint(1, 10)
-    if cacca < 0 and len(merch) > 0:
+    if random_output < 0 and len(merch) > 0:
         merch.popitem()
-    if cacca < -1 and len(merch) > 0:
+    if random_output < -1 and len(merch) > 0:
         merch.popitem()
 
     return merch
@@ -346,11 +233,11 @@ def single_ar_generator(sr, province_set, merchandise):
     vec_to = [step['to'] for step in ar]
 
     # Change the starting province if start_ind is True
-    if not start_ind:
-        vec_from[1] = random.choice(province_set)
+    if not start_ind[0]:
+        vec_from[0] = random.choice(province_set)
 
     # Change the ending province based on trip_ind
-    for i in range(1, len(ar)):
+    for i in range(0, len(ar)):
         if not trip_ind[i]:
             vec_to[i] = random.choice(province_set)
             while vec_to[i] == vec_from[i]:
@@ -360,42 +247,45 @@ def single_ar_generator(sr, province_set, merchandise):
     vec_from[1:] = vec_to[:-1]
 
     # Update the original list
+    updated_trips = []
     for i, step in enumerate(ar):
-        step['from'] = vec_from[i]
-        step['to'] = vec_to[i]
-        step["merchandise"] = t_merchandise_randomizer(step["merchandise"], merchandise)
-        step["merchandise"] = n_merchandise_randomizer(step["merchandise"])
+        trip = {}
+        trip["from"] = vec_from[i]
+        trip["to"] = vec_to[i]
+        trip["merchandise"] = t_merchandise_randomizer(step["merchandise"], merchandise)
+        trip["merchandise"] = n_merchandise_randomizer(step["merchandise"])
+        updated_trips.append(trip)
 
     # Generate random values for decision-making
-    output_randomizer = randomizer()
-    n_obj = max(len(ar[random.randint(0, len(ar)-1)]["merchandise"]) + randomizer(), 0)
+    n_obj = max(len(ar[random.randint(0, len(ar) - 1)]["merchandise"]) + randomizer(), 1)
 
     # Add a new trip if the condition is met
-    if output_randomizer > 1:
+    if randomizer() > 1:
         start_province = random.choice(province_set)
-        while start_province == ar[1]["to"]:
+        while start_province == updated_trips[1]["to"]:
             start_province = random.choice(province_set)
         first_trip = trip_generator(province_set, merchandise, start_province, n_obj)
-        ar.insert(0, first_trip)
-        ar[1]["from"] = ar[0]["to"]
+        updated_trips.insert(0, first_trip)
+        updated_trips[1]["from"] = updated_trips[0]["to"]
 
     # Add or remove new trips (maybe)
-    sbrugna = ar.copy()
-    j = 0
-    for i, step in enumerate(sbrugna):
-        output_randomizer = randomizer()
-        if output_randomizer < 1:
-            ar.pop(i+j)
-            j -= 1
-        if output_randomizer > 1: 
-            new_trip = trip_generator(province_set, merchandise, step["to"], max(n_obj + randomizer(), 1))
-            while new_trip["to"] == ar[i+j]["to"]:
-                new_trip = trip_generator(province_set, merchandise, step["to"], max(n_obj + randomizer(), 1))
-            ar.insert(i+j, new_trip)
-            ar[i+j]["from"] = new_trip["to"]
-            j += 1
+    # TODO WATCHOUT !!! THIS CODE GENERATES ERRORS (es. SAME CITY IN FROM AND TO)
+    # ar_copy = ar.copy()
+    # j = 0
+    # for i, step in enumerate(ar_copy):
+    #     output_randomizer = randomizer()
+    #     if output_randomizer < 1:
+    #         ar.pop(i+j)
+    #         j -= 1
+    #     if output_randomizer > 1: 
+    #         new_trip = trip_generator(province_set, merchandise, step["to"], max(n_obj + randomizer(), 1))
+    #         while new_trip["to"] == ar[i+j]["to"]:
+    #             new_trip = trip_generator(province_set, merchandise, step["to"], max(n_obj + randomizer(), 1))
+    #         ar.insert(i+j, new_trip)
+    #         ar[i+j]["from"] = new_trip["to"]
+    #         j += 1
 
-    return ar
+    return updated_trips
 
 
 def is_subset(vector1, vector2):
@@ -474,27 +364,36 @@ def actual_routes_generator(standard_routes, merchandise, n_drivers, n_route_4d)
 # REAL DATA GENERATION
 # ------------------ #
 
-# number of standard routes generated
-sr_count = int(os.environ.get("STANDARD_ROUTES_COUNT", 1))
-# number of provinces to choose for the routes
-provinces_count = int(os.environ.get("PROVINCES_TO_PICK", 10))
-# extimated value of number of items per trip
-n_merchandise = int(os.environ.get("NUMBER_OF_ITEMS_PER_TRIP", 3))
-# total number of different items 
-tot_merchandise = int(os.environ.get("TOTAL_NUMBER_OF_ITEMS", 10))
+def data_generation():
+    # number of standard routes generated
+    sr_count = int(os.environ.get("STANDARD_ROUTES_COUNT", 1))
+    # number of trips per route
+    trips_per_route = int(os.environ.get("TRIPS_PER_ROUTE", 5))
+    # number of provinces to choose for the routes
+    provinces_count = int(os.environ.get("PROVINCES_TO_PICK", 10))
+    # extimated value of number of items per trip
+    n_merchandise = int(os.environ.get("NUMBER_OF_ITEMS_PER_TRIP", 3))
+    # total number of different items 
+    tot_merchandise = int(os.environ.get("TOTAL_NUMBER_OF_ITEMS", 10))
+    # number of routes for each driver
+    drivers_count = int(os.environ.get("DRIVERS_COUNT", 10))
+    # number of routes for each driver
+    routes_per_driver = int(os.environ.get("ROUTES_PER_DRIVER", 15))
 
 
-# generation of merchandise
-merchandise = merchandise_generator(20)
+    # generation of merchandise
+    merchandise = merchandise_generator(tot_merchandise)
 
-# generation of standard routes
-standard_routes = standard_routes_generator(sr_count, provinces_count, n_merchandise, merchandise, 5)
+    # generation of standard routes
+    standard_routes = standard_routes_generator(sr_count, provinces_count, n_merchandise,
+                                                merchandise, trips_per_route)
 
-# write standard routes on a json file
-json_writer(standard_routes, "src/generator/data/standard_routes.json")
+    # write standard routes on a json file
+    json_writer(standard_routes, get_sr_path())
 
-# 2. randomize standard routes to get actual routes
-actual_routes = actual_routes_generator(standard_routes, merchandise, 20, 15)
+    # 2. randomize standard routes to get actual routes
+    actual_routes = actual_routes_generator(standard_routes, merchandise, drivers_count,
+                                            routes_per_driver)
 
-# write actual routes on a json file
-json_writer(actual_routes, "src/generator/data/actual_routes.json")
+    # write actual routes on a json file
+    json_writer(actual_routes, get_ar_path())
