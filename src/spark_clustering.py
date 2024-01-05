@@ -244,7 +244,7 @@ def perform_freq_items(actual_routes: list[ActualRoute], space: CoordinateSystem
     ctx = spark.sparkContext
     rdd = ctx.parallelize(data)
 
-    model = FPGrowth.train(data = rdd, minSupport = 0.4, numPartitions = 10)
+    model = FPGrowth.train(data = rdd, minSupport = 0.3, numPartitions = 10)
     result = model.freqItemsets().collect()
     valueable_fi = []
 
@@ -261,6 +261,8 @@ def perform_freq_items(actual_routes: list[ActualRoute], space: CoordinateSystem
     # e come ben vedrai conterra' solo i frequent itemset di una citta (invece che di tutte quelle in set_items)
     return valueable_fi
 
+# c'era un return true nel ciclo while, ho messo il false nel ciclo e il true alla fine
+
 set_items = {}
 def contains_city(fi, space: CoordinateSystem) -> bool:
     items = fi.items
@@ -268,6 +270,12 @@ def contains_city(fi, space: CoordinateSystem) -> bool:
     while i < len(items):
         if items[i] in space.all_city_vec:
             set_items[items[i]] = "present"
-            return True
+        else:
+            return False
         i = i + 1
-    return False
+    return True
+
+# più che altro sto freq item dovrebbe avere tipo coppie di città
+# invece sembra si basi su frequenze delle singole città
+# che di fatto non ci serve dc
+

@@ -1,0 +1,639 @@
+[
+    {
+        "id": "s1",
+        "route": [
+            {
+                "from": "Ancona",
+                "to": "Viterbo",
+                "merchandise": {
+                    "kzav": 10,
+                    "qena": 5,
+                    "oawr": 3,
+                    "gyll": 3
+                }
+            },
+            {
+                "from": "Viterbo",
+                "to": "Verbano-Cusio-Ossola",
+                "merchandise": {
+                    "ofpn": 4,
+                    "mwilg": 6,
+                    "fwdsnpd": 2,
+                    "oigxwsw": 2,
+                    "kzav": 1
+                }
+            },
+            {
+                "from": "Verbano-Cusio-Ossola",
+                "to": "Catania",
+                "merchandise": {
+                    "oigxwsw": 5,
+                    "rkxmzgfh": 2,
+                    "dkmwk": 5,
+                    "kzav": 6,
+                    "snto": 1,
+                    "ofpn": 8
+                }
+            },
+            {
+                "from": "Catania",
+                "to": "Verbano-Cusio-Ossola",
+                "merchandise": {
+                    "zfic": 1,
+                    "vphg": 4,
+                    "kzav": 7,
+                    "mwilg": 9,
+                    "cxya": 10
+                }
+            },
+            {
+                "from": "Verbano-Cusio-Ossola",
+                "to": "Benevento",
+                "merchandise": {
+                    "oawr": 3,
+                    "cxya": 3,
+                    "udilq": 4,
+                    "snto": 6,
+                    "fwdsnpd": 5
+                }
+            },
+            {
+                "from": "Benevento",
+                "to": "Trieste",
+                "merchandise": {
+                    "dkmwk": 5,
+                    "fwdsnpd": 5,
+                    "lkyski": 8,
+                    "oawr": 2,
+                    "ofpn": 1,
+                    "qxvksov": 10,
+                    "qena": 10
+                }
+            },
+            {
+                "from": "Trieste",
+                "to": "Reggio nell'Emilia",
+                "merchandise": {
+                    "oigxwsw": 1,
+                    "mwilg": 10,
+                    "acueegp": 1
+                }
+            }
+        ]
+    },
+    {
+        "id": "s2",
+        "route": [
+            {
+                "from": "Rimini",
+                "to": "Ancona",
+                "merchandise": {
+                    "qxvksov": 2,
+                    "lkyski": 3,
+                    "dkmwk": 8,
+                    "qena": 4,
+                    "rkxmzgfh": 2,
+                    "mwilg": 10
+                }
+            },
+            {
+                "from": "Ancona",
+                "to": "Reggio nell'Emilia",
+                "merchandise": {
+                    "fwdsnpd": 4,
+                    "wohj": 2,
+                    "qena": 7,
+                    "gyll": 2,
+                    "mwilg": 1,
+                    "vphg": 8
+                }
+            },
+            {
+                "from": "Reggio nell'Emilia",
+                "to": "Viterbo",
+                "merchandise": {
+                    "snto": 9,
+                    "netez": 1,
+                    "acueegp": 9,
+                    "rkxmzgfh": 5,
+                    "wohj": 8,
+                    "gyll": 8,
+                    "ofpn": 9
+                }
+            },
+            {
+                "from": "Viterbo",
+                "to": "Messina",
+                "merchandise": {
+                    "ofpn": 6,
+                    "qena": 2,
+                    "gyll": 8,
+                    "udilq": 2,
+                    "snto": 5
+                }
+            }
+        ]
+    },
+    {
+        "id": "s3",
+        "route": [
+            {
+                "from": "Messina",
+                "to": "Ancona",
+                "merchandise": {
+                    "netez": 9,
+                    "qena": 2,
+                    "lkyski": 5,
+                    "gyll": 3,
+                    "oawr": 10
+                }
+            },
+            {
+                "from": "Ancona",
+                "to": "Milano",
+                "merchandise": {
+                    "mwilg": 8,
+                    "acueegp": 4,
+                    "udilq": 4,
+                    "kzav": 6,
+                    "rkxmzgfh": 9
+                }
+            },
+            {
+                "from": "Milano",
+                "to": "Rimini",
+                "merchandise": {
+                    "oigxwsw": 6,
+                    "zfic": 10,
+                    "kzav": 1,
+                    "fwdsnpd": 5,
+                    "netez": 9,
+                    "dkmwk": 6
+                }
+            },
+            {
+                "from": "Rimini",
+                "to": "Viterbo",
+                "merchandise": {
+                    "dkmwk": 5,
+                    "kzav": 9,
+                    "rkxmzgfh": 7,
+                    "ofpn": 3,
+                    "qena": 7
+                }
+            },
+            {
+                "from": "Viterbo",
+                "to": "Ancona",
+                "merchandise": {
+                    "oigxwsw": 8,
+                    "fwdsnpd": 7,
+                    "rkxmzgfh": 9,
+                    "oawr": 1,
+                    "mwilg": 10
+                }
+            }
+        ]
+    },
+    {
+        "id": "s4",
+        "route": [
+            {
+                "from": "Reggio nell'Emilia",
+                "to": "Ogliastra",
+                "merchandise": {
+                    "mwilg": 4,
+                    "fwdsnpd": 3,
+                    "udilq": 6,
+                    "zfic": 6,
+                    "oawr": 9
+                }
+            },
+            {
+                "from": "Ogliastra",
+                "to": "Verbano-Cusio-Ossola",
+                "merchandise": {
+                    "zfic": 9,
+                    "dkmwk": 6,
+                    "fwdsnpd": 2,
+                    "oawr": 10,
+                    "kzav": 3
+                }
+            },
+            {
+                "from": "Verbano-Cusio-Ossola",
+                "to": "Ancona",
+                "merchandise": {
+                    "kzav": 1,
+                    "ofpn": 9,
+                    "wohj": 2,
+                    "netez": 4,
+                    "lkyski": 8
+                }
+            },
+            {
+                "from": "Ancona",
+                "to": "Verbano-Cusio-Ossola",
+                "merchandise": {
+                    "netez": 6,
+                    "lkyski": 8,
+                    "cxya": 9,
+                    "rkxmzgfh": 8,
+                    "qena": 8,
+                    "oigxwsw": 9
+                }
+            },
+            {
+                "from": "Verbano-Cusio-Ossola",
+                "to": "Viterbo",
+                "merchandise": {
+                    "qena": 3,
+                    "udilq": 10,
+                    "snto": 10
+                }
+            }
+        ]
+    },
+    {
+        "id": "s5",
+        "route": [
+            {
+                "from": "Belluno",
+                "to": "Verbano-Cusio-Ossola",
+                "merchandise": {
+                    "ofpn": 2,
+                    "zfic": 5,
+                    "acueegp": 1,
+                    "qena": 1,
+                    "lkyski": 3
+                }
+            },
+            {
+                "from": "Verbano-Cusio-Ossola",
+                "to": "Ancona",
+                "merchandise": {
+                    "netez": 6,
+                    "zfic": 3,
+                    "qena": 8,
+                    "ofpn": 9
+                }
+            },
+            {
+                "from": "Ancona",
+                "to": "Brescia",
+                "merchandise": {
+                    "fwdsnpd": 7,
+                    "mwilg": 3,
+                    "lkyski": 7
+                }
+            },
+            {
+                "from": "Brescia",
+                "to": "Chieti",
+                "merchandise": {
+                    "oawr": 3,
+                    "fwdsnpd": 6,
+                    "wohj": 2,
+                    "qxvksov": 3
+                }
+            },
+            {
+                "from": "Chieti",
+                "to": "Trieste",
+                "merchandise": {
+                    "qena": 10,
+                    "zfic": 2,
+                    "rkxmzgfh": 1,
+                    "mwilg": 10,
+                    "cxya": 5
+                }
+            }
+        ]
+    },
+    {
+        "id": "s6",
+        "route": [
+            {
+                "from": "Chieti",
+                "to": "Rimini",
+                "merchandise": {
+                    "ofpn": 7,
+                    "gyll": 8,
+                    "dkmwk": 5,
+                    "cxya": 5,
+                    "acueegp": 9
+                }
+            },
+            {
+                "from": "Rimini",
+                "to": "Milano",
+                "merchandise": {
+                    "kzav": 8,
+                    "udilq": 1,
+                    "netez": 3,
+                    "lkyski": 9,
+                    "cxya": 2,
+                    "zfic": 1
+                }
+            },
+            {
+                "from": "Milano",
+                "to": "Ogliastra",
+                "merchandise": {
+                    "netez": 6,
+                    "udilq": 4,
+                    "zfic": 5,
+                    "fwdsnpd": 1,
+                    "gyll": 10,
+                    "cxya": 5
+                }
+            },
+            {
+                "from": "Ogliastra",
+                "to": "Ferrara",
+                "merchandise": {
+                    "qena": 1,
+                    "kzav": 7,
+                    "oigxwsw": 1,
+                    "snto": 3,
+                    "fwdsnpd": 6
+                }
+            },
+            {
+                "from": "Ferrara",
+                "to": "Grosseto",
+                "merchandise": {
+                    "acueegp": 8,
+                    "dkmwk": 7,
+                    "oigxwsw": 7,
+                    "wohj": 3,
+                    "qxvksov": 6
+                }
+            },
+            {
+                "from": "Grosseto",
+                "to": "Benevento",
+                "merchandise": {
+                    "wohj": 4,
+                    "rkxmzgfh": 9,
+                    "oawr": 2,
+                    "dkmwk": 2,
+                    "ofpn": 9,
+                    "fwdsnpd": 1,
+                    "qxvksov": 10
+                }
+            }
+        ]
+    },
+    {
+        "id": "s7",
+        "route": [
+            {
+                "from": "Ancona",
+                "to": "Benevento",
+                "merchandise": {
+                    "cxya": 1,
+                    "mwilg": 10,
+                    "gyll": 4,
+                    "vphg": 1
+                }
+            },
+            {
+                "from": "Benevento",
+                "to": "Verbano-Cusio-Ossola",
+                "merchandise": {
+                    "fwdsnpd": 5,
+                    "oawr": 8,
+                    "lkyski": 9,
+                    "zfic": 4,
+                    "acueegp": 2
+                }
+            },
+            {
+                "from": "Verbano-Cusio-Ossola",
+                "to": "L'Aquila",
+                "merchandise": {
+                    "cxya": 8,
+                    "fwdsnpd": 2,
+                    "qena": 5,
+                    "oawr": 10
+                }
+            },
+            {
+                "from": "L'Aquila",
+                "to": "Milano",
+                "merchandise": {
+                    "wohj": 6,
+                    "lkyski": 10,
+                    "snto": 9,
+                    "acueegp": 6
+                }
+            },
+            {
+                "from": "Milano",
+                "to": "Ancona",
+                "merchandise": {
+                    "oawr": 3,
+                    "wohj": 7,
+                    "gyll": 2,
+                    "ofpn": 2,
+                    "oigxwsw": 4,
+                    "cxya": 4
+                }
+            },
+            {
+                "from": "Ancona",
+                "to": "Milano",
+                "merchandise": {
+                    "qena": 4,
+                    "zfic": 9,
+                    "cxya": 10,
+                    "snto": 10,
+                    "vphg": 3,
+                    "gyll": 5
+                }
+            },
+            {
+                "from": "Milano",
+                "to": "Olbia-Tempio",
+                "merchandise": {
+                    "wohj": 9,
+                    "gyll": 2,
+                    "qena": 3,
+                    "acueegp": 3,
+                    "mwilg": 9,
+                    "snto": 1,
+                    "vphg": 9
+                }
+            }
+        ]
+    },
+    {
+        "id": "s8",
+        "route": [
+            {
+                "from": "Trieste",
+                "to": "Rimini",
+                "merchandise": {
+                    "oawr": 8,
+                    "fwdsnpd": 10,
+                    "gyll": 3,
+                    "kzav": 6,
+                    "netez": 2
+                }
+            },
+            {
+                "from": "Rimini",
+                "to": "Milano",
+                "merchandise": {
+                    "netez": 5,
+                    "zfic": 2,
+                    "snto": 6,
+                    "mwilg": 1,
+                    "qxvksov": 10
+                }
+            },
+            {
+                "from": "Milano",
+                "to": "Catania",
+                "merchandise": {
+                    "vphg": 2,
+                    "acueegp": 6,
+                    "zfic": 3,
+                    "gyll": 4,
+                    "lkyski": 1
+                }
+            }
+        ]
+    },
+    {
+        "id": "s9",
+        "route": [
+            {
+                "from": "Grosseto",
+                "to": "Benevento",
+                "merchandise": {
+                    "qxvksov": 2,
+                    "ofpn": 5,
+                    "kzav": 8,
+                    "lkyski": 8
+                }
+            },
+            {
+                "from": "Benevento",
+                "to": "Ancona",
+                "merchandise": {
+                    "oawr": 3,
+                    "vphg": 2,
+                    "cxya": 8,
+                    "oigxwsw": 7,
+                    "mwilg": 5
+                }
+            },
+            {
+                "from": "Ancona",
+                "to": "Grosseto",
+                "merchandise": {
+                    "kzav": 8,
+                    "udilq": 10,
+                    "cxya": 6,
+                    "qena": 2,
+                    "lkyski": 1
+                }
+            },
+            {
+                "from": "Grosseto",
+                "to": "Brescia",
+                "merchandise": {
+                    "zfic": 7,
+                    "vphg": 7,
+                    "rkxmzgfh": 8,
+                    "dkmwk": 2,
+                    "qxvksov": 4
+                }
+            },
+            {
+                "from": "Brescia",
+                "to": "Benevento",
+                "merchandise": {
+                    "netez": 7,
+                    "vphg": 3,
+                    "oawr": 5,
+                    "rkxmzgfh": 7,
+                    "gyll": 4
+                }
+            },
+            {
+                "from": "Benevento",
+                "to": "Ferrara",
+                "merchandise": {
+                    "oawr": 5,
+                    "qena": 4,
+                    "rkxmzgfh": 10,
+                    "oigxwsw": 8
+                }
+            },
+            {
+                "from": "Ferrara",
+                "to": "Benevento",
+                "merchandise": {
+                    "qena": 8,
+                    "oawr": 5,
+                    "acueegp": 3,
+                    "lkyski": 7,
+                    "netez": 6
+                }
+            }
+        ]
+    },
+    {
+        "id": "s10",
+        "route": [
+            {
+                "from": "Catania",
+                "to": "Reggio nell'Emilia",
+                "merchandise": {
+                    "wohj": 3,
+                    "zfic": 5,
+                    "vphg": 2,
+                    "qxvksov": 9,
+                    "oawr": 7,
+                    "snto": 10,
+                    "lkyski": 9
+                }
+            },
+            {
+                "from": "Reggio nell'Emilia",
+                "to": "Benevento",
+                "merchandise": {
+                    "mwilg": 1,
+                    "qena": 4,
+                    "fwdsnpd": 4,
+                    "acueegp": 2
+                }
+            },
+            {
+                "from": "Benevento",
+                "to": "Ferrara",
+                "merchandise": {
+                    "vphg": 5,
+                    "kzav": 2,
+                    "snto": 8,
+                    "rkxmzgfh": 1,
+                    "zfic": 6,
+                    "dkmwk": 5
+                }
+            },
+            {
+                "from": "Ferrara",
+                "to": "Chieti",
+                "merchandise": {
+                    "lkyski": 9,
+                    "mwilg": 2,
+                    "qena": 3,
+                    "qxvksov": 4
+                }
+            }
+        ]
+    }
+]
