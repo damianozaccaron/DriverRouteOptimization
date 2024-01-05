@@ -1,8 +1,10 @@
 import json, csv
 import os
 import random
+from typing import Any
 
 from dotenv import load_dotenv
+from pyspark import RDD
 from entities.actual_route import ActualRoute
 from entities.coordinate_system import CoordinateSystem
 
@@ -178,9 +180,10 @@ def normalize_cluster_centers(space: CoordinateSystem):
 
     json_writer(normalized_centers, get_norm_centers_path())
 
-def build_results(space: CoordinateSystem):
+def build_results(space: CoordinateSystem, frequent_itemsets):
     with open(get_norm_centers_path(), "r") as json_file:
         normalized_centers = json.load(json_file)
+    print(frequent_itemsets[:10])
     
     new_routes = []
     for i, center in enumerate(normalized_centers):
@@ -224,7 +227,6 @@ def create_sr_from_centers(cities: list[str], merch: dict[str, int], id: int):
 
 def perform_freq_items(actual_routes: list[ActualRoute], space: CoordinateSystem): 
     from pyspark.mllib.fpm import FPGrowth
-    # from pyspark.ml.fpm import FPGrowth
 
     findspark.init()
 
@@ -239,34 +241,33 @@ def perform_freq_items(actual_routes: list[ActualRoute], space: CoordinateSystem
         row_result.extend(actual_route_merch)
         data.append(row_result)
 
-    # from pyspark.sql.types import ArrayType, StringType, StructField, StructType
-
-    # schema = StructType([
-    #     StructField("id", StringType(), True),
-    #     StructField("features", ArrayType(elementType = StringType()), True)
-    # ])
-
-    # final_data = spark.createDataFrame(data, schema)
     ctx = spark.sparkContext
     rdd = ctx.parallelize(data)
 
-    model = FPGrowth.train(data = rdd, minSupport = 0.6, numPartitions = 20)
+    model = FPGrowth.train(data = rdd, minSupport = 0.4, numPartitions = 10)
     result = model.freqItemsets().collect()
+    valueable_fi = []
+
     for fi in result:
-        # print only ones with cities
-        print(fi)
-    print(len(result))
-    # fpGrowth = FPGrowth(itemsCol = "features", minSupport = 0.4, minConfidence = 0.8)
-    # model = fpGrowth.fit(final_data)
-
-    # Display frequent itemsets.
-    # model.freqItemsets.show()
-
-    # # Display generated association rules.
-    # model.associationRules.show()
-
-    # # transform examines the input items against all the association rules and summarize the
-    # # consequents as prediction
-    # model.transform(final_data).show()
-
+        if contains_city(fi, space):
+            valueable_fi.append(fi.items)
+    
     spark.stop()
+    # questo fottutiissimo set_items contiene tutte le citta
+    # che sono state trovate nei frequent itemset
+    print(set_items)
+    # piu tardi vengono printati questi valuable_fi
+    # (array che contiene i frequent itemset con citta al loro interno)
+    # e come ben vedrai conterra' solo i frequent itemset di una citta (invece che di tutte quelle in set_items)
+    return valueable_fi
+
+set_items = {}
+def contains_city(fi, space: CoordinateSystem) -> bool:
+    items = fi.items
+    i = 0
+    while i < len(items):
+        if items[i] in space.all_city_vec:
+            set_items[items[i]] = "present"
+            return True
+        i = i + 1
+    return False

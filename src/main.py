@@ -132,7 +132,10 @@ print(f"routes generated in {end - start} milliseconds")
 actual_routes = get_actual_routes()
 space = create_space(actual_routes)
 
-perform_freq_items(actual_routes, space)
+start = int(round(time.time() * 1000))
+frequent_itemsets = perform_freq_items(actual_routes, space)
+end = int(round(time.time() * 1000))
+print(f"frequent itemsets in {end - start} milliseconds")
 
 start = int(round(time.time() * 1000))
 create_clusters(actual_routes, space)
@@ -141,7 +144,7 @@ print(f"clusters generated in {end - start} milliseconds")
 
 start = int(round(time.time() * 1000))
 normalize_cluster_centers(space)
-build_results(space)
+build_results(space, frequent_itemsets)
 end = int(round(time.time() * 1000))
 print(f"recStandard.json generated in {end - start} milliseconds")
 
