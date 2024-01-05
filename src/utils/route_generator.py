@@ -269,7 +269,6 @@ def single_ar_generator(sr, province_set, merchandise):
         updated_trips[1]["from"] = updated_trips[0]["to"]
 
     # Add or remove new trips (maybe)
-    
     # TODO WATCHOUT !!! THIS CODE GENERATES ERRORS (es. SAME CITY IN FROM AND TO)
     # ar_copy = ar.copy()
     # j = 0

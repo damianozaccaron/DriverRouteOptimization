@@ -1,14 +1,10 @@
 # imports
-import json
-import os
-
-from dotenv import load_dotenv
-from entities.actual_route import ActualRoute
+import time
 from entities.merchandise import Merchandise
 from entities.standard_route import StandardRoute
 from entities.trip import Trip
-from spark_clustering import build_results, create_clusters, create_space, normalize_cluster_centers
-from utils.functions import get_ar_path
+from spark_clustering import build_results, create_clusters, create_space, normalize_cluster_centers, perform_freq_items
+from utils.functions import get_actual_routes, save_run_parameters
 from utils.route_generator import data_generation
 
 # with open('src/data/standard_routes.json', 'r') as json_file:
@@ -126,13 +122,28 @@ print('Calinski-Harabasz Index',ch_index,'\n') # higher -> better
 centroids = kmeans.cluster_centers_
 
 '''
+global_start = int(round(time.time() * 1000))
+save_run_parameters()
+start = int(round(time.time() * 1000))
 data_generation()
+end = int(round(time.time() * 1000))
+print(f"routes generated in {end - start} milliseconds")
 
-with open(get_ar_path(), 'r') as json_file:
-    actual_route_data = json.load(json_file)
-actual_routes = [ActualRoute(route_data_item) for route_data_item in actual_route_data]
+actual_routes = get_actual_routes()
 space = create_space(actual_routes)
 
-create_clusters(space)
+perform_freq_items(actual_routes, space)
+
+start = int(round(time.time() * 1000))
+create_clusters(actual_routes, space)
+end = int(round(time.time() * 1000))
+print(f"clusters generated in {end - start} milliseconds")
+
+start = int(round(time.time() * 1000))
 normalize_cluster_centers(space)
 build_results(space)
+end = int(round(time.time() * 1000))
+print(f"recStandard.json generated in {end - start} milliseconds")
+
+global_end = int(round(time.time() * 1000))
+print(f"total time execution: {global_end - global_start} milliseconds")
