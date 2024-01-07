@@ -281,28 +281,48 @@ def contains_city(fi, space: CoordinateSystem) -> bool:
 def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: CoordinateSystem):
     from pyspark.mllib.fpm import FPGrowth
 
-    # trip vec is a vector of 2ple of cities not object trip !!!!!!!
-    trip_vec = space.all_trip
+    city_vec = space.all_city_vec
     data = {}
     result = {}
-
+    '''
+    # trip vec is a vector of 2ple of cities not object trip !!!!!!!
+    trip_vec = space.all_tripdata_trip = {}
+    result_trip = {}
     for trip in trip_vec:
         findspark.init()
         spark = SparkSession.builder.master("local").appName(name = "PySpark for data mining").getOrCreate()
-        data[trip] = []
+        data_trip[trip] = []
         for ar in actual_routes:
             merch_vec = []
             for new_trip in ar.route:
                 if new_trip.city_from == trip[0] and new_trip.city_to == trip[1]:
                     merch_vec.append(new_trip.merchandise.item)
-            data[trip].append(merch_vec)   
+            data_trip[trip].append(merch_vec)   
 
         ctx = spark.sparkContext
         rdd = ctx.parallelize(data[trip])
 
         model = FPGrowth.train(data=rdd, minSupport=0.1, numPartitions=10)
 
-        result[trip] = model.freqItemsets().collect()
+        result_trip[trip] = model.freqItemsets().collect()
+'''
+    for city in city_vec:
+        findspark.init()
+        spark = SparkSession.builder.master("local").appName(name = "PySpark for data mining").getOrCreate()
+        data[city] = []
+        for ar in actual_routes:
+            merch_vec = []
+            for new_trip in ar.route:
+                if city == new_trip.city_to:
+                    merch_vec.append(new_trip.merchandise.item)
+            data[city].append(merch_vec)   
+
+        ctx = spark.sparkContext
+        rdd = ctx.parallelize(data[city])
+
+        model = FPGrowth.train(data=rdd, minSupport=0.1, numPartitions=10)
+
+        result[city] = model.freqItemsets().collect()
 
     return result
         

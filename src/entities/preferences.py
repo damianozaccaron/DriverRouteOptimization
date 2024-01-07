@@ -1,8 +1,8 @@
 class Preferences:
     """contains the preferences of each driver"""
 
-    def __init__(self, freq_city, freq_start, freq_finish, freq_trip, freq_itemset_city, freq_itemset_trip, n_trip,
-                 n_merch, n_merch_per_route, freq_merch_per_trip, freq_merch_avg):
+    def __init__(self, freq_city: dict, freq_start: dict, freq_finish:dict, freq_trip: dict, freq_itemset_city: dict, freq_itemset_trip: dict, n_trip: float, 
+                 freq_merch_avg: float, n_merch: dict, n_merch_per_route: float, freq_merch_per_trip: dict):
         self.freq_city = freq_city  # dict(key = string, value = int), lista di città per cui è passato spesso
         self.freq_start = freq_start  # dict(key = string, value = int), lista di città da cui è partito spesso
         self.freq_finish = freq_finish  # dict(key = string, value = int), lista di città in cui è arrivato spesso
