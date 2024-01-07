@@ -270,12 +270,36 @@ def contains_city(fi, space: CoordinateSystem) -> bool:
     while i < len(items):
         if items[i] in space.all_city_vec:
             set_items[items[i]] = "present"
-        else:
-            return False
+            return True
         i = i + 1
-    return True
+    return False
 
 # più che altro sto freq item dovrebbe avere tipo coppie di città
 # invece sembra si basi su frequenze delle singole città
 # che di fatto non ci serve dc
 
+def perform_freq_cities(actual_routes: list[ActualRoute], cities_of_interest: list[str]): 
+
+    from pyspark.mllib.fpm import FPGrowth
+    findspark.init()
+
+    spark = SparkSession.builder.master("local").appName(name="PySpark for data mining").getOrCreate()
+
+    data = []
+    for ar in actual_routes:
+        row_result = []
+        actual_route_cities = list(dict.fromkeys(ar.extract_city()))
+        row_result.extend(actual_route_cities)
+        data.append(row_result)
+
+    ctx = spark.sparkContext
+    rdd = ctx.parallelize(data)
+
+    model = FPGrowth.train(data=rdd, minSupport=0.3, numPartitions=10)
+    
+    # Filter the results to include only itemsets containing cities of interest
+    result = model.freqItemsets().filter(lambda itemset: any(city in itemset.items for city in cities_of_interest)).collect()
+
+    spark.stop()
+    
+    return result
