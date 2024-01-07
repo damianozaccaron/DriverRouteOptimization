@@ -3,7 +3,7 @@ import time
 from entities.merchandise import Merchandise
 from entities.standard_route import StandardRoute
 from entities.trip import Trip
-from spark_clustering import build_results, create_clusters, create_space, normalize_cluster_centers, perform_freq_items, perform_freq_cities
+from spark_clustering import build_results, create_clusters, create_space, normalize_cluster_centers, perform_freq_items, perform_freq_city_pairs
 from utils.functions import get_actual_routes, save_run_parameters
 from utils.route_generator import data_generation, provinces_reader
 
@@ -132,7 +132,7 @@ print(f"routes generated in {end - start} milliseconds\n")
 
 actual_routes = get_actual_routes()
 space = create_space(actual_routes)
-
+'''
 start = int(round(time.time() * 1000))
 frequent_itemsets = perform_freq_items(actual_routes, space)
 end = int(round(time.time() * 1000))
@@ -148,10 +148,10 @@ normalize_cluster_centers(space)
 build_results(space, frequent_itemsets)
 end = int(round(time.time() * 1000))
 print(f"recStandard.json generated in {end - start} milliseconds\n")
-
+'''
 start = int(round(time.time() * 1000))
 provinces_list = provinces_reader()
-frequent_cities = perform_freq_cities(actual_routes, provinces_list)
+frequent_cities = perform_freq_city_pairs(actual_routes, provinces_list)
 print(frequent_cities)
 end = int(round(time.time() * 1000))
 print(f"frequent itemset cities in {end - start} milliseconds\n")

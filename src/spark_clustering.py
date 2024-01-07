@@ -278,28 +278,46 @@ def contains_city(fi, space: CoordinateSystem) -> bool:
 # invece sembra si basi su frequenze delle singole città
 # che di fatto non ci serve dc
 
-def perform_freq_cities(actual_routes: list[ActualRoute], cities_of_interest: list[str]): 
-
+def perform_freq_city_pairs(actual_routes: list[ActualRoute], city_vec: list[str]): 
     from pyspark.mllib.fpm import FPGrowth
     findspark.init()
 
     spark = SparkSession.builder.master("local").appName(name="PySpark for data mining").getOrCreate()
+    city_pairs_of_interest = generate_2_tuples(city_vec)
 
     data = []
+    print(len(actual_routes))
     for ar in actual_routes:
-        row_result = []
         actual_route_cities = list(dict.fromkeys(ar.extract_city()))
-        row_result.extend(actual_route_cities)
-        data.append(row_result)
+        print(actual_route_cities)
+        data.append(actual_route_cities)
+
+    print(len(data))
 
     ctx = spark.sparkContext
     rdd = ctx.parallelize(data)
 
-    model = FPGrowth.train(data=rdd, minSupport=0.3, numPartitions=10)
-    
-    # Filter the results to include only itemsets containing cities of interest
-    result = model.freqItemsets().filter(lambda itemset: any(city in itemset.items for city in cities_of_interest)).collect()
+    print(rdd)
+
+    # Cache the RDD to improve performance
+    rdd.cache()
+    print("Number of elements in RDD:", rdd.count())
+
+    # Adjust minSupport based on your data and requirements
+    model = FPGrowth.train(data=rdd, minSupport=0.1, numPartitions=10)
+
+    # Filter the results to include only itemsets containing pairs of cities of interest
+    result = model.freqItemsets().filter(lambda itemset: any(set(pair) <= set(itemset.items) for pair in city_pairs_of_interest)).collect()
+
+    # Unpersist the RDD when done with it
+    rdd.unpersist()
 
     spark.stop()
-    
+
+    return result
+
+def generate_2_tuples(input_vector):
+    from itertools import combinations
+    # Use combinations to generate all 2-tuples
+    result = list(combinations(input_vector, 2))
     return result
