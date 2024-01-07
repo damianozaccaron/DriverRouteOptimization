@@ -3,9 +3,10 @@ import time
 from entities.merchandise import Merchandise
 from entities.standard_route import StandardRoute
 from entities.trip import Trip
-from spark_clustering import build_results, create_clusters, create_space, normalize_cluster_centers, perform_freq_items, perform_freq_city_pairs
+from spark_clustering import build_results, create_clusters, create_space, normalize_cluster_centers,\
+    perform_freq_items, perform_freq_city_pairs, perform_freq_items_for_city
 from utils.functions import get_actual_routes, save_run_parameters
-from utils.route_generator import data_generation, provinces_reader
+from utils.route_generator import data_generation
 
 # with open('src/data/standard_routes.json', 'r') as json_file:
 #     standard_route_data = json.load(json_file)
@@ -150,11 +151,16 @@ end = int(round(time.time() * 1000))
 print(f"recStandard.json generated in {end - start} milliseconds\n")
 '''
 start = int(round(time.time() * 1000))
-provinces_list = provinces_reader()
-frequent_cities = perform_freq_city_pairs(actual_routes, provinces_list)
+frequent_cities = perform_freq_city_pairs(actual_routes, space)
 print(frequent_cities)
 end = int(round(time.time() * 1000))
 print(f"frequent itemset cities in {end - start} milliseconds\n")
+
+start = int(round(time.time() * 1000))
+frequent_items = perform_freq_items_for_city(actual_routes, space)
+print(frequent_items)
+end = int(round(time.time() * 1000))
+print(f"frequent itemset of merch for every city in {end - start} milliseconds\n")
 
 global_end = int(round(time.time() * 1000))
 print(f"total time execution: {global_end - global_start} milliseconds\n")
