@@ -7,13 +7,16 @@ import trips
 def hash_pair(n1, n2, n_buckets):
     """Generates a basic hash function starting from string or tuple"""
     if isinstance(n1, tuple):
-        n1 = n1[0] + n1[1]
+        n1 = ''.join(map(str, n1))
     if isinstance(n2, tuple):
-        n2 = n2[0] + n2[1]
+        n2 = ''.join(map(str, n2))
+    
     ascii1 = [ord(char) for char in n1]
     ascii2 = [ord(char) for char in n2]
-    "hash function is the module of the sum of the total ASCII values of the parameters divided by number of buckets"
+    
+    # The hash function is the modulo of the sum of the total ASCII values of the parameters divided by the number of buckets
     return ((sum(ascii1)**2) + (sum(ascii2)**2)) % n_buckets
+
 
 
 def second_hash_pair(n1, n2, n_buckets):
