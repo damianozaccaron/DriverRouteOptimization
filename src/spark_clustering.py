@@ -281,7 +281,6 @@ def contains_city(fi, space: CoordinateSystem) -> bool:
 # che di fatto non ci serve dc
 
 def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: CoordinateSystem):
-    from pyspark.mllib.fpm import FPGrowth
 
     city_vec = space.all_city_vec
     data = {}
@@ -318,7 +317,7 @@ def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: Coordin
                     merch_vec.append(new_trip.merchandise.item)
             data[city].append(merch_vec)   
 
-        frequent_merch = run_pcy(data[city], 100, 0.01)
+        frequent_merch = run_pcy(data[city], 1, 0.001)
 
         result[city] = frequent_merch
 
