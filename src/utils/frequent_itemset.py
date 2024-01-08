@@ -76,7 +76,7 @@ def run_pcy(baskets, n_buckets, t_hold, start=time.time()):
                 frequent_pairs[(key[0], key[1])] = frequent_pairs.get((key[0], key[1]), 0) + 1
 
     "We cancel entries that are not actually frequent"
-    temp = [item[0] for item in frequent_pairs.items() if item[1] < len(baskets) * support_threshold]
+    temp = [item[0] for item in frequent_pairs.items() if item[1] < len(baskets) * t_hold]
     for item in temp:
         del frequent_pairs[item]
 
