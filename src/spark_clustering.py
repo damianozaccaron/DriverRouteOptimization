@@ -151,9 +151,9 @@ def normalize_cluster_centers(space: CoordinateSystem):
     for center in cluster_centers:
         normalized_center = {}
         # for every center, take the values of the provinces and sort them
-        # then take the first trips_per_route + 2 values
-        # with 5 trips we will likely have 7 provinces
-        # use the 7th (in the case of 5 trips_per_route) as a threshold
+        # then take the first trips_per_route + 1 values
+        # with 5 trips we will likely have 6 provinces
+        # use the 6th (in the case of 5 trips_per_route) as a threshold
         cities_values = []
         for key in center:
             if key in space.all_city_vec:
@@ -306,9 +306,9 @@ def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: Coordin
 
         result_trip[trip] = model.freqItemsets().collect()
 '''
+    findspark.init()
+    spark = SparkSession.builder.master("local").appName(name = "PySpark for data mining").getOrCreate() # type: ignore
     for city in city_vec:
-        findspark.init()
-        spark = SparkSession.builder.master("local").appName(name = "PySpark for data mining").getOrCreate()
         data[city] = []
         for ar in actual_routes:
             merch_vec = []
@@ -324,6 +324,7 @@ def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: Coordin
 
         result[city] = model.freqItemsets().collect()
 
+    spark.stop()
     return result
         
 
@@ -332,7 +333,7 @@ def perform_freq_city_pairs(actual_routes: list[ActualRoute], space: CoordinateS
     from pyspark.mllib.fpm import FPGrowth
     findspark.init()
 
-    spark = SparkSession.builder.master("local").appName(name="PySpark for data mining").getOrCreate()
+    spark = SparkSession.builder.master("local").appName(name="PySpark for data mining").getOrCreate() # type: ignore
     city_pairs_of_interest = generate_2_tuples(space.all_city_vec)
 
     data = []
