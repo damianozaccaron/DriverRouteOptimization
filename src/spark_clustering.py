@@ -16,6 +16,8 @@ from pyspark.ml.evaluation import ClusteringEvaluator
 
 from utils.functions import get_actual_routes, get_centers_path, get_first_output_path, get_matrix_path, get_norm_centers_path, json_writer
 
+from utils.frequent_itemset import run_pcy
+
 load_dotenv()
 # get the run id to save files differently
 run_id = os.environ.get("RUN_ID", "1")
@@ -307,8 +309,7 @@ def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: Coordin
         result_trip[trip] = model.freqItemsets().collect()
 '''
     for city in city_vec:
-        findspark.init()
-        spark = SparkSession.builder.master("local").appName(name = "PySpark for data mining").getOrCreate()
+
         data[city] = []
         for ar in actual_routes:
             merch_vec = []
@@ -317,12 +318,9 @@ def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: Coordin
                     merch_vec.append(new_trip.merchandise.item)
             data[city].append(merch_vec)   
 
-        ctx = spark.sparkContext
-        rdd = ctx.parallelize(data[city])
+        frequent_merch = run_pcy(data[city], 100, 0.01)
 
-        model = FPGrowth.train(data=rdd, minSupport=0.1, numPartitions=10)
-
-        result[city] = model.freqItemsets().collect()
+        result[city] = frequent_merch
 
     return result
         

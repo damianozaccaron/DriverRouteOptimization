@@ -27,7 +27,7 @@ def pcy_basket(basket, n_buckets, pairs_hashtable, second_pairs_hashtable, singl
 
     "count frequency of the items"
     for item in basket:
-        singletons[item] = singletons.get(item, 0) + 1
+        singletons[tuple(item)] = singletons.get(tuple(item), 0) + 1
 
     "creates the couples with itertools (tuple) and adds them to a dictionary with the respective count"
     for key in itertools.combinations(singletons, 2):
@@ -109,11 +109,11 @@ def run_pcy(baskets, n_buckets, t_hold, start=time.time()):
 
 "prove"
 "import data for a specific driver"
-data = trips.import_data('actual.json', 'N71YE')
+'''data = trips.import_data('actual.json', 'N71YE')
 
 num_buckets = 30  # look into this
 support_threshold = 0.2
-
+'''
 """# frequent itemset cities
 x = run_pcy(trips.extract_destinations(data), n_buckets=num_buckets, t_hold=support_threshold, start=time.time())
 print(x)
@@ -128,8 +128,9 @@ print('len: ', len(y))
 z = run_pcy(merch.extract_merchandise_type(data), n_buckets=num_buckets, t_hold=support_threshold, start=time.time())
 print(z)
 print('len: ', len(z))"""
-
+'''
 # frequent itemset associating city - trip
 luciano = run_pcy(trips.extract_trips_path(data), n_buckets=200, t_hold=0.2, start=time.time())
 print(luciano)
 print('len: ', len(luciano))
+'''
