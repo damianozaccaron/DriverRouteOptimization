@@ -16,6 +16,8 @@ from pyspark.ml.evaluation import ClusteringEvaluator
 
 from utils.functions import get_actual_routes, get_centers_path, get_first_output_path, get_matrix_path, get_norm_centers_path, json_writer
 
+from utils.frequent_itemset import run_pcy
+
 load_dotenv()
 # get the run id to save files differently
 run_id = os.environ.get("RUN_ID", "1")
@@ -279,7 +281,7 @@ def contains_city(fi, space: CoordinateSystem) -> bool:
 # che di fatto non ci serve dc
 
 def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: CoordinateSystem):
-    from pyspark.mllib.fpm import FPGrowth
+    #from pyspark.mllib.fpm import FPGrowth
 
     city_vec = space.all_city_vec
     data = {}
@@ -317,12 +319,8 @@ def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: Coordin
                     merch_vec.append(new_trip.merchandise.item)
             data[city].append(merch_vec)   
 
-        ctx = spark.sparkContext
-        rdd = ctx.parallelize(data[city])
-
-        model = FPGrowth.train(data=rdd, minSupport=0.1, numPartitions=10)
-
-        result[city] = model.freqItemsets().collect()
+        freq_pairs = run_pcy(data[city], 100, 0.01) 
+        result[city] = freq_pairs
 
     spark.stop()
     return result

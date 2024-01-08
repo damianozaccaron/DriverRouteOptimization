@@ -1,9 +1,11 @@
 import time
 import itertools
 import merch
+'''
+import merch 
 import trips
 
-
+'''
 def hash_pair(n1, n2, n_buckets):
     """Generates a basic hash function starting from string or tuple"""
     if isinstance(n1, tuple):
@@ -27,7 +29,7 @@ def pcy_basket(basket, n_buckets, pairs_hashtable, second_pairs_hashtable, singl
 
     "count frequency of the items"
     for item in basket:
-        singletons[item] = singletons.get(item, 0) + 1
+        singletons[tuple(item)] = singletons.get(tuple(item), 0) + 1
 
     "creates the couples with itertools (tuple) and adds them to a dictionary with the respective count"
     for key in itertools.combinations(singletons, 2):
@@ -51,6 +53,9 @@ def run_pcy(baskets, n_buckets, t_hold, start=time.time()):
     for item in baskets:
         pcy_basket(item, n_buckets, pairs_count_hash, second_pairs_count_hash, singletons)
 
+        if len(item) == 0:
+            baskets.remove(item)
+            continue
     "remove singletons that are not frequent"
     frequent_single_items = {}
     for key in singletons.items():
@@ -109,7 +114,7 @@ def run_pcy(baskets, n_buckets, t_hold, start=time.time()):
 
 "prove"
 "import data for a specific driver"
-data = trips.import_data('actual.json', 'N71YE')
+'''ata = trips.import_data('/src/data/freq_items/actual.json', 'N71YE')
 
 num_buckets = 30  # look into this
 support_threshold = 0.2
@@ -133,3 +138,4 @@ print('len: ', len(z))"""
 luciano = run_pcy(trips.extract_trips_path(data), n_buckets=200, t_hold=0.2, start=time.time())
 print(luciano)
 print('len: ', len(luciano))
+'''

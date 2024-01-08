@@ -55,5 +55,5 @@ def extract_merch_city(var):
 
 
 "prove"
-data = import_data('actual.json', 'N71YE')
+data = import_data('src/data/freq_items/actual.json', 'N71YE')
 print(extract_merch_city(data))
