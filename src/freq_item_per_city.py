@@ -43,7 +43,7 @@ def perform_freq_items_for_single_city(actual_routes: list[ActualRoute], space: 
 '''
 
 
-def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: CoordinateSystem):
+'''def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: CoordinateSystem):
     import findspark
     from pyspark.sql import SparkSession
     from pyspark.mllib.fpm import FPGrowth
@@ -68,11 +68,46 @@ def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: Coordin
 
         rdd.persist()
 
-        model = FPGrowth.train(data=rdd, minSupport=0.1, numPartitions=10)
+        model = FPGrowth.train(data=rdd, minSupport=0.1, numPartitions=20)
 
         result[city] = model.freqItemsets().collect()
 
         rdd.unpersist()
+
+    return result
+'''
+
+
+def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: CoordinateSystem):
+    from pyspark.sql import SparkSession
+    from pyspark.mllib.fpm import FPGrowth
+    
+
+    city_vec = space.all_city_vec
+    data = {}
+    result = {}
+
+    for city in city_vec:
+        spark = SparkSession.builder.appName("FrequentItemsetMining").getOrCreate()
+        data[city] = []
+        for ar in actual_routes:
+            merch_vec = []
+            for new_trip in ar.route:
+                if city == new_trip.city_to:
+                    merch_vec.append(new_trip.merchandise.item)
+            data[city].append(merch_vec)   
+
+        ctx = spark.sparkContext
+        rdd = ctx.parallelize(data[city])
+
+
+        model = FPGrowth.train(data=rdd, minSupport=0.1, numPartitions=20)
+
+        freq_itemsets = model.freqItemsets().filter(lambda x: len(x.items) >= 2)
+        freq_itemsets.collect()
+
+        result[city] = model.freqItemsets().collect()
+        spark.stop()
 
     return result
 
