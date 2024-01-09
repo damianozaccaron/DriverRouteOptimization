@@ -317,7 +317,7 @@ def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: Coordin
                     merch_vec.append(new_trip.merchandise.item)
             data[city].append(merch_vec)   
 
-        frequent_merch = run_pcy(data[city], 1, 0.001)
+        frequent_merch = run_pcy(data[city], 1, 0.00001)
 
         result[city] = frequent_merch
 

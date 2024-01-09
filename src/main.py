@@ -164,3 +164,4 @@ print(f"frequent itemset of merch for every city in {end - start} milliseconds\n
 
 global_end = int(round(time.time() * 1000))
 print(f"total time execution: {global_end - global_start} milliseconds\n")
+
