@@ -180,30 +180,35 @@ def normalize_cluster_centers(space: CoordinateSystem):
 
     json_writer(normalized_centers, get_norm_centers_path())
 
-def build_results(space: CoordinateSystem, frequent_itemsets):
+def build_results(space: CoordinateSystem, fi_cities, fi_merch):
     with open(get_norm_centers_path(), "r") as json_file:
         normalized_centers = json.load(json_file)
-    print(frequent_itemsets[:10])
     
     new_routes = []
     for i, center in enumerate(normalized_centers):
         cities = []
         merch = {}
+        fi_merch_filtered = {}
         for key in center:
             if key in space.all_city_vec:
                 cities.append(key)
+                if len(fi_merch[key]) > 0:
+                    fi_merch_filtered[key] = fi_merch[key]
             else:
                 merch[key] = center[key]
-        new_route = create_sr_from_centers(cities, merch, i + 1)
+        new_route = create_sr_from_centers(cities, merch, i + 1, fi_cities, fi_merch_filtered)
         new_routes.append(new_route)
     
     json_writer(new_routes, get_first_output_path())
 
-def create_sr_from_centers(cities: list[str], merch: dict[str, int], id: int):
+from pyspark.mllib.fpm import FPGrowth
+
+def create_sr_from_centers(cities: list[str], merch: dict[str, int], id: int,
+                           fi_cities: list, fi_merch: dict[str, Any]):
     route = []
     previous_end = ""
     random.shuffle(cities)
-    # extimated value of number of items per trip
+    # estimated value of number of items per trip
     n_merchandise = int(os.environ.get("NUMBER_OF_ITEMS_PER_TRIP", 3))
     for city in cities:
         trip = {}
@@ -215,8 +220,16 @@ def create_sr_from_centers(cities: list[str], merch: dict[str, int], id: int):
         m_keys = list(merch.keys())
         random_merch = random.choices(m_keys, k = min(n_merchandise, len(m_keys)))
         selected_merch = {}
-        for m in random_merch:
-            selected_merch[m] = merch[m]
+        if city in fi_merch.keys():
+            fi = fi_merch[city]
+            for itemset in fi:
+                for item in itemset[0]:
+                    if item in merch and item not in selected_merch.keys():
+                        print(f"merch {item} added to route")
+                        selected_merch[item] = merch[item]
+        else:
+            for m in random_merch:
+                selected_merch[m] = merch[m]
         trip["merchandise"] = selected_merch
         route.append(trip)
 
@@ -287,23 +300,23 @@ def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: Coordin
 
     findspark.init()
     spark = SparkSession.builder.master("local").appName(name = "PySpark for data mining").getOrCreate() # type: ignore
+    ctx = spark.sparkContext
     for city in city_vec:
         data[city] = []
         for ar in actual_routes:
             merch_vec = []
             for new_trip in ar.route:
                 if city == new_trip.city_to:
-                    merch_vec.append(new_trip.merchandise.item)
-            data[city].append(merch_vec)
+                    merch_vec = new_trip.merchandise.item
+                    data[city].append(merch_vec)
 
-        ctx = spark.sparkContext
         rdd = ctx.parallelize(data[city])
 
-        rdd.cache()
+        model = FPGrowth.train(data=rdd, minSupport=0.3, numPartitions=10)
 
-        model = FPGrowth.train(data=rdd, minSupport=0.1, numPartitions=10)
-
-        result[city] = model.freqItemsets().collect()
+        # questo parametro sarebbe da settare in maniera intelligente
+        THRESHOLD = 5
+        result[city] = model.freqItemsets().filter(lambda fi: fi.freq > THRESHOLD).collect()
 
     spark.stop()
     return result
@@ -320,7 +333,6 @@ def perform_freq_city_pairs(actual_routes: list[ActualRoute], space: CoordinateS
     data = []
     for ar in actual_routes:
         actual_route_cities = list(dict.fromkeys(ar.extract_city()))
-        print(actual_route_cities)
         data.append(actual_route_cities)
 
     ctx = spark.sparkContext
