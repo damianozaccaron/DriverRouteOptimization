@@ -1,7 +1,7 @@
 import time
 import itertools
-import merch
-import trips
+# import merch
+# import trips
 
 
 def hash_pair(n1, n2, n_buckets):
@@ -107,12 +107,12 @@ def run_pcy(baskets, n_buckets, t_hold, start=time.time()):
     return frequent_pairs
 
 
-"prove"
-"import data for a specific driver"
-data = trips.import_data('actual.json', 'N71YE')
+# "prove"
+# "import data for a specific driver"
+# data = trips.import_data('actual.json', 'N71YE')
 
-num_buckets = 30  # look into this
-support_threshold = 0.2
+# num_buckets = 30  # look into this
+# support_threshold = 0.2
 
 """# frequent itemset cities
 x = run_pcy(trips.extract_destinations(data), n_buckets=num_buckets, t_hold=support_threshold, start=time.time())
@@ -130,6 +130,6 @@ print(z)
 print('len: ', len(z))"""
 
 # frequent itemset associating city - trip
-luciano = run_pcy(trips.extract_trips_path(data), n_buckets=200, t_hold=0.2, start=time.time())
-print(luciano)
-print('len: ', len(luciano))
+# luciano = run_pcy(trips.extract_trips_path(data), n_buckets=200, t_hold=0.2, start=time.time())
+# print(luciano)
+# print('len: ', len(luciano))

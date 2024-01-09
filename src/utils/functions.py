@@ -82,3 +82,6 @@ def get_matrix_path() -> str:
 
 def get_first_output_path() -> str:
     return "src/data/{run_id}/recStandard.json".format(run_id = run_id)
+
+def get_fi_per_driver_path() -> str:
+    return "src/data/{run_id}/fi_per_driver.txt".format(run_id = run_id)

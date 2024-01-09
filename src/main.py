@@ -5,7 +5,9 @@ from entities.standard_route import StandardRoute
 from entities.trip import Trip
 from spark_clustering import build_results, create_clusters, create_space, normalize_cluster_centers,\
     perform_freq_items, perform_freq_city_pairs, perform_freq_items_for_city
-from utils.functions import get_actual_routes, save_run_parameters
+from trips import extract_trips_path, import_data
+from utils.frequent_itemset import run_pcy
+from utils.functions import get_actual_routes, get_ar_path, get_fi_per_driver_path, json_writer, save_run_parameters
 from utils.route_generator import data_generation
 
 # with open('src/data/standard_routes.json', 'r') as json_file:
@@ -127,7 +129,7 @@ centroids = kmeans.cluster_centers_
 global_start = int(round(time.time() * 1000))
 save_run_parameters()
 start = int(round(time.time() * 1000))
-data_generation()
+drivers = data_generation()
 end = int(round(time.time() * 1000))
 print(f"routes generated in {end - start} milliseconds\n")
 
@@ -149,7 +151,7 @@ normalize_cluster_centers(space)
 build_results(space, frequent_itemsets)
 end = int(round(time.time() * 1000))
 print(f"recStandard.json generated in {end - start} milliseconds\n")
-'''
+
 start = int(round(time.time() * 1000))
 frequent_cities = perform_freq_city_pairs(actual_routes, space)
 print(frequent_cities)
@@ -161,6 +163,19 @@ frequent_items = perform_freq_items_for_city(actual_routes, space)
 print(frequent_items)
 end = int(round(time.time() * 1000))
 print(f"frequent itemset of merch for every city in {end - start} milliseconds\n")
+'''
+
+drivers_data = {}
+freq_items_per_driver = {}
+for driver in drivers:
+    drivers_data[driver] = import_data(get_ar_path(), driver)
+    freq_items = run_pcy(
+        extract_trips_path(drivers_data[driver]), n_buckets=200, t_hold=0.2, start=time.time())
+    freq_items_per_driver[driver] = freq_items
+
+with open(get_fi_per_driver_path(), "w") as freq_items:
+    for driver in freq_items_per_driver:
+        freq_items.writelines(driver + ": " + str(freq_items_per_driver[driver]) + "\n")
 
 global_end = int(round(time.time() * 1000))
 print(f"total time execution: {global_end - global_start} milliseconds\n")

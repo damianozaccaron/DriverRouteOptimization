@@ -102,6 +102,15 @@ def merchandise_generator(tot_merch):
     merchandise = [''.join(random.choices(string.ascii_lowercase, k=random.randint(3, 9))) for _ in range(tot_merch)]
     return merchandise
 
+def drivers_generator(n_drivers: int) -> list[str]:
+    driver_names = []
+    for _ in range(n_drivers):
+        driver_name = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
+        if driver_name in driver_names: 
+            driver_name = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
+        driver_names.append(driver_name)
+    return driver_names
+
 def single_sr_generator(province_set, merchandise, n_obj, n_trip):
     """
     Generates a list of trips (standard_route) with random starting province.
@@ -301,7 +310,7 @@ def is_subset(vector1, vector2):
     """
     return all(elem in vector2 for elem in vector1)
 
-def actual_routes_generator(standard_routes, merchandise, n_drivers, n_route_4d):
+def actual_routes_generator(standard_routes, merchandise, driver_names, n_route_4d):
     """
     Generate actual routes based on standard routes.
 
@@ -316,13 +325,6 @@ def actual_routes_generator(standard_routes, merchandise, n_drivers, n_route_4d)
     """
     province_set = provinces_reader()
     actual_routes = []
-
-    driver_names = []
-    for i in range(n_drivers):
-        driver_name = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
-        if driver_name in driver_names: 
-            driver_name = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
-        driver_names.append(driver_name)
 
     ac_id = 1
 
@@ -391,9 +393,14 @@ def data_generation():
     # write standard routes on a json file
     json_writer(standard_routes, get_sr_path())
 
+    # generation of drivers
+    drivers = drivers_generator(drivers_count)
+
     # 2. randomize standard routes to get actual routes
-    actual_routes = actual_routes_generator(standard_routes, merchandise, drivers_count,
+    actual_routes = actual_routes_generator(standard_routes, merchandise, drivers,
                                             routes_per_driver)
 
     # write actual routes on a json file
     json_writer(actual_routes, get_ar_path())
+
+    return drivers
