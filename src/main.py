@@ -151,7 +151,7 @@ normalize_cluster_centers(space)
 build_results(space, frequent_itemsets)
 end = int(round(time.time() * 1000))
 print(f"recStandard.json generated in {end - start} milliseconds\n")
-
+'''
 start = int(round(time.time() * 1000))
 frequent_cities = perform_freq_city_pairs(actual_routes, space)
 print(frequent_cities)
@@ -163,7 +163,7 @@ frequent_items = perform_freq_items_for_city(actual_routes, space)
 print(frequent_items)
 end = int(round(time.time() * 1000))
 print(f"frequent itemset of merch for every city in {end - start} milliseconds\n")
-'''
+
 
 drivers_data = {}
 freq_items_per_driver = {}
