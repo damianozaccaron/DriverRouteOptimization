@@ -9,13 +9,16 @@ import trips
 def hash_pair(n1, n2, n_buckets):
     """Generates a basic hash function starting from string or tuple"""
     if isinstance(n1, tuple):
-        n1 = n1[0] + n1[1]
+        n1 = ''.join(map(str, n1))
     if isinstance(n2, tuple):
-        n2 = n2[0] + n2[1]
+        n2 = ''.join(map(str, n2))
+    
     ascii1 = [ord(char) for char in n1]
     ascii2 = [ord(char) for char in n2]
-    "hash function is the module of the sum of the total ASCII values of the parameters divided by number of buckets"
+    
+    # The hash function is the modulo of the sum of the total ASCII values of the parameters divided by the number of buckets
     return ((sum(ascii1)**2) + (sum(ascii2)**2)) % n_buckets
+
 
 
 def second_hash_pair(n1, n2, n_buckets):
@@ -114,11 +117,11 @@ def run_pcy(baskets, n_buckets, t_hold, start=time.time()):
 
 "prove"
 "import data for a specific driver"
-'''ata = trips.import_data('/src/data/freq_items/actual.json', 'N71YE')
+'''data = trips.import_data('actual.json', 'N71YE')
 
 num_buckets = 30  # look into this
 support_threshold = 0.2
-
+'''
 """# frequent itemset cities
 x = run_pcy(trips.extract_destinations(data), n_buckets=num_buckets, t_hold=support_threshold, start=time.time())
 print(x)
@@ -133,7 +136,7 @@ print('len: ', len(y))
 z = run_pcy(merch.extract_merchandise_type(data), n_buckets=num_buckets, t_hold=support_threshold, start=time.time())
 print(z)
 print('len: ', len(z))"""
-
+'''
 # frequent itemset associating city - trip
 luciano = run_pcy(trips.extract_trips_path(data), n_buckets=200, t_hold=0.2, start=time.time())
 print(luciano)

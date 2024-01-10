@@ -1,11 +1,14 @@
 import json
+import time
+import merch
+import utils.frequent_itemset
 
 
 class Preferences:
     """contains the preferences of each driver"""
 
-    def __init__(self, freq_city, freq_start, freq_finish, freq_trip, freq_itemset_city, freq_itemset_trip, n_trip,
-                 n_merch, n_merch_per_route, freq_merch_per_trip, freq_merch_avg):
+    def __init__(self, freq_city: list, freq_start: list, freq_finish: list, freq_trip: list, freq_itemset_city: list, freq_itemset_trip: list, n_trip: float, 
+                 freq_merch_avg: float, n_merch: list, n_merch_per_route: float, freq_merch_per_trip: list):
         self.freq_city = freq_city  # dict(key = string, value = int), lista di città per cui è passato spesso
         self.freq_start = freq_start  # dict(key = string, value = int), lista di città da cui è partito spesso
         self.freq_finish = freq_finish  # dict(key = string, value = int), lista di città in cui è arrivato spesso
@@ -20,6 +23,33 @@ class Preferences:
         # merci per trip
         "se serve lo faccio per città: "
         # self.freq_itemset_per_city = freq_merch_per_trip  # dict(key = tuple(tuple), value = int)
+
+
+def implement_pref(data, output_len):
+    pref = Preferences(
+        freq_city=sorted(pass_through_city_count(data).items(), key=lambda item: item[1], reverse=True)[
+                  0:output_len],
+        freq_start=sorted(start_finish_count(data, 0).items(), key=lambda item: item[1], reverse=True)[
+                   0:output_len],
+        freq_finish=sorted(start_finish_count(data).items(), key=lambda item: item[1], reverse=True)[
+                    0:output_len],
+        freq_trip=sorted(trip_count(data).items(), key=lambda item: item[1], reverse=True)[0:output_len],
+        freq_itemset_city=sorted(utils.frequent_itemset.run_pcy(extract_destinations(data), n_buckets=600, t_hold=0.3,
+                                                          start=time.time()).items(), key=lambda item: item[1],
+                                 reverse=True)[0:output_len],
+        freq_itemset_trip=sorted(utils.frequent_itemset.run_pcy(extract_trips_path(data), n_buckets=600, t_hold=0.2,
+                                                          start=time.time()).items(), key=lambda item: item[1],
+                                 reverse=True)[0:output_len],
+        n_trip=mean_trip(data),
+        freq_merch_avg=merch.mean_types(data),
+        n_merch=sorted(merch.count_merch(data).items(), key=lambda item: item[1], reverse=True)[0:output_len],
+        n_merch_per_route=merch.mean_quantities(data),
+        freq_merch_per_trip=sorted(
+            utils.frequent_itemset.run_pcy(merch.extract_merchandise_type(data), n_buckets=600, t_hold=0.2,
+                                     start=time.time()).items(), key=lambda item: item[1], reverse=True)[0:output_len]
+    )
+
+    return pref
 
 
 def import_data(file, driver):
@@ -133,7 +163,7 @@ def extract_trips_path(var):
 
 
 "prove"
-data = import_data('src/data/freq_items/actual.json', 'N71YE')
+#data = import_data('actual.json', 'N71YE')
 """x = trip_count(data)
 print(x) """
 
