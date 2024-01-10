@@ -455,10 +455,13 @@ def create_and_test_clusters(actual_routes:list[ActualRoute], space: CoordinateS
     predictions_pandas = predictions.select("prediction").toPandas()
 
     # Convert features to NumPy array
-    features_array = np.array(predictions.select("features").collect())
+    features_array = np.array(predictions.select("features").rdd.map(lambda row: row.features.toArray()).collect())
+    
+    # Convert features_array to a 2D NumPy array
+    features_array_2d = np.array(features_array)
 
     # Calculate Calinski-Harabasz Index
-    calinski_harabasz = calinski_harabasz_score(features_array, predictions_pandas["prediction"].values)
+    calinski_harabasz = calinski_harabasz_score(features_array_2d, predictions_pandas["prediction"].values)
     print(f"Calinski-Harabasz Index: {calinski_harabasz}")
 
     #evaluator = ClusteringEvaluator(metricName="silhouette")
