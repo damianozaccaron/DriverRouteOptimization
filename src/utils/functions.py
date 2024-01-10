@@ -85,3 +85,6 @@ def get_first_output_path() -> str:
 
 def get_fi_per_driver_path() -> str:
     return "src/data/{run_id}/fi_per_driver.txt".format(run_id = run_id)
+
+def get_clusters_path() -> str:
+    return "src/data/{run_id}/clusters".format(run_id = run_id)

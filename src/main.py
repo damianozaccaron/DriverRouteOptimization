@@ -4,7 +4,7 @@ from entities.merchandise import Merchandise
 from entities.standard_route import StandardRoute
 from entities.trip import Trip
 from spark_clustering import build_results, create_clusters, create_space, normalize_cluster_centers,\
-    perform_freq_items, perform_freq_city_pairs, perform_freq_items_for_city
+        perform_freq_city_pairs, perform_freq_items_for_city
 from trips import extract_trips_path, import_data
 from utils.frequent_itemset import run_pcy
 from utils.functions import get_actual_routes, get_ar_path, get_fi_per_driver_path, json_writer, save_run_parameters
@@ -141,7 +141,7 @@ space = create_space(actual_routes)
 
 
 start = int(round(time.time() * 1000))
-create_clusters(actual_routes, space)
+ar_per_cluster = create_clusters(actual_routes, space)
 end = int(round(time.time() * 1000))
 print(f"clusters generated in {end - start} milliseconds\n")
 
