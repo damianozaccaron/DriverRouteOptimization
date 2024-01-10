@@ -7,6 +7,8 @@ from spark_clustering import build_results, create_clusters, create_space, norma
     perform_freq_items, perform_freq_city_pairs, perform_freq_items_for_city
 from utils.functions import get_actual_routes, save_run_parameters
 from utils.route_generator import data_generation
+from preferoute import preferoute_similarity
+from entities.preferences import implement_pref
 
 # with open('src/data/standard_routes.json', 'r') as json_file:
 #     standard_route_data = json.load(json_file)
@@ -34,7 +36,7 @@ print(f"routes generated in {end - start} milliseconds\n")
 
 actual_routes = get_actual_routes()
 space = create_space(actual_routes)
-'''
+
 start = int(round(time.time() * 1000))
 frequent_itemsets = perform_freq_items(actual_routes, space)
 end = int(round(time.time() * 1000))
@@ -50,7 +52,7 @@ normalize_cluster_centers(space)
 build_results(space, frequent_itemsets)
 end = int(round(time.time() * 1000))
 print(f"recStandard.json generated in {end - start} milliseconds\n")
-'''
+
 start = int(round(time.time() * 1000))
 frequent_cities = perform_freq_city_pairs(actual_routes, space)
 print(frequent_cities)
@@ -62,6 +64,12 @@ frequent_items = perform_freq_items_for_city(actual_routes, space)
 print(frequent_items)
 end = int(round(time.time() * 1000))
 print(f"frequent itemset of merch for every city in {end - start} milliseconds\n")
+
+start = int(round(time.time() * 1000))
+preferences = implement_pref(actual_routes, 5)
+print(preferences)
+end = int(round(time.time() * 1000))
+print(f"implementation of preferences in {end - start} milliseconds\n")
 
 global_end = int(round(time.time() * 1000))
 print(f"total time execution: {global_end - global_start} milliseconds\n")

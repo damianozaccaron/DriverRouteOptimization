@@ -1,6 +1,6 @@
 import json
 import time
-import merch
+import utils.merch as merch
 import utils.frequent_itemset
 
 

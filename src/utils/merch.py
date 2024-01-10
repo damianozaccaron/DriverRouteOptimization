@@ -1,5 +1,5 @@
 import statistics
-from trips import extract_trips, import_data
+from utils.trips import extract_trips, import_data
 
 
 def extract_merchandise(var):

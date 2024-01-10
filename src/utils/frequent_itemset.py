@@ -1,6 +1,5 @@
 import time
 import itertools
-import merch
 '''
 import merch 
 import trips

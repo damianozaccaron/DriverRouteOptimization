@@ -1,3 +1,7 @@
+import time
+import utils.frequent_itemset as frequent_itemset
+import utils.damiANO as d
+
 class Preferences:
     """contains the preferences of each driver"""
 
@@ -21,39 +25,40 @@ class Preferences:
 
 def implement_pref(data, output_len):
     pref = Preferences(
-        freq_city=sorted(trips.pass_through_city_count(data).items(), key=lambda item: item[1], reverse=True)[
+        freq_city=sorted(d.pass_through_city_count(data).items(), key=lambda item: item[1], reverse=True)[
                   0:output_len],
-        freq_start=sorted(trips.start_finish_count(data, 0).items(), key=lambda item: item[1], reverse=True)[
+        freq_start=sorted(d.start_finish_count(data, 0).items(), key=lambda item: item[1], reverse=True)[
                    0:output_len],
-        freq_finish=sorted(trips.start_finish_count(data).items(), key=lambda item: item[1], reverse=True)[
+        freq_finish=sorted(d.start_finish_count(data).items(), key=lambda item: item[1], reverse=True)[
                     0:output_len],
-        freq_trip=sorted(trips.trip_count(data).items(), key=lambda item: item[1], reverse=True)[0:output_len],
-        freq_itemset_city=sorted(frequent_itemset.run_pcy(trips.extract_destinations(data), n_buckets=600, t_hold=0.3,
+        freq_trip=sorted(d.trip_count(data).items(), key=lambda item: item[1], reverse=True)[0:output_len],
+        freq_itemset_city=sorted(frequent_itemset.run_pcy(d.extract_destinations(data), n_buckets=600, t_hold=0.3,
                                                           start=time.time()).items(), key=lambda item: item[1],
                                  reverse=True)[0:output_len],
-        freq_itemset_trip=sorted(frequent_itemset.run_pcy(trips.extract_trips_path(data), n_buckets=600, t_hold=0.2,
+        freq_itemset_trip=sorted(frequent_itemset.run_pcy(d.extract_trips_path(data), n_buckets=600, t_hold=0.2,
                                                           start=time.time()).items(), key=lambda item: item[1],
                                  reverse=True)[0:output_len],
-        n_trip=trips.mean_trip(data),
-        freq_merch_avg=merch.mean_types(data),
-        n_merch=sorted(merch.count_merch(data).items(), key=lambda item: item[1], reverse=True)[0:output_len],
-        n_merch_per_route=merch.mean_quantities(data),
+        n_trip=d.mean_trip(data),
+        freq_merch_avg=d.mean_types(data),
+        n_merch=sorted(d.count_merch(data).items(), key=lambda item: item[1], reverse=True)[0:output_len],
+        n_merch_per_route=d.mean_quantities(data),
         freq_merch_per_trip=sorted(
-            frequent_itemset.run_pcy(merch.extract_merchandise_type(data), n_buckets=600, t_hold=0.2,
+            frequent_itemset.run_pcy(d.extract_merchandise_type(data), n_buckets=600, t_hold=0.2,
                                      start=time.time()).items(), key=lambda item: item[1], reverse=True)[0:output_len]
     )
 
     return pref
 
-
+'''
 start = time.time()
 output = 5
 
-drivers = trips.extract_drivers(trips.import_data_prov('actual.json'))
+drivers = d.extract_drivers(d.import_data_prov('actual.json'))
 drivers_pref = [0] * len(drivers)
 
 for i, driver in enumerate(drivers):
-    prov_data = trips.import_data('actual.json', driver)
+    prov_data = d.import_data('actual.json', driver)
     drivers_pref[i] = implement_pref(prov_data, output_len=output)
 
 print(time.time() - start)
+'''

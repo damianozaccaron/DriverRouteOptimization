@@ -3,6 +3,8 @@ import json, os
 from dotenv import load_dotenv
 from entities.actual_route import ActualRoute
 from entities.standard_route import StandardRoute
+from entities.trip import Trip
+from entities.merchandise import Merchandise
 
 load_dotenv()
 # get the run id to save files differently
