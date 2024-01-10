@@ -287,28 +287,7 @@ def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: Coordin
     city_vec = space.all_city_vec
     data = {}
     result = {}
-    '''
-    # trip vec is a vector of 2ple of cities not object trip !!!!!!!
-    trip_vec = space.all_tripdata_trip = {}
-    result_trip = {}
-    for trip in trip_vec:
-        findspark.init()
-        spark = SparkSession.builder.master("local").appName(name = "PySpark for data mining").getOrCreate()
-        data_trip[trip] = []
-        for ar in actual_routes:
-            merch_vec = []
-            for new_trip in ar.route:
-                if new_trip.city_from == trip[0] and new_trip.city_to == trip[1]:
-                    merch_vec.append(new_trip.merchandise.item)
-            data_trip[trip].append(merch_vec)   
-
-        ctx = spark.sparkContext
-        rdd = ctx.parallelize(data[trip])
-
-        model = FPGrowth.train(data=rdd, minSupport=0.1, numPartitions=10)
-
-        result_trip[trip] = model.freqItemsets().collect()
-'''
+    
     for city in city_vec:
 
         data[city] = []
@@ -464,8 +443,15 @@ def create_and_test_clusters(actual_routes:list[ActualRoute], space: CoordinateS
     calinski_harabasz = calinski_harabasz_score(features_array_2d, predictions_pandas["prediction"].values)
     print(f"Calinski-Harabasz Index: {calinski_harabasz}")
 
-    #evaluator = ClusteringEvaluator(metricName="silhouette")
-    #silhouette_per_cluster = evaluator.evaluate(predictions, {evaluator.metricName: "silhouette", evaluator.setDistanceCol("silhouette")})
-    #print(f"Silhouette Score for Each Cluster: {silhouette_per_cluster}")
+    # get the centers and reconnect with the column name
+    cluster_centers = []
+    centers = model.clusterCenters()
+    for center in centers:
+        cluster_center = {}
+        for index, coord in enumerate(train_data['inputCols']):
+            cluster_center[coord] = center[index]
+        cluster_centers.append(cluster_center)
+
+
 
     spark.stop()

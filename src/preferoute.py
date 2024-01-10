@@ -5,7 +5,7 @@ from entities.standard_route import StandardRoute
 from entities.preferences import Preferences
 
 
-def preferoute_dimilarity(route: StandardRoute, prefe: Preferences, weights: list = [1]*10) -> float:
+def preferoute_similarity(route: StandardRoute, prefe: Preferences, weights: list = [1]*10) -> float:
     '''
     calculate a sort of similarity between a Standard (or Actual, as child class) route and a preference of a driver
     can choose a weight vector, default all one
