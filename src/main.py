@@ -145,11 +145,11 @@ ar_per_cluster = create_clusters(actual_routes, space)
 end = int(round(time.time() * 1000))
 print(f"clusters generated in {end - start} milliseconds\n")
 
-start = int(round(time.time() * 1000))
-frequent_cities = perform_freq_city_pairs(actual_routes, space)
-print(frequent_cities)
-end = int(round(time.time() * 1000))
-print(f"frequent itemset cities in {end - start} milliseconds\n")
+# start = int(round(time.time() * 1000))
+# frequent_cities = perform_freq_city_pairs(actual_routes, space)
+# print(frequent_cities)
+# end = int(round(time.time() * 1000))
+# print(f"frequent itemset cities in {end - start} milliseconds\n")
 
 start = int(round(time.time() * 1000))
 frequent_items = perform_freq_items_for_city(actual_routes, space)
@@ -159,7 +159,7 @@ print(f"frequent itemset of merch for every city in {end - start} milliseconds\n
 
 start = int(round(time.time() * 1000))
 normalize_cluster_centers(space)
-build_results(space, frequent_cities, frequent_items)
+build_results(space, frequent_items)
 end = int(round(time.time() * 1000))
 print(f"recStandard.json generated in {end - start} milliseconds\n")
 

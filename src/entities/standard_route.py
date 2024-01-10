@@ -32,3 +32,10 @@ class StandardRoute:
             if merch_label in trip.merchandise.item:
                 counter = counter + 1
         return counter
+    
+    def trip_string(self) -> list[str]:
+        trips = []
+        for trip in self.route:
+            trip_string = "{city_from}:{city_to}".format(city_from = trip.city_from, city_to = trip.city_to)
+            trips.append(trip_string)
+        return trips

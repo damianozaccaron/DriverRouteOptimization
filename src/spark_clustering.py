@@ -34,7 +34,9 @@ def create_space(actual_routes: list[ActualRoute]) -> CoordinateSystem:
         # remove duplicates
         merch_vec = list(dict.fromkeys(merch_vec))
         merch_list += [merch for merch in merch_vec if merch not in merch_list]
-        trips = actual_route.trip_without_merch()
+        trips = actual_route.trip_string()
+        trips = list(dict.fromkeys(trips))
+        # trips = actual_route.trip_without_merch()
         trip_list += [trip for trip in trips if trip not in trip_list]
 
     return CoordinateSystem(city_list, merch_list, trip_list)
@@ -44,6 +46,7 @@ def write_coordinates(space: CoordinateSystem, actual_routes: list[ActualRoute])
     header.append("id")
     header.extend(space.all_city_vec)
     header.extend(space.all_merch)
+    header.extend(space.all_trip)
 
     # write every city and merch as a coordinate
     with open(get_matrix_path(), "w") as f:
@@ -63,6 +66,9 @@ def write_coordinates(space: CoordinateSystem, actual_routes: list[ActualRoute])
                     row_result.append(actual_route_merch.quantity[index] / counter)
                 else:
                     row_result.append(0)
+            actual_route_trips = ar.trip_string()
+            for trip in space.all_trip:
+                row_result.append(1 if trip in actual_route_trips else 0)
             writer.writerow(row_result)
     f.close()
 
@@ -102,11 +108,12 @@ def create_clusters(actual_routes:list[ActualRoute], space: CoordinateSystem):
     silhouette = evaluator.evaluate(predictions)
     print("Silhouette with squared euclidean distance = " + str(silhouette))
 
-    import shutil
-    shutil.rmtree(get_clusters_path())
-    model.save(get_clusters_path())
-    parq = spark.read.parquet(get_clusters_path() + "/data/*")
-    parq.foreach(lambda f: print(f))
+    # import shutil
+    # shutil.rmtree(get_clusters_path())
+    # model.save(get_clusters_path())
+    # parq = spark.read.parquet(get_clusters_path() + "/data/*")
+    # parq.foreach(lambda f: print(f))
+
     # get the centers and reconnect with the column name
     cluster_centers = []
     centers = model.clusterCenters()
@@ -151,38 +158,55 @@ def normalize_cluster_centers(space: CoordinateSystem):
         # with 5 trips we will likely have 6 provinces
         # use the 6th (in the case of 5 trips_per_route) as a threshold
         cities_values = []
+        trips_values = []
         for key in center:
-            if key in space.all_city_vec:
+            value = center[key]
+            if key in space.all_city_vec and value > 0:
                 # ignore if the value is 0
-                value = center[key]
-                if value > 0:
-                    cities_values.append(value)
-            elif center[key] > 0:
+                cities_values.append(value)
+            elif key in space.all_trip and value > 0:
+                trips_values.append(value)
+            elif value > 0:
+                # merch case
                 normalized_center[key] = round(center[key])
         # sort the array descending
         cities_values.sort(reverse = True)
-        threshold_index = trips_per_route + 1
+        threshold_index_cities = trips_per_route + 1
         # take the minimum because could be that the cities_values array
         # has lenght smaller than the threshold index
-        threshold_index = min(threshold_index, len(cities_values))
-        threshold = cities_values[threshold_index - 1]
-        for key in center:
-            if key in space.all_city_vec:
-                # now save the values greater or equal than the threshold
-                # ignore the values that have 0
-                if center[key] >= threshold:
-                    normalized_center[key] = 1
+        threshold_index_cities = min(threshold_index_cities, len(cities_values))
+        threshold_cities = cities_values[threshold_index_cities - 1]
+
+        trips_values.sort(reverse = True)
+        threshold_index_trips = trips_per_route
+        # take the minimum because could be that the trips_values array
+        # has lenght smaller than the threshold index
+        threshold_index_trips = min(threshold_index_trips, len(trips_values))
+        threshold_trips = trips_values[threshold_index_trips - 1]
+        for key in space.all_city_vec:
+            # now save the values greater or equal than the threshold
+            if center[key] >= threshold_cities:
+                normalized_center[key] = 1
+        for key in space.all_trip:
+            if center[key] >= threshold_trips:
+                normalized_center[key] = 1
+        # for key in center:
+        #     if key in space.all_city_vec:
+        #         if center[key] >= threshold_cities:
+        #             normalized_center[key] = 1
+                
         normalized_centers.append(normalized_center)
 
     json_writer(normalized_centers, get_norm_centers_path())
 
-def build_results(space: CoordinateSystem, fi_cities, fi_merch):
+def build_results(space: CoordinateSystem, fi_merch):
     with open(get_norm_centers_path(), "r") as json_file:
         normalized_centers = json.load(json_file)
     
     new_routes = []
     for i, center in enumerate(normalized_centers):
         cities = []
+        trips = []
         merch = {}
         fi_merch_filtered = {}
         for key in center:
@@ -190,9 +214,11 @@ def build_results(space: CoordinateSystem, fi_cities, fi_merch):
                 cities.append(key)
                 if len(fi_merch[key]) > 0:
                     fi_merch_filtered[key] = fi_merch[key]
+            elif key in space.all_trip and center[key] > 0:
+                trips.append(key)
             else:
                 merch[key] = center[key]
-        new_route = create_sr_from_centers(cities, merch, i + 1, fi_cities, fi_merch_filtered)
+        new_route = create_sr_from_centers(cities, merch, i + 1, fi_merch_filtered, trips)
         new_routes.append(new_route)
     
     json_writer(new_routes, get_first_output_path())
@@ -200,7 +226,7 @@ def build_results(space: CoordinateSystem, fi_cities, fi_merch):
 from pyspark.mllib.fpm import FPGrowth
 
 def create_sr_from_centers(cities: list[str], merch: dict[str, int], id: int,
-                           fi_cities: list, fi_merch: dict[str, Any]):
+                           fi_merch: dict[str, Any], trips: list[str]):
     route = []
     previous_end = ""
     random.shuffle(cities)
