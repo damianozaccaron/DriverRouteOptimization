@@ -46,8 +46,36 @@ def merch_per_city_counter(actual_routes: list[ActualRoute], space: CoordinateSy
 
 
 
+def merch_per_trip_counter(actual_routes: list[ActualRoute], space: CoordinateSystem, t_hold_n: int = None, t_hold_q: int = None) -> dict:
+
+    result = {}
+    counter = {}
+    for trip in space.all_trip:
+        counter = {merch: [0, 0] for ar in actual_routes for merch in ar.extract_merch().item}
+        for ar in actual_routes:
+            for ar_trip in ar.route:
+                if ar_trip.city_from == trip.city_from and ar_trip.city_to == trip.city_to:
+                    for i, merch_key in enumerate(trip.merchandise.item):
+                        counter[merch_key][0] += 1
+                        counter[merch_key][1] += trip.merchandise.quantity[i]
+        for merch_key, (count, quantity) in counter.items():
+            if count > 0:
+                counter[merch_key][1] = round(quantity / count, 2)
+        if t_hold_n:
+            counter = dict(sorted(counter.items(), key=lambda x: x[1][0], reverse=True)[:t_hold_n])        
+        elif t_hold_q:
+            counts = [count for _, (count, _) in counter.items()]
+            threshold_value = np.percentile(counts, t_hold_q)
+            counter = {merch: [count, quantity] for merch, (count, quantity) in counter.items() if count >= threshold_value}
+        result[str(trip.city_from, trip.city_to)] = counter
+    return result
+
+
+
 start = int(round(time.time() * 1000))
-frequent_items = merch_per_city_counter(actual_routes, space, t_hold_q = 80)
+frequent_items = merch_per_trip_counter(actual_routes, space, t_hold_q = 80)
 print(frequent_items)
 end = int(round(time.time() * 1000))
 print(f"frequent itemset of merch for a city in {end - start} milliseconds\n")
+
+

@@ -1,6 +1,7 @@
 import json, csv
 import os
 import random
+import numpy as np
 from typing import Any
 
 from dotenv import load_dotenv
@@ -13,6 +14,7 @@ from pyspark.ml.clustering import KMeans
 from pyspark.sql import SparkSession
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.evaluation import ClusteringEvaluator
+from sklearn.metrics import adjusted_rand_score
 
 from utils.functions import get_actual_routes, get_centers_path, get_first_output_path, get_matrix_path, get_norm_centers_path, json_writer
 
@@ -361,3 +363,106 @@ def generate_2_tuples(input_vector):
     # Use combinations to generate all 2-tuples
     result = list(combinations(input_vector, 2))
     return result
+
+
+
+
+def merch_per_city_counter(actual_routes: list[ActualRoute], space: CoordinateSystem, t_hold_n: int = None, t_hold_q: int = None) -> dict:
+
+    result = {}
+    counter = {}
+    for city in space.all_city_vec:
+        counter = {merch: [0, 0] for ar in actual_routes for merch in ar.extract_merch().item}
+        for ar in actual_routes:
+            for trip in ar.route:
+                if trip.city_to == city:
+                    for i, merch_key in enumerate(trip.merchandise.item):
+                        counter[merch_key][0] += 1
+                        counter[merch_key][1] += trip.merchandise.quantity[i]
+        for merch_key, (count, quantity) in counter.items():
+            if count > 0:
+                counter[merch_key][1] = round(quantity / count, 2)
+        if t_hold_n:
+            counter = dict(sorted(counter.items(), key=lambda x: x[1][0], reverse=True)[:t_hold_n])        
+        elif t_hold_q:
+            counts = [count for _, (count, _) in counter.items()]
+            threshold_value = np.percentile(counts, t_hold_q)
+            counter = {merch: [count, quantity] for merch, (count, quantity) in counter.items() if count >= threshold_value}
+        result[city] = counter
+    return result
+
+
+
+
+
+
+
+
+
+
+def create_and_test_clusters(actual_routes:list[ActualRoute], space: CoordinateSystem):
+    from pyspark.ml.feature import VectorAssembler
+
+    write_coordinates(space, actual_routes)
+
+    findspark.init()
+
+    spark = SparkSession.builder.master("local").appName(name = "PySpark for data mining").getOrCreate() # type: ignore
+
+    data = spark.read.option("header", True) \
+        .option("inferSchema", True) \
+        .csv(get_matrix_path())
+
+    # create a column with a vector of all the values of the table
+    input_cols = data.columns
+    vec_assembler = VectorAssembler(inputCols = input_cols, outputCol = "features")
+    final_data = vec_assembler.transform(data)
+
+    train_data, test_data = final_data.randomSplit([0.7, 0.3], seed=42)
+
+    # number of standard routes generated
+    sr_count = int(os.environ.get("STANDARD_ROUTES_COUNT", 1))
+    # perform clustering over that column
+    kmeans = KMeans() \
+        .setK(sr_count) \
+        .setSeed(1) \
+        .setFeaturesCol("features") 
+        # .setWeightCol("weightCol")
+    model = kmeans.fit(train_data)
+
+    predictions = model.transform(test_data)
+    # Evaluate clustering by computing Silhouette score
+    evaluator = ClusteringEvaluator()
+
+    silhouette = evaluator.evaluate(predictions)
+    # value close to 1 means that the clustering is good
+    print("Silhouette with squared euclidean distance = " + str(silhouette))
+
+    # Calculate Davies-Bouldin Index using sklearn
+    from sklearn.metrics import davies_bouldin_score
+
+    # Convert the PySpark DataFrame to a Pandas DataFrame
+    predictions_pandas = predictions.select("prediction").toPandas()
+
+    # Calculate Davies-Bouldin Index
+    davies_bouldin = davies_bouldin_score(predictions_pandas.values, predictions_pandas["prediction"].values)
+    print(f"Davies-Bouldin Index: {davies_bouldin}")
+
+    # Calculate Calinski-Harabasz Index using sklearn
+    from sklearn.metrics import calinski_harabasz_score
+
+    # Convert the PySpark DataFrame to a Pandas DataFrame
+    predictions_pandas = predictions.select("prediction").toPandas()
+
+    # Convert features to NumPy array
+    features_array = np.array(predictions.select("features").collect())
+
+    # Calculate Calinski-Harabasz Index
+    calinski_harabasz = calinski_harabasz_score(features_array, predictions_pandas["prediction"].values)
+    print(f"Calinski-Harabasz Index: {calinski_harabasz}")
+
+    #evaluator = ClusteringEvaluator(metricName="silhouette")
+    #silhouette_per_cluster = evaluator.evaluate(predictions, {evaluator.metricName: "silhouette", evaluator.setDistanceCol("silhouette")})
+    #print(f"Silhouette Score for Each Cluster: {silhouette_per_cluster}")
+
+    spark.stop()
