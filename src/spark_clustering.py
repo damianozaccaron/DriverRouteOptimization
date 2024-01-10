@@ -16,7 +16,7 @@ from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.evaluation import ClusteringEvaluator
 from sklearn.metrics import adjusted_rand_score
 
-from utils.functions import get_actual_routes, get_centers_path, get_first_output_path, get_matrix_path, get_norm_centers_path, json_writer
+from utils.functions import get_actual_routes, get_centers_path, get_clusters_path, get_first_output_path, get_matrix_path, get_norm_centers_path, json_writer
 
 from utils.frequent_itemset import run_pcy
 
@@ -38,22 +38,27 @@ def create_space(actual_routes: list[ActualRoute]) -> CoordinateSystem:
         # remove duplicates
         merch_vec = list(dict.fromkeys(merch_vec))
         merch_list += [merch for merch in merch_vec if merch not in merch_list]
-        trips = actual_route.trip_without_merch()
+        trips = actual_route.trip_string()
+        trips = list(dict.fromkeys(trips))
+        # trips = actual_route.trip_without_merch()
         trip_list += [trip for trip in trips if trip not in trip_list]
 
     return CoordinateSystem(city_list, merch_list, trip_list)
 
 def write_coordinates(space: CoordinateSystem, actual_routes: list[ActualRoute]):
     header: list[str] = []
+    header.append("id")
     header.extend(space.all_city_vec)
     header.extend(space.all_merch)
+    header.extend(space.all_trip)
 
     # write every city and merch as a coordinate
-    with open("src/data/{run_id}/matrix.csv".format(run_id = run_id), "w") as f:
+    with open(get_matrix_path(), "w") as f:
         writer = csv.writer(f)
         writer.writerow(header)
         for ar in actual_routes:
             row_result = []
+            row_result.append(ar.id)
             actual_route_cities = ar.extract_city()
             for city in space.all_city_vec:
                 row_result.append(1 if city in actual_route_cities else 0)
@@ -65,34 +70,12 @@ def write_coordinates(space: CoordinateSystem, actual_routes: list[ActualRoute])
                     row_result.append(actual_route_merch.quantity[index] / counter)
                 else:
                     row_result.append(0)
+            actual_route_trips = ar.trip_string()
+            for trip in space.all_trip:
+                row_result.append(1 if trip in actual_route_trips else 0)
             writer.writerow(row_result)
     f.close()
 
-    # header: list[str] = ["weightCol"]
-    # header.extend(ar.id for ar in actual_routes)
-    # write every city and merch as a coordinate
-    # with open(get_matrix_path(), "w") as f:
-    #     writer = csv.writer(f)
-    #     writer.writerow(header)
-    #     dims:list[str] = []
-    #     dims.extend(space.all_city_vec)
-    #     dims.extend(space.all_merch)
-    #     for i, feature in enumerate(dims):
-    #         row_result = []
-    #         row_result.append(2.0 if i < len(space.all_city_vec) else 1.0)
-    #         for ar in actual_routes:
-    #             if feature in space.all_city_vec:
-    #                 row_result.append(1 if feature in ar.extract_city() else 0)
-    #             else:
-    #                 actual_route_merch = ar.extract_merch()
-    #                 if feature in actual_route_merch.item:
-    #                     index = actual_route_merch.item.index(feature)
-    #                     counter = ar.extract_merch_count(feature)
-    #                     row_result.append(actual_route_merch.quantity[index] / counter)
-    #                 else:
-    #                     row_result.append(0)
-    #         writer.writerow(row_result)
-    # f.close()
 
 def create_clusters(actual_routes:list[ActualRoute], space: CoordinateSystem):
 
@@ -107,7 +90,7 @@ def create_clusters(actual_routes:list[ActualRoute], space: CoordinateSystem):
         .csv(get_matrix_path())
 
     # create a column with a vector of all the values of the table
-    input_cols = data.columns
+    input_cols = data.columns[1:]
     vec_assembler = VectorAssembler(inputCols = input_cols, outputCol = "features")
     final_data = vec_assembler.transform(data)
 
@@ -125,15 +108,22 @@ def create_clusters(actual_routes:list[ActualRoute], space: CoordinateSystem):
     # Evaluate clustering by computing Silhouette score
     evaluator = ClusteringEvaluator()
 
-    silhouette = evaluator.evaluate(predictions)
     # value close to 1 means that the clustering is good
+    silhouette = evaluator.evaluate(predictions)
     print("Silhouette with squared euclidean distance = " + str(silhouette))
+
+    # import shutil
+    # shutil.rmtree(get_clusters_path())
+    # model.save(get_clusters_path())
+    # parq = spark.read.parquet(get_clusters_path() + "/data/*")
+    # parq.foreach(lambda f: print(f))
 
     # get the centers and reconnect with the column name
     cluster_centers = []
     centers = model.clusterCenters()
     for center in centers:
         cluster_center = {}
+        # cluster_center["cluster_id"] = center
         for index, coord in enumerate(input_cols):
             cluster_center[coord] = center[index]
         cluster_centers.append(cluster_center)
@@ -141,7 +131,20 @@ def create_clusters(actual_routes:list[ActualRoute], space: CoordinateSystem):
     # write the centers in a file
     json_writer(cluster_centers, get_centers_path())
 
+    clusters_id = predictions.select(["id", "prediction"]).collect()
     spark.stop()
+    return get_clusters_mapping(clusters_id)
+
+
+def get_clusters_mapping(clusters_id) -> dict[str, list]:
+    routes_per_center: dict[str, list] = {}
+    for item in clusters_id:
+        cluster_id = item[1]
+        ar_id = item[0]
+        if cluster_id not in routes_per_center.keys():
+            routes_per_center[cluster_id] = []
+        routes_per_center[cluster_id].append(ar_id)
+    return routes_per_center
 
 def normalize_cluster_centers(space: CoordinateSystem):
     # normalize the centers and ignore the axis with 0 on the coord
@@ -159,55 +162,79 @@ def normalize_cluster_centers(space: CoordinateSystem):
         # with 5 trips we will likely have 6 provinces
         # use the 6th (in the case of 5 trips_per_route) as a threshold
         cities_values = []
+        trips_values = []
         for key in center:
-            if key in space.all_city_vec:
+            value = center[key]
+            if key in space.all_city_vec and value > 0:
                 # ignore if the value is 0
-                value = center[key]
-                if value > 0:
-                    cities_values.append(value)
-            elif center[key] > 0:
+                cities_values.append(value)
+            elif key in space.all_trip and value > 0:
+                trips_values.append(value)
+            elif value > 0:
+                # merch case
                 normalized_center[key] = round(center[key])
         # sort the array descending
         cities_values.sort(reverse = True)
-        threshold_index = trips_per_route + 1
+        threshold_index_cities = trips_per_route + 1
         # take the minimum because could be that the cities_values array
         # has lenght smaller than the threshold index
-        threshold_index = min(threshold_index, len(cities_values))
-        threshold = cities_values[threshold_index - 1]
-        for key in center:
-            if key in space.all_city_vec:
-                # now save the values greater or equal than the threshold
-                # ignore the values that have 0
-                if center[key] >= threshold:
-                    normalized_center[key] = 1
+        threshold_index_cities = min(threshold_index_cities, len(cities_values))
+        threshold_cities = cities_values[threshold_index_cities - 1]
+
+        trips_values.sort(reverse = True)
+        threshold_index_trips = trips_per_route
+        # take the minimum because could be that the trips_values array
+        # has lenght smaller than the threshold index
+        threshold_index_trips = min(threshold_index_trips, len(trips_values))
+        threshold_trips = trips_values[threshold_index_trips - 1]
+        for key in space.all_city_vec:
+            # now save the values greater or equal than the threshold
+            if center[key] >= threshold_cities:
+                normalized_center[key] = 1
+        for key in space.all_trip:
+            if center[key] >= threshold_trips:
+                normalized_center[key] = 1
+        # for key in center:
+        #     if key in space.all_city_vec:
+        #         if center[key] >= threshold_cities:
+        #             normalized_center[key] = 1
+                
         normalized_centers.append(normalized_center)
 
     json_writer(normalized_centers, get_norm_centers_path())
 
-def build_results(space: CoordinateSystem, frequent_itemsets):
+def build_results(space: CoordinateSystem, fi_merch):
     with open(get_norm_centers_path(), "r") as json_file:
         normalized_centers = json.load(json_file)
-    print(frequent_itemsets[:10])
     
     new_routes = []
     for i, center in enumerate(normalized_centers):
         cities = []
+        trips = []
         merch = {}
+        fi_merch_filtered = {}
         for key in center:
             if key in space.all_city_vec:
                 cities.append(key)
+                if len(fi_merch[key]) > 0:
+                    fi_merch_filtered[key] = fi_merch[key]
+            elif key in space.all_trip and center[key] > 0:
+                trips.append(key)
             else:
                 merch[key] = center[key]
-        new_route = create_sr_from_centers(cities, merch, i + 1)
+        new_route = create_sr_from_centers(cities, merch, i + 1, fi_merch_filtered, trips)
         new_routes.append(new_route)
     
     json_writer(new_routes, get_first_output_path())
 
-def create_sr_from_centers(cities: list[str], merch: dict[str, int], id: int):
+from pyspark.mllib.fpm import FPGrowth
+
+def create_sr_from_centers(cities: list[str], merch: dict[str, int], id: int,
+                           fi_merch: dict[str, Any], trips: list[str]):
     route = []
     previous_end = ""
     random.shuffle(cities)
-    # extimated value of number of items per trip
+    # estimated value of number of items per trip
     n_merchandise = int(os.environ.get("NUMBER_OF_ITEMS_PER_TRIP", 3))
     for city in cities:
         trip = {}
@@ -217,11 +244,8 @@ def create_sr_from_centers(cities: list[str], merch: dict[str, int], id: int):
             trip["to"] = random.choice(cities)
         previous_end = trip["to"]
         m_keys = list(merch.keys())
-        random_merch = random.choices(m_keys, k = min(n_merchandise, len(m_keys)))
-        selected_merch = {}
-        for m in random_merch:
-            selected_merch[m] = merch[m]
-        trip["merchandise"] = selected_merch
+        merch_count = min(n_merchandise, len(m_keys))
+        trip["merchandise"] = add_merch_to_trip(trip["to"], fi_merch, merch, merch_count)
         route.append(trip)
 
     sr = {}
@@ -229,58 +253,23 @@ def create_sr_from_centers(cities: list[str], merch: dict[str, int], id: int):
     sr["route"] = route
     return sr
 
-def perform_freq_items(actual_routes: list[ActualRoute], space: CoordinateSystem): 
-    from pyspark.mllib.fpm import FPGrowth
+def add_merch_to_trip(city_to: str, fi_merch: dict[str, Any],
+                      merch: dict[str, int], merch_count: int) -> dict[str, int]:
+    selected_merch = {}
+    if city_to in fi_merch.keys():
+            fi = fi_merch[city_to]
+            for itemset in fi:
+                for item in itemset[0]:
+                    if item in merch and item not in selected_merch.keys():
+                        print(f"from fi merch {item} added to route")
+                        selected_merch[item] = merch[item]
+    while len(selected_merch.keys()) < merch_count:
+        random_merch = random.choice(list(merch.keys()))
+        if random_merch not in selected_merch.keys():
+            print(f"from random merch {random_merch} added to route")
+            selected_merch[random_merch] = merch[random_merch]
+    return selected_merch
 
-    findspark.init()
-
-    spark = SparkSession.builder.master("local").appName(name = "PySpark for data mining").getOrCreate() # type: ignore
-
-    data = []
-    for ar in actual_routes:
-        row_result = []
-        actual_route_cities = list(dict.fromkeys(ar.extract_city()))
-        actual_route_merch = list(dict.fromkeys(ar.extract_merch().item))
-        row_result.extend(actual_route_cities)
-        row_result.extend(actual_route_merch)
-        data.append(row_result)
-
-    ctx = spark.sparkContext
-    rdd = ctx.parallelize(data)
-
-    model = FPGrowth.train(data = rdd, minSupport = 0.3, numPartitions = 10)
-    result = model.freqItemsets().collect()
-    valueable_fi = []
-
-    for fi in result:
-        if contains_city(fi, space):
-            valueable_fi.append(fi.items)
-    
-    spark.stop()
-    # questo fottutiissimo set_items contiene tutte le citta
-    # che sono state trovate nei frequent itemset
-    print(set_items)
-    # piu tardi vengono printati questi valuable_fi
-    # (array che contiene i frequent itemset con citta al loro interno)
-    # e come ben vedrai conterra' solo i frequent itemset di una citta (invece che di tutte quelle in set_items)
-    return valueable_fi
-
-# c'era un return true nel ciclo while, ho messo il false nel ciclo e il true alla fine
-
-set_items = {}
-def contains_city(fi, space: CoordinateSystem) -> bool:
-    items = fi.items
-    i = 0
-    while i < len(items):
-        if items[i] in space.all_city_vec:
-            set_items[items[i]] = "present"
-            return True
-        i = i + 1
-    return False
-
-# più che altro sto freq item dovrebbe avere tipo coppie di città
-# invece sembra si basi su frequenze delle singole città
-# che di fatto non ci serve dc
 
 def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: CoordinateSystem):
     #from pyspark.mllib.fpm import FPGrowth
@@ -288,41 +277,29 @@ def perform_freq_items_for_city(actual_routes: list[ActualRoute], space: Coordin
     city_vec = space.all_city_vec
     data = {}
     result = {}
-    '''
-    # trip vec is a vector of 2ple of cities not object trip !!!!!!!
-    trip_vec = space.all_tripdata_trip = {}
-    result_trip = {}
-    for trip in trip_vec:
-        findspark.init()
-        spark = SparkSession.builder.master("local").appName(name = "PySpark for data mining").getOrCreate()
-        data_trip[trip] = []
-        for ar in actual_routes:
-            merch_vec = []
-            for new_trip in ar.route:
-                if new_trip.city_from == trip[0] and new_trip.city_to == trip[1]:
-                    merch_vec.append(new_trip.merchandise.item)
-            data_trip[trip].append(merch_vec)   
 
-        ctx = spark.sparkContext
-        rdd = ctx.parallelize(data[trip])
-
-        model = FPGrowth.train(data=rdd, minSupport=0.1, numPartitions=10)
-
-        result_trip[trip] = model.freqItemsets().collect()
-'''
     findspark.init()
     spark = SparkSession.builder.master("local").appName(name = "PySpark for data mining").getOrCreate() # type: ignore
+    ctx = spark.sparkContext
     for city in city_vec:
         data[city] = []
         for ar in actual_routes:
             merch_vec = []
             for new_trip in ar.route:
                 if city == new_trip.city_to:
-                    merch_vec.append(new_trip.merchandise.item)
-            data[city].append(merch_vec)   
+                    merch_vec = new_trip.merchandise.item
+                    data[city].append(merch_vec)
 
-        freq_pairs = run_pcy(data[city], 100, 0.01) 
-        result[city] = freq_pairs
+        # freq_pairs = run_pcy(data[city], 100, 0.01) 
+        # result[city] = freq_pairs
+        
+        rdd = ctx.parallelize(data[city])
+
+        model = FPGrowth.train(data=rdd, minSupport=0.3, numPartitions=10)
+
+        # questo parametro sarebbe da settare in maniera intelligente
+        THRESHOLD = 5
+        result[city] = model.freqItemsets().filter(lambda fi: fi.freq > THRESHOLD).collect()
 
     spark.stop()
     return result
@@ -339,7 +316,6 @@ def perform_freq_city_pairs(actual_routes: list[ActualRoute], space: CoordinateS
     data = []
     for ar in actual_routes:
         actual_route_cities = list(dict.fromkeys(ar.extract_city()))
-        print(actual_route_cities)
         data.append(actual_route_cities)
 
     ctx = spark.sparkContext

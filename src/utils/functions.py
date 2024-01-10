@@ -185,3 +185,8 @@ print('Calinski-Harabasz Index',ch_index,'\n') # higher -> better
 centroids = kmeans.cluster_centers_
 
 '''
+def get_fi_per_driver_path() -> str:
+    return "src/data/{run_id}/fi_per_driver.txt".format(run_id = run_id)
+
+def get_clusters_path() -> str:
+    return "src/data/{run_id}/clusters".format(run_id = run_id)
