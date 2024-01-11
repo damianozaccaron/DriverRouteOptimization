@@ -71,8 +71,8 @@ end = int(round(time.time() * 1000))
 print(f"frequent itemset of merch for every city in {end - start} milliseconds\n")
 
 start = int(round(time.time() * 1000))
-preferences = implement_pref(actual_routes, 5)
-print(preferences)
+#preferences = implement_pref(actual_routes, 5)
+#print(preferences)
 end = int(round(time.time() * 1000))
 print(f"implementation of preferences in {end - start} milliseconds\n")
 normalize_cluster_centers(space)
@@ -80,7 +80,7 @@ build_results(space, frequent_items)
 end = int(round(time.time() * 1000))
 print(f"recStandard.json generated in {end - start} milliseconds\n")
 
-
+'''
 drivers_data = {}
 freq_items_per_driver = {}
 for driver in drivers:
@@ -92,7 +92,7 @@ for driver in drivers:
 with open(get_fi_per_driver_path(), "w") as freq_items:
     for driver in freq_items_per_driver:
         freq_items.writelines(driver + ": " + str(freq_items_per_driver[driver]) + "\n")
-
+'''
 global_end = int(round(time.time() * 1000))
 print(f"total time execution: {global_end - global_start} milliseconds\n")
 

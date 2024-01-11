@@ -162,6 +162,7 @@ def normalize_cluster_centers(space: CoordinateSystem):
     normalized_centers = []
     for center in cluster_centers:
         normalized_center = {}
+        normalized_center["pred"] = center["pred"]
         # for every center, take the values of the provinces and sort them
         # then take the first trips_per_route + 1 values
         # with 5 trips we will likely have 6 provinces
@@ -216,6 +217,7 @@ def normalize_cluster_centers(space: CoordinateSystem):
                 
         normalized_centers.append(normalized_center)
 
+    print(normalized_centers)
     json_writer(normalized_centers, get_norm_centers_path())
 
 def build_results(space: CoordinateSystem, fi_merch):
