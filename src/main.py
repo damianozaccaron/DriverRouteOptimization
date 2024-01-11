@@ -5,7 +5,7 @@ from entities.standard_route import StandardRoute
 from entities.trip import Trip
 from spark_clustering import build_results, create_clusters, create_space, normalize_cluster_centers,\
         perform_freq_city_pairs, perform_freq_items_for_city
-from trips import extract_trips_path, import_data
+from utils.damiANO import extract_trips_path, import_data
 from utils.frequent_itemset import run_pcy
 from utils.functions import get_actual_routes, get_ar_path, get_fi_per_driver_path, json_writer, save_run_parameters
 from utils.route_generator import data_generation

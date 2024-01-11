@@ -61,20 +61,21 @@ def write_coordinates(space: CoordinateSystem, actual_routes: list[ActualRoute])
             row_result.append(ar.id)
             actual_route_cities = ar.extract_city()
             for city in space.all_city_vec:
-                row_result.append(1 if city in actual_route_cities else 0)
+                row_result.append(5 if city in actual_route_cities else 0)
             actual_route_merch = ar.extract_merch()
+            total_quant = sum(actual_route_merch.quantity)
             for merch in space.all_merch:
                 if merch in actual_route_merch.item:
                     index = actual_route_merch.item.index(merch)
-                    counter = ar.extract_merch_count(merch)
-                    row_result.append(actual_route_merch.quantity[index] / counter)
+                    row_result.append(actual_route_merch.quantity[index] / total_quant)
                 else:
                     row_result.append(0)
             actual_route_trips = ar.trip_string()
             for trip in space.all_trip:
-                row_result.append(1 if trip in actual_route_trips else 0)
+                row_result.append(10 if trip in actual_route_trips else 0)
             writer.writerow(row_result)
     f.close()
+
 
 
 def create_clusters(actual_routes:list[ActualRoute], space: CoordinateSystem):
@@ -121,8 +122,9 @@ def create_clusters(actual_routes:list[ActualRoute], space: CoordinateSystem):
     # get the centers and reconnect with the column name
     cluster_centers = []
     centers = model.clusterCenters()
-    for center in centers:
+    for i, center in enumerate(centers):
         cluster_center = {}
+        cluster_center["pred"] = i
         # cluster_center["cluster_id"] = center
         for index, coord in enumerate(input_cols):
             cluster_center[coord] = center[index]
@@ -153,6 +155,9 @@ def normalize_cluster_centers(space: CoordinateSystem):
 
     # number of trips per route
     trips_per_route = int(os.environ.get("TRIPS_PER_ROUTE", 5))
+
+    # number of merch per trip 
+    merch_per_trip = int(os.environ.get("NUMBER_OF_ITEMS_PER_TRIP", 5))
     
     normalized_centers = []
     for center in cluster_centers:
@@ -163,7 +168,8 @@ def normalize_cluster_centers(space: CoordinateSystem):
         # use the 6th (in the case of 5 trips_per_route) as a threshold
         cities_values = []
         trips_values = []
-        for key in center:
+        merch_values = []
+        for key in center.keys():
             value = center[key]
             if key in space.all_city_vec and value > 0:
                 # ignore if the value is 0
@@ -172,7 +178,7 @@ def normalize_cluster_centers(space: CoordinateSystem):
                 trips_values.append(value)
             elif value > 0:
                 # merch case
-                normalized_center[key] = round(center[key])
+                merch_values.append(center[key])
         # sort the array descending
         cities_values.sort(reverse = True)
         threshold_index_cities = trips_per_route + 1
@@ -187,12 +193,21 @@ def normalize_cluster_centers(space: CoordinateSystem):
         # has lenght smaller than the threshold index
         threshold_index_trips = min(threshold_index_trips, len(trips_values))
         threshold_trips = trips_values[threshold_index_trips - 1]
+        # merch same
+        merch_values.sort(reverse= True)
+        threshold_index_merch = merch_per_trip
+        threshold_index_merch = min(threshold_index_merch, len(merch_values))
+        threshold_merch = cities_values[threshold_index_merch - 1]
+
         for key in space.all_city_vec:
             # now save the values greater or equal than the threshold
             if center[key] >= threshold_cities:
                 normalized_center[key] = 1
         for key in space.all_trip:
             if center[key] >= threshold_trips:
+                normalized_center[key] = 1
+        for key in space.all_merch:
+            if center[key] >= threshold_merch:
                 normalized_center[key] = 1
         # for key in center:
         #     if key in space.all_city_vec:
