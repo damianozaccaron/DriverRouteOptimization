@@ -198,7 +198,7 @@ def normalize_cluster_centers(space: CoordinateSystem):
         merch_values.sort(reverse= True)
         threshold_index_merch = merch_per_trip
         threshold_index_merch = min(threshold_index_merch, len(merch_values))
-        threshold_merch = cities_values[threshold_index_merch - 1]
+        threshold_merch = merch_values[threshold_index_merch - 1]
 
         for key in space.all_city_vec:
             # now save the values greater or equal than the threshold
@@ -214,11 +214,68 @@ def normalize_cluster_centers(space: CoordinateSystem):
         #     if key in space.all_city_vec:
         #         if center[key] >= threshold_cities:
         #             normalized_center[key] = 1
-                
+        cities_values.sort(reverse = True)
+        city_vec = cities_values[:min(trips_per_route + 1, len(cities_values))]
+        trips_values.sort(reverse = True)
+        trip_vec = trips_values[:min(trips_per_route, len(trips_values))]
+        merch_values.sort(reverse = True)
+        merch_vec = merch_values[:min(merch_per_trip * trips_per_route, len(merch_vec))]
+        normalized_center["trip"] = trip_vec
+        normalized_center["city"] = city_vec
+        normalized_center["merch"] = merch_vec
         normalized_centers.append(normalized_center)
 
     print(normalized_centers)
     json_writer(normalized_centers, get_norm_centers_path())
+
+
+def sbrbuild_result(space: CoordinateSystem) -> None:
+    with open(get_norm_centers_path(), "r") as json_file:
+        normalized_centers = json.load(json_file)
+
+    rec_routes = []
+    for center in normalized_centers:
+        rss = {}
+        rss["id"] = 's' + str(center["pred"] + 1)
+        route = []
+        
+        i = 0
+        chain = []
+        while len(chain) < 2 and i <= len(center["trip"]):
+            found = True
+            chain = [center["trip"][i]]
+            while found:
+                found = False
+                for trip in center["trip"]:
+                    if trip not in chain:
+                        city_from, city_to = trip.split(":")
+                        ch_city_from = chain[0].split(":")[0]
+                        ch_city_to = chain[-1].split(":")[1]
+                        if city_from == ch_city_to:
+                            found = True
+                            chain = [trip] + chain
+                        if city_to == ch_city_from:
+                            found = True
+                            chain = chain + [trip]
+            i += 1
+        
+        if len(chain) == 1:
+            city_chain = center["city"]
+        else:
+            city_chain = [chain[0].split(":")[0]]
+            for trip in chain:
+                city_chain.append(trip.split(":")[1])
+            city_chain.append(city for city in center["city"] if city not in city_chain)
+            if len(city_chain) > len(center["city"]):
+                city_chain = city_chain[:len(center["city"])]
+        
+
+
+
+            
+
+
+
 
 def build_results(space: CoordinateSystem, fi_merch):
     with open(get_norm_centers_path(), "r") as json_file:
