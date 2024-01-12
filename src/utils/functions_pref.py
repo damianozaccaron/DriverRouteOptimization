@@ -1,20 +1,27 @@
 import json
-import time
-import utils.frequent_itemset
 import statistics
-from utils.functions import get_actual_routes  # list of actual routes
+from utils.functions import get_ar_path  # list of actual routes
 from entities.actual_route import ActualRoute
 from entities.trip import Trip
 import collections
 
-data = get_actual_routes()
+
+def get_actual_routes_per_driver():
+    with open(get_ar_path(), 'r') as json_file:
+        actual_route_data = json.load(json_file)
+
+    routes_by_driver = {}
+
+    for route in actual_route_data:
+        driver = ActualRoute(route).driver
+        routes_by_driver.setdefault(driver, []).append(ActualRoute(route))
+
+    return routes_by_driver
 
 
-def import_data(file, driver):
-    """import data for a specific driver"""
-    with open(file) as json_data:
-        prov_data = json.load(json_data)
-    return [route for route in prov_data if route['driver'] == driver]
+def extract_drivers(var: dict[str, ActualRoute]):
+    """giver a set of routes, it extracts the drivers who have driven that routes. Used to extract data by driver"""
+    return list(var.keys())
 
 
 def count_occurrences(obj, spec, spec2=None):
@@ -34,11 +41,6 @@ def count_occurrences(obj, spec, spec2=None):
             occ[element] = occ.get(element, 0) + 1
 
     return occ
-
-
-def extract_route(aroute: ActualRoute):
-    """given ONE actual route, only considers the route itself (excludes id, driver and standard route)"""
-    return aroute.route
 
 
 def extract_trips(var: list[ActualRoute]):
@@ -101,18 +103,13 @@ def extract_destinations(var: list[ActualRoute]):
     return res
 
 
-def extract_trips_path(var):
+def extract_trips_path(var: list[ActualRoute]):
     """given a set of routes, it extracts the trips that were traveled at least once, divided by route.
 
         Its output is a list of lists of tuples"""
     res = [act_route.trip_without_merch() for act_route in var]
 
     return res
-
-
-def extract_drivers(var: list[ActualRoute]):
-    """giver a set od routes, it extracts the drivers who have driven that routes. Used to extract data by driver"""
-    return list(set([route.driver for route in var]))
 
 
 def extract_merchandise(trips: list[Trip]):

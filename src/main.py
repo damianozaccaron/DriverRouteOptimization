@@ -6,6 +6,8 @@ from entities.actual_route import ActualRoute
 from entities.trip import Trip
 from utils.functions import get_actual_routes, save_run_parameters, get_standard_routes, json_writer
 from utils.route_generator import data_generation
+from utils.functions_pref import get_actual_routes_per_driver, extract_drivers, extract_destinations
+from preferences import Preferences
 
 
 global_start = int(round(time.time() * 1000))
@@ -17,6 +19,13 @@ print(f"routes generated in {end - start} milliseconds\n")
 
 standard_routes = get_standard_routes()
 actual_routes = get_actual_routes()
+
+# computing a dictionary with keys the names of the drivers and values list of ActualRoute
+actual_routes_dict = get_actual_routes_per_driver()
+data_driver = actual_routes_dict[extract_drivers(actual_routes_dict)[0]]
+
+pref = Preferences(data_driver, 0.05, 1000).update_pref()
+print(pref.freq_itemset_trip)
 
 
 # Function: first output generator

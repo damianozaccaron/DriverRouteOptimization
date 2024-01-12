@@ -9,16 +9,9 @@ import trips
 '''
 def hash_pair(n1, n2, n_buckets):
     """Generates a basic hash function starting from string or tuple"""
-    if isinstance(n1, tuple):
-        n1 = ''.join(map(str, n1))
-    if isinstance(n2, tuple):
-        n2 = ''.join(map(str, n2))
-    
-    ascii1 = [ord(char) for char in n1]
-    ascii2 = [ord(char) for char in n2]
     
     # The hash function is the modulo of the sum of the total ASCII values of the parameters divided by the number of buckets
-    return ((sum(ascii1)**2) + (sum(ascii2)**2)) % n_buckets
+    return (hash((n1, n2)) * hash((n1[0], n2[0]))) % n_buckets
 
 
 
@@ -28,12 +21,12 @@ def second_hash_pair(n1, n2, n_buckets):
     return (hash((n1, n2))) % n_buckets
 
 
-def pcy_basket(basket, n_buckets, pairs_hashtable, second_pairs_hashtable, singletons):
+def pcy_basket(basket: list, n_buckets: int, pairs_hashtable: dict, second_pairs_hashtable: dict, singletons: dict):
     """Does the first pass of the PCY for a single basket, its only use is to modify its parent's dictionaries"""
 
     "count frequency of the items"
     for item in basket:
-        singletons[tuple(item)] = singletons.get(tuple(item), 0) + 1
+        singletons[item] = singletons.get(item, 0) + 1
 
     "creates the couples with itertools (tuple) and adds them to a dictionary with the respective count"
     for key in itertools.combinations(singletons, 2):
@@ -49,7 +42,7 @@ def pcy_basket(basket, n_buckets, pairs_hashtable, second_pairs_hashtable, singl
         second_pairs_hashtable[hash_value] = second_pairs_hashtable.get(hash_value, 0) + 1
 
 
-def run_pcy(baskets, n_buckets, t_hold, start=time.time()):
+def run_pcy(baskets: list[list[str or tuple]], n_buckets, t_hold, start=time.time()):
     singletons = {}
     pairs_count_hash = {}
     second_pairs_count_hash = {}
@@ -57,14 +50,14 @@ def run_pcy(baskets, n_buckets, t_hold, start=time.time()):
     for item in baskets:
         pcy_basket(item, n_buckets, pairs_count_hash, second_pairs_count_hash, singletons)
 
-        if len(item) == 0:
+        """if len(item) == 0:
             baskets.remove(item)
             continue
+"""
     "remove singletons that are not frequent"
     frequent_single_items = {}
     for key in singletons.items():
         if key[1] >= len(baskets) * t_hold:
-            "discuss about threshold"
             frequent_single_items[key[0]] = key[1]
 
     "creates a list containing only the names of the frequent items (remove the count)"
@@ -76,14 +69,14 @@ def run_pcy(baskets, n_buckets, t_hold, start=time.time()):
     for key in sorted(pairs_count_hash.keys()):
         if pairs_count_hash[key] > len(baskets) * t_hold:
             bitmap[key] = 1
-    print(sum(bitmap))
+    # print(sum(bitmap))
 
     bitmap2 = [0] * n_buckets  # bitmap that will summarise which baskets have the minimum support
     "transform into a bit vector with value 1 if the count is over the threshold"
     for key in sorted(second_pairs_count_hash.keys()):
         if second_pairs_count_hash[key] > len(baskets) * t_hold:
             bitmap2[key] = 1
-    print(sum(bitmap2))
+    # print(sum(bitmap2))
 
     # PASS 2
     "we only keep the pairs that have frequent singletons and belong to a frequent bucket"
@@ -123,12 +116,6 @@ def run_pcy(baskets, n_buckets, t_hold, start=time.time()):
 num_buckets = 30  # look into this
 support_threshold = 0.2
 '''
-# "prove"
-# "import data for a specific driver"
-# data = trips.import_data('actual.json', 'N71YE')
-
-# num_buckets = 30  # look into this
-# support_threshold = 0.2
 
 """# frequent itemset cities
 x = run_pcy(trips.extract_destinations(data), n_buckets=num_buckets, t_hold=support_threshold, start=time.time())
@@ -150,6 +137,3 @@ luciano = run_pcy(trips.extract_trips_path(data), n_buckets=200, t_hold=0.2, sta
 print(luciano)
 print('len: ', len(luciano))
 '''
-# luciano = run_pcy(trips.extract_trips_path(data), n_buckets=200, t_hold=0.2, start=time.time())
-# print(luciano)
-# print('len: ', len(luciano))
