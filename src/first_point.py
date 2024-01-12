@@ -9,6 +9,7 @@ import numpy as np
 
 from dotenv import load_dotenv
 
+from entities.standard_route import StandardRoute
 from entities.actual_route import ActualRoute
 from entities.coordinate_system import CoordinateSystem
 
@@ -25,6 +26,28 @@ run_id = os.environ.get("RUN_ID", "1")
 
 
 # functions:
+
+def parameters_extraction(standard_routes: list[StandardRoute]) -> dict:
+    """
+    extraction of:
+    - n_standard_route
+    - trip_per_route
+    - merch_per_trip
+    """
+    parameters = {}
+    parameters["n_standard_route"] = len(standard_routes)
+    trip_counter = 0
+    merch_counter = 0
+    for sr in standard_routes:
+        trip_counter += len(sr.route)
+        merch_counter_prov = 0
+        for trip in sr.route:
+            merch_counter_prov += len(trip.merchandise.item)
+        merch_counter += merch_counter_prov / len(trip.city_from)
+    parameters["trips_per_route"] = round(trip_counter / len(standard_routes))
+    parameters["merch_per_trip"] = round(merch_counter / len(standard_routes))
+    return parameters
+
 
 def create_space(actual_routes: list[ActualRoute]) -> CoordinateSystem:
     city_list = []
@@ -119,16 +142,35 @@ def build_centers(model: KMeans, space: CoordinateSystem) -> list:
 
     return(cluster_centers)
 
-def normalize_cluster_centers(cluster_centers: list, trips_per_route: int, merch_per_trip: int, space: CoordinateSystem) -> list:
+def normalize_cluster_centers(cluster_centers: list, actual_routes: list[ActualRoute], model, space: CoordinateSystem, spark) -> list:
+    from pyspark.sql.functions import col
 
-    trips_per_route = int(os.environ.get("TRIPS_PER_ROUTE", 5))
-
-    merch_per_trip = int(os.environ.get("NUMBER_OF_ITEMS_PER_TRIP", 5))
+    data = read_coordinates(spark)
     
     normalized_centers = []
-    for center in cluster_centers:
+    for index, center in enumerate(cluster_centers):
         normalized_center = {}
         normalized_center["pred"] = center["pred"]
+
+        predictions = model.transform(data)
+        indexed_data = predictions.select("index", "prediction")
+        target_cluster = index
+        cluster_indexes = (
+            indexed_data
+            .filter(col("prediction") == target_cluster)
+            .select("index")
+            .orderBy("index")
+        )
+        indexes_list = [row["index"] for row in cluster_indexes.collect()]
+
+        small_ar_set = []
+        for i, ar in enumerate(actual_routes):
+            if i in indexes_list:
+                small_ar_set.append(ar)
+        
+        parameters = parameters_extraction(actual_routes)
+        trips_per_route = parameters["trips_per_route"]
+        merch_per_trip = parameters["merch_per_trip"]
         
         cities_values = []
         trips_values = []
@@ -149,18 +191,22 @@ def normalize_cluster_centers(cluster_centers: list, trips_per_route: int, merch
         threshold_index_cities = min(threshold_index_cities, len(cities_values))
         threshold_cities = cities_values[threshold_index_cities - 1]
         city_vec = []
+        counter = 0
         for key in space.all_city_vec:
-            if center[key] >= threshold_cities:
+            if center[key] >= threshold_cities and counter <= trips_per_route:
                 city_vec.append(key)
-        
+                counter += 1
+
         trips_values.sort(reverse = True)
         threshold_index_trips = trips_per_route 
         threshold_index_trips = min(threshold_index_trips, len(trips_values))
         threshold_trips = trips_values[threshold_index_trips - 1]
         trip_vec = []
+        counter = 0
         for key in space.all_trip:
-            if center[key] >= threshold_trips:
+            if center[key] >= threshold_trips and counter < trips_per_route:
                 trip_vec.append(key)
+                counter += 1
 
         merch_values.sort(reverse = True)
         threshold_index_merch = trips_per_route * merch_per_trip
@@ -182,10 +228,8 @@ def normalize_cluster_centers(cluster_centers: list, trips_per_route: int, merch
 def build_result(normalized_centers: list, actual_routes: list[ActualRoute], model: KMeans, spark) -> None:
     from pyspark.sql.functions import col
 
-
     rec_routes = []
     data = read_coordinates(spark)
-    predictions = model.transform(data)
 
     for index, center in enumerate(normalized_centers):
         rsr = {}
@@ -194,7 +238,7 @@ def build_result(normalized_centers: list, actual_routes: list[ActualRoute], mod
         
         i = 0
         chain = []
-        while len(chain) < 2 and i <= len(center["trip"]):
+        while len(chain) < 2 and i < len(center["trip"]):
             found = True
             chain = [center["trip"][i]]
             while found:
@@ -202,16 +246,16 @@ def build_result(normalized_centers: list, actual_routes: list[ActualRoute], mod
                 for trip in center["trip"]:
                     if trip not in chain:
                         city_from, city_to = trip.split(":")
-                        ch_city_from = chain[0].split(":")[0]
                         ch_city_to = chain[-1].split(":")[1]
+                        ch_city_from = chain[0].split(":")[0]
                         if city_from == ch_city_to:
                             found = True
-                            chain = [trip] + chain
-                        if city_to == ch_city_from:
-                            found = True
                             chain = chain + [trip]
+                        elif city_to == ch_city_from:
+                            found = True
+                            chain = [trip] + chain
             i += 1
-        
+
         if len(chain) == 1:
             city_chain = center["city"]
         else:
@@ -242,10 +286,10 @@ def build_result(normalized_centers: list, actual_routes: list[ActualRoute], mod
         for i, ar in enumerate(actual_routes):
             if i in indexes_list:
                 small_ar_set.append(ar)
-        for city in city_chain:
-            if city != city_chain[-1]:
+        for i, city in enumerate(city_chain):
+            if i != len(city_chain)-1:
                 city_from_vec.append(city)
-            if city == city_chain[0]:
+            if i == 0:
                 continue
             city_to_vec.append(city)
         small_space = create_space(small_ar_set)
