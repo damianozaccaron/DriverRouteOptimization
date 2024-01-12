@@ -3,7 +3,6 @@ import time
 from entities.actual_route import ActualRoute
 from entities.standard_route import StandardRoute
 from entities.actual_route import ActualRoute
-from entities.trip import Trip
 from utils.functions import get_actual_routes, save_run_parameters, get_standard_routes, json_writer
 from utils.route_generator import data_generation
 
@@ -64,7 +63,6 @@ def recommended_standard_route_generator(actual_routes: list[ActualRoute], stand
     spark.stop()
 
 
-
-recommended_standard_route_generator(actual_routes, standard_routes)
+recommended_standard_route_generator(actual_routes = actual_routes, standard_routes = standard_routes)
 global_end = int(round(time.time() * 1000))
 print(f"total time execution: {global_end - global_start} milliseconds\n")
