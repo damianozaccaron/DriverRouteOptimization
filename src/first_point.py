@@ -168,7 +168,7 @@ def normalize_cluster_centers(cluster_centers: list, actual_routes: list[ActualR
             if i in indexes_list:
                 small_ar_set.append(ar)
         
-        parameters = parameters_extraction(actual_routes)
+        parameters = parameters_extraction(small_ar_set)
         trips_per_route = parameters["trips_per_route"]
         merch_per_trip = parameters["merch_per_trip"]
         
@@ -268,8 +268,6 @@ def build_result(normalized_centers: list, actual_routes: list[ActualRoute], mod
         
         city_from_vec = []
         city_to_vec = []
-        merch_vec_item = []
-        merch_vec_quantity = []
 
         predictions = model.transform(data)
         indexed_data = predictions.select("index", "prediction")
@@ -293,11 +291,15 @@ def build_result(normalized_centers: list, actual_routes: list[ActualRoute], mod
                 continue
             city_to_vec.append(city)
         small_space = create_space(small_ar_set)
-        freq_merch = merch_per_city_counter(small_ar_set, small_space, 5)
+        parameters = parameters_extraction(small_ar_set)
+        freq_merch = merch_per_city_counter(small_ar_set, small_space, t_hold_n = parameters["merch_per_trip"])
         for i, city in enumerate(city_to_vec):
+            merch_vec_item = []
+            merch_vec_quantity = []
             for merch_item in freq_merch[city].keys():
-                merch_vec_item.append(merch_item)
-                merch_vec_quantity.append(freq_merch[city][merch_item][1])
+                if freq_merch[city][merch_item][1] != 0:
+                    merch_vec_item.append(merch_item)
+                    merch_vec_quantity.append(freq_merch[city][merch_item][1])
             merch = dict(zip(merch_vec_item, merch_vec_quantity))
             trip = {"from": city_from_vec[i], "to": city, "merchandise": merch}
             route.append(trip)
@@ -323,7 +325,7 @@ def merch_per_city_counter(actual_routes: list[ActualRoute], space: CoordinateSy
                         counter[merch_key][1] += trip.merchandise.quantity[i]
         for merch_key, (count, quantity) in counter.items():
             if count > 0:
-                counter[merch_key][1] = round(quantity / count, 2)
+                counter[merch_key][1] = round(quantity / count)
         if t_hold_n:
             counter = dict(sorted(counter.items(), key=lambda x: x[1][0], reverse=True)[:t_hold_n])        
         elif t_hold_q:
