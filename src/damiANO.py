@@ -2,11 +2,12 @@ import json
 import time
 import utils.frequent_itemset
 import statistics
-from utils.functions import get_actual_route  # list of actual routes
+from utils.functions import get_actual_routes  # list of actual routes
 from entities.actual_route import ActualRoute
+from entities.trip import Trip
 import collections
 
-data = get_actual_route()
+data = get_actual_routes()
 
 
 def import_data(file, driver):
@@ -35,7 +36,7 @@ def count_occurrences(obj, spec, spec2=None):
     return occ
 
 
-def extract_route(aroute):
+def extract_route(aroute: ActualRoute):
     """given ONE actual route, only considers the route itself (excludes id, driver and standard route)"""
     return aroute.route
 
@@ -50,16 +51,16 @@ def extract_trips(var: list[ActualRoute]):
     return trips
 
 
-def mean_trip(var):
+def mean_trip(var: list[ActualRoute]):
     """computes the mean number of trips"""
     return len(extract_trips(var))/len(var)
 
 
-def pass_through_city_count(var):
-    """computes how many times a city as been visited in total, excluding starting and ending point"""
-    result = [item for item in extract_trips(var) if item['pos'] != 0]
+def pass_through_city_count(trips: list[Trip]):
+    """computes how many times a city has been visited in total, excluding starting and ending point"""
+    result = [item.city_to for item in trips]
 
-    return count_occurrences(result, 'from')
+    return collections.Counter(result)
 
 
 def start_finish_count(var: list[ActualRoute], s_or_f=1):
@@ -79,26 +80,23 @@ def start_finish_count(var: list[ActualRoute], s_or_f=1):
     return collections.Counter(result)
 
 
-def trip_count(var):
-    """computes the number of times a specific route has been traveled"""
-    return count_occurrences(extract_trips(var), 'from', 'to')
+def total_city_counter(counter1: collections.Counter, counter2: collections.Counter):
+    """Returns the total number of times a city has been touched, requires as input two outputs of the functions
+    start_finish_count(data,0) and pass_through_city_count(extract_trips(data))"""
+    return counter1 + counter2
 
 
-def extract_destinations(var):
+def trip_count(trips: list[Trip]):
+    """computes the number of times a specific trip has been traveled"""
+    result = [(item.city_from, item.city_to) for item in trips]
+    return collections.Counter(result)
+
+
+def extract_destinations(var: list[ActualRoute]):
     """given a set of routes, it extracts the cities that were passed at least once, divided by route.
 
-    Its output is a list of lists"""
-    act_route = [extract_route(route) for route in var]
-    res = []
-
-    for route in act_route:
-        "take the starting point"
-        starting_point = route[0]['from']
-        "take every other destination"
-        trip_destination = [trip['to'] for trip in route]
-        "merge them and append it as a list to the result"
-        trip_destination.insert(0, starting_point)
-        res.append(trip_destination)
+    Its output is a list of lists. Used for freq_itemset."""
+    res = [act_route.extract_city() for act_route in var]
 
     return res
 
@@ -107,84 +105,61 @@ def extract_trips_path(var):
     """given a set of routes, it extracts the trips that were traveled at least once, divided by route.
 
         Its output is a list of lists of tuples"""
-    act_route = [extract_route(route) for route in var]
-    res = []
-    for route in act_route:
-        prov = [(trip['from'], trip['to']) for trip in route]
-        res.append(prov)
+    res = [act_route.trip_without_merch() for act_route in var]
 
     return res
 
 
-def extract_drivers(var):
-    """giver a set od routes, it extracts the drivers who have driven that routes"""
-
+def extract_drivers(var: list[ActualRoute]):
+    """giver a set od routes, it extracts the drivers who have driven that routes. Used to extract data by driver"""
     return list(set([route.driver for route in var]))
-     
 
 
+def extract_merchandise(trips: list[Trip]):
+    """Returns a dictionary merchandise divided by trip (list of dictionaries)"""
 
-"prove"
-#data = import_data('actual.json', 'N71YE')
-"""x = trip_count(data)
-print(x) """
-
-"""y = extract_trips(data)
-print(y)"""
+    return [{key: value for key, value in zip(item.merchandise.item, item.merchandise.quantity)} for item in trips]
 
 
-def extract_merchandise(var):
-    """Returns the object merchandise divided by trip (list of dictionaries)"""
-    return [item["merchandise"] for item in extract_trips(var)]
-
-
-def extract_merchandise_type(var):
+def extract_merchandise_type(trips: list[Trip]):
     """Returns all types of merchandise brought, divided by trip.
 
-    the output is a list of lists"""
-    res = [list(item.keys()) for item in extract_merchandise(var)]
-    return res
+    the output is a list of lists. Used in frequent itemset"""
+    return [trip.merchandise.item for trip in trips]
 
 
-def mean_types(var):
+def mean_types(trips: list[Trip]):
     """Computes the mean of how many kinds of merch a driver has transported in a trip"""
 
     count = 0
-    for item in extract_merchandise(var):
-        count += len(item)
-    return count/len(extract_merchandise(var))
+    for items in extract_merchandise(trips):
+        count += len(items)
+
+    return count/len(extract_merchandise(trips))
 
 
-def count_merch(var):
-    """computes the number of times a specific merch has been transported, for every merch item"""
+def count_merch(merch_type: list[list[str]]):
+    """computes the number of times a specific merch has been transported, for every merch item.
 
-    occ = {}
-    for item in extract_merchandise(var):
-        for merch in item:
-            occ[merch] = occ.get(merch, 0) + 1
-
-    return occ
+    Pass as parameters result of the function extract_merchandise_type"""
+    res = [item for itemset in merch_type for item in itemset]
+    return collections.Counter(res)
 
 
-def mean_quantities(var):
+def mean_quantities(trips: list[Trip]):
     """returns the mean quantities of merch that the driver transports in a trip"""
 
-    res = [sum(list(item.values())) for item in extract_merchandise(var)]
+    res = [sum(list(item.values())) for item in extract_merchandise(trips)]
     return statistics.mean(res)
 
 
-def extract_merch_city(var):
-    """similar to extract_merch_type, but it returns a tuple containing merch type AND the city it was delivered to.
+"""def extract_merch_city(var):
+    similar to extract_merch_type, but it returns a tuple containing merch type AND the city it was delivered to.
 
-    Returns a list of lists of tuples"""
+    Returns a list of lists of tuples
     prov = [(item['to'], item["merchandise"]) for item in extract_trips(var)]
     res = []
     for element in prov:
         res.append([(element[0], item) for item in element[1].keys()])
 
-    return res
-
-
-"prove"
-#data = import_data('actual.json', 'N71YE')
-#print(extract_merch_city(data))
+    return res"""
