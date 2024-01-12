@@ -3,48 +3,76 @@
         "id": "s1",
         "route": [
             {
-                "from": "Sassari",
-                "to": "Crotone",
+                "from": "La Spezia",
+                "to": "Cuneo",
                 "merchandise": {
-                    "cpq": 9,
-                    "zrk": 4,
-                    "dxim": 11
+                    "fjl": 4,
+                    "imneaj": 19,
+                    "jrpql": 5,
+                    "fitoa": 18,
+                    "cjqh": 7,
+                    "tvaex": 7,
+                    "ebkuc": 1,
+                    "jtzd": 9,
+                    "gbppzvri": 4
                 }
             },
             {
-                "from": "Crotone",
+                "from": "Cuneo",
                 "to": "Sassari",
                 "merchandise": {
-                    "gkdohvybf": 16,
-                    "cpq": 3,
-                    "rjvl": 10
+                    "fjl": 9,
+                    "jrpql": 12,
+                    "fitoa": 4,
+                    "tvaex": 10,
+                    "ebkuc": 8,
+                    "kkqzjhw": 6,
+                    "pkkr": 8,
+                    "kcy": 2,
+                    "tgzkoody": 1
                 }
             },
             {
                 "from": "Sassari",
-                "to": "Vicenza",
+                "to": "La Spezia",
                 "merchandise": {
-                    "bpmghkws": 6,
-                    "rmjtrp": 7,
-                    "gkdohvybf": 7
+                    "jrpql": 8,
+                    "tvaex": 8,
+                    "ebkuc": 11,
+                    "jtzd": 6,
+                    "pkkr": 6,
+                    "rbdj": 16,
+                    "jwshtr": 11
                 }
             },
             {
-                "from": "Vicenza",
-                "to": "Verbano-Cusio-Ossola",
+                "from": "La Spezia",
+                "to": "Venezia",
                 "merchandise": {
-                    "cpq": 13,
-                    "zrk": 7,
-                    "dxim": 14
+                    "imneaj": 10,
+                    "cjqh": 6,
+                    "ebkuc": 11,
+                    "jtzd": 16,
+                    "ynxusag": 8,
+                    "kkqzjhw": 7,
+                    "pkkr": 19,
+                    "kcy": 11,
+                    "wakqiq": 2
                 }
             },
             {
-                "from": "Verbano-Cusio-Ossola",
-                "to": "Mantova",
+                "from": "Venezia",
+                "to": "Bergamo",
                 "merchandise": {
-                    "zzcsgm": 7,
-                    "bpmghkws": 1,
-                    "xupf": 8
+                    "fjl": 10,
+                    "imneaj": 7,
+                    "jrpql": 3,
+                    "fitoa": 13,
+                    "cjqh": 2,
+                    "tvaex": 9,
+                    "ebkuc": 17,
+                    "ynxusag": 15,
+                    "kkqzjhw": 5
                 }
             }
         ]
@@ -53,63 +81,73 @@
         "id": "s2",
         "route": [
             {
-                "from": "Matera",
-                "to": "Sassari",
+                "from": "Parma",
+                "to": "Cuneo",
                 "merchandise": {
-                    "khmgyn": 9,
-                    "obgtldr": 1,
-                    "dzbflki": 8,
-                    "zrk": 21,
-                    "gkdohvybf": 26
+                    "wakqiq": 3,
+                    "fjl": 9,
+                    "vfpas": 6,
+                    "tvaex": 5
                 }
             },
             {
-                "from": "Sassari",
-                "to": "Crotone",
+                "from": "Cuneo",
+                "to": "Caserta",
                 "merchandise": {
-                    "bpmghkws": 9,
-                    "rmjtrp": 2,
-                    "obgtldr": 5,
-                    "gkdohvybf": 8,
-                    "cpq": 6
+                    "fjl": 12,
+                    "rbdj": 13,
+                    "fitoa": 13,
+                    "ltvzrgl": 9,
+                    "ynxusag": 6,
+                    "jwshtr": 8
                 }
             },
             {
-                "from": "Crotone",
-                "to": "Trieste",
+                "from": "Caserta",
+                "to": "Reggio di Calabria",
                 "merchandise": {
-                    "rmjtrp": 16,
-                    "odvw": 17,
-                    "khmgyn": 3,
-                    "obgtldr": 1,
-                    "gkdohvybf": 1
+                    "wakqiq": 7,
+                    "fjl": 11,
+                    "tvaex": 2,
+                    "rbdj": 2,
+                    "ynxusag": 5,
+                    "kkqzjhw": 4
                 }
             },
             {
-                "from": "Trieste",
-                "to": "Novara",
+                "from": "Reggio di Calabria",
+                "to": "Vibo Valentia",
                 "merchandise": {
-                    "bpmghkws": 8,
-                    "rmjtrp": 10
+                    "ynxusag": 3,
+                    "jwshtr": 10,
+                    "pkkr": 12,
+                    "gbppzvri": 6,
+                    "cjqh": 4,
+                    "kcy": 14
                 }
             },
             {
-                "from": "Novara",
-                "to": "Enna",
+                "from": "Vibo Valentia",
+                "to": "Pistoia",
                 "merchandise": {
-                    "rmjtrp": 2,
-                    "kozumx": 5,
-                    "odvw": 8
+                    "tvaex": 3,
+                    "rbdj": 13,
+                    "ltvzrgl": 12,
+                    "ynxusag": 9,
+                    "jtzd": 16,
+                    "zggd": 9
                 }
             },
             {
-                "from": "Enna",
-                "to": "Matera",
+                "from": "Pistoia",
+                "to": "Campobasso",
                 "merchandise": {
-                    "rmjtrp": 8,
-                    "kozumx": 10,
-                    "khmgyn": 6,
-                    "omkaznrw": 6
+                    "vfpas": 4,
+                    "fitoa": 1,
+                    "ltvzrgl": 9,
+                    "ynxusag": 22,
+                    "jwshtr": 13,
+                    "zggd": 4
                 }
             }
         ]
@@ -118,70 +156,55 @@
         "id": "s3",
         "route": [
             {
-                "from": "Firenze",
-                "to": "Enna",
+                "from": "Udine",
+                "to": "Massa-Carrara",
                 "merchandise": {
-                    "yduzyaoi": 2,
-                    "knoldl": 9,
-                    "khmgyn": 2,
-                    "obgtldr": 12,
-                    "rjvl": 3
+                    "ltvzrgl": 2
                 }
             },
             {
-                "from": "Enna",
-                "to": "Gorizia",
-                "merchandise": {}
-            },
-            {
-                "from": "Gorizia",
-                "to": "Lecco",
+                "from": "Massa-Carrara",
+                "to": "Frosinone",
                 "merchandise": {
-                    "obgtldr": 3,
-                    "cpq": 4,
-                    "rmjtrp": 10,
-                    "omkaznrw": 12,
-                    "wsjapkciz": 4
+                    "ebkuc": 11,
+                    "cjqh": 9,
+                    "wakqiq": 11
                 }
             },
             {
-                "from": "Lecco",
-                "to": "Novara",
+                "from": "Frosinone",
+                "to": "Verbano-Cusio-Ossola",
                 "merchandise": {
-                    "khmgyn": 4,
-                    "obgtldr": 12,
-                    "rmjtrp": 19,
-                    "zzcsgm": 4
+                    "ebkuc": 2,
+                    "cjqh": 10,
+                    "gbppzvri": 1
                 }
             },
             {
-                "from": "Novara",
-                "to": "Messina",
+                "from": "Verbano-Cusio-Ossola",
+                "to": "Padova",
                 "merchandise": {
-                    "khmgyn": 10,
-                    "rjvl": 5,
-                    "zrk": 13,
-                    "dzbflki": 15,
-                    "cpq": 3
+                    "cjqh": 7,
+                    "fitoa": 15,
+                    "kcy": 11
                 }
             },
             {
-                "from": "Messina",
-                "to": "Chieti",
+                "from": "Padova",
+                "to": "Ascoli Piceno",
                 "merchandise": {
-                    "dzbflki": 6,
-                    "kozumx": 11
+                    "cjqh": 3,
+                    "wakqiq": 12,
+                    "vfpas": 3
                 }
             },
             {
-                "from": "Chieti",
-                "to": "Crotone",
+                "from": "Ascoli Piceno",
+                "to": "Cremona",
                 "merchandise": {
-                    "knoldl": 11,
-                    "khmgyn": 1,
-                    "rmjtrp": 7,
-                    "kozumx": 8,
-                    "debykgzjo": 5
+                    "ebkuc": 9,
+                    "vfpas": 5,
+                    "kcy": 10
                 }
             }
         ]
@@ -190,97 +213,82 @@
         "id": "s4",
         "route": [
             {
-                "from": "Cagliari",
-                "to": "Pavia",
-                "merchandise": {
-                    "omkaznrw": 4,
-                    "bpmghkws": 4,
-                    "debykgzjo": 8,
-                    "lqp": 10,
-                    "odvw": 4,
-                    "kozumx": 6
-                }
-            },
-            {
-                "from": "Pavia",
-                "to": "Caserta",
-                "merchandise": {
-                    "debykgzjo": 11,
-                    "lqp": 1,
-                    "odvw": 8,
-                    "cpq": 9,
-                    "dzbflki": 14,
-                    "dxim": 13,
-                    "gkdohvybf": 12,
-                    "knoldl": 10
-                }
-            },
-            {
-                "from": "Caserta",
-                "to": "Vercelli",
-                "merchandise": {
-                    "omkaznrw": 14,
-                    "odvw": 6,
-                    "kozumx": 9,
-                    "cpq": 8,
-                    "dzbflki": 11,
-                    "dxim": 8,
-                    "knoldl": 2,
-                    "rjvl": 15
-                }
-            },
-            {
-                "from": "Vercelli",
-                "to": "Carbonia-Iglesias",
-                "merchandise": {
-                    "omkaznrw": 12,
-                    "bpmghkws": 3,
-                    "gkdohvybf": 6,
-                    "knoldl": 15,
-                    "xupf": 9,
-                    "wsjapkciz": 9,
-                    "yduzyaoi": 15,
-                    "obgtldr": 15
-                }
-            },
-            {
-                "from": "Carbonia-Iglesias",
+                "from": "Verona",
                 "to": "Bergamo",
                 "merchandise": {
-                    "omkaznrw": 11,
-                    "bpmghkws": 6,
-                    "debykgzjo": 16,
-                    "kozumx": 4,
-                    "dxim": 1,
-                    "gkdohvybf": 16,
-                    "knoldl": 7,
-                    "rjvl": 8
+                    "fjl": 9,
+                    "rbdj": 8,
+                    "jwshtr": 6,
+                    "tgzkoody": 12,
+                    "kcy": 12,
+                    "fitoa": 8,
+                    "pkkr": 11,
+                    "ebkuc": 12
                 }
             },
             {
                 "from": "Bergamo",
-                "to": "Avellino",
+                "to": "Palermo",
                 "merchandise": {
-                    "debykgzjo": 10,
-                    "kozumx": 4,
-                    "knoldl": 14,
-                    "xupf": 7,
-                    "wsjapkciz": 3,
-                    "khmgyn": 2
+                    "fjl": 9,
+                    "jtzd": 11,
+                    "jrpql": 3,
+                    "wakqiq": 12,
+                    "tvaex": 7,
+                    "vfpas": 1,
+                    "zggd": 11
                 }
             },
             {
-                "from": "Avellino",
-                "to": "Padova",
+                "from": "Palermo",
+                "to": "Cuneo",
                 "merchandise": {
-                    "bpmghkws": 7,
-                    "kozumx": 10,
-                    "cpq": 13,
-                    "dzbflki": 17,
-                    "gkdohvybf": 16,
-                    "knoldl": 12,
-                    "xupf": 17,
-                    "yduzyaoi": 9
+                    "fjl": 15,
+                    "tgzkoody": 6,
+                    "kcy": 11,
+                    "jtzd": 11,
+                    "wakqiq": 9,
+                    "tvaex": 8,
+                    "zggd": 17,
+                    "ltvzrgl": 17
+                }
+            },
+            {
+                "from": "Cuneo",
+                "to": "Sassari",
+                "merchandise": {
+                    "fjl": 18,
+                    "pkkr": 8,
+                    "tgzkoody": 10,
+                    "kcy": 16,
+                    "fitoa": 3,
+                    "jtzd": 10,
+                    "jrpql": 9,
+                    "tvaex": 11
+                }
+            },
+            {
+                "from": "Sassari",
+                "to": "Fermo",
+                "merchandise": {
+                    "jrpql": 16,
+                    "tvaex": 13,
+                    "vfpas": 11,
+                    "imneaj": 8
+                }
+            },
+            {
+                "from": "Fermo",
+                "to": "Bergamo",
+                "merchandise": {
+                    "fjl": 9,
+                    "rbdj": 8,
+                    "jwshtr": 6,
+                    "tgzkoody": 12,
+                    "kcy": 12,
+                    "fitoa": 8,
+                    "pkkr": 11,
+                    "ebkuc": 12
                 }
             }
         ]
@@ -289,63 +297,48 @@
         "id": "s5",
         "route": [
             {
-                "from": "Ravenna",
-                "to": "Messina",
+                "from": "Rovigo",
+                "to": "Siracusa",
                 "merchandise": {
-                    "gkdohvybf": 13,
-                    "rmjtrp": 11,
-                    "debykgzjo": 2,
-                    "rjvl": 14,
-                    "odvw": 12,
-                    "dzbflki": 7
+                    "imneaj": 9,
+                    "ltvzrgl": 20,
+                    "jrpql": 4
                 }
             },
             {
-                "from": "Messina",
-                "to": "Novara",
+                "from": "Siracusa",
+                "to": "Belluno",
                 "merchandise": {
-                    "gkdohvybf": 16,
-                    "debykgzjo": 19,
-                    "rjvl": 10,
-                    "odvw": 11,
-                    "dzbflki": 1,
-                    "wsjapkciz": 5
+                    "jrpql": 6,
+                    "tvaex": 1,
+                    "kkqzjhw": 3
                 }
             },
             {
-                "from": "Novara",
-                "to": "Bergamo",
+                "from": "Belluno",
+                "to": "Siena",
                 "merchandise": {
-                    "odvw": 12,
-                    "wsjapkciz": 9,
-                    "kozumx": 2,
-                    "obgtldr": 11,
-                    "zrk": 16,
-                    "bpmghkws": 2
+                    "ltvzrgl": 9,
+                    "cjqh": 9,
+                    "gbppzvri": 6
                 }
             },
             {
-                "from": "Bergamo",
-                "to": "Catanzaro",
+                "from": "Siena",
+                "to": "Bolzano/Bozen",
                 "merchandise": {
-                    "gkdohvybf": 12,
-                    "rmjtrp": 4,
-                    "debykgzjo": 9,
-                    "knoldl": 6,
-                    "obgtldr": 11,
-                    "zrk": 1
+                    "ltvzrgl": 8,
+                    "vfpas": 10,
+                    "rbdj": 8
                 }
             },
             {
-                "from": "Catanzaro",
-                "to": "Roma",
+                "from": "Bolzano/Bozen",
+                "to": "Verbano-Cusio-Ossola",
                 "merchandise": {
-                    "gkdohvybf": 3,
-                    "rmjtrp": 13,
-                    "rjvl": 23,
-                    "dzbflki": 3,
-                    "wsjapkciz": 5,
-                    "yduzyaoi": 5
+                    "vfpas": 12,
+                    "fitoa": 4,
+                    "jwshtr": 3
                 }
             }
         ]
@@ -354,75 +347,54 @@
         "id": "s6",
         "route": [
             {
-                "from": "Lecco",
-                "to": "Caserta",
+                "from": "Sassari",
+                "to": "Reggio di Calabria",
                 "merchandise": {
-                    "cpq": 9,
-                    "dzbflki": 14,
-                    "dxim": 13,
-                    "gkdohvybf": 12,
-                    "odvw": 8,
-                    "knoldl": 10
+                    "ynxusag": 16,
+                    "zggd": 5,
+                    "wakqiq": 15,
+                    "rbdj": 13,
+                    "gbppzvri": 9
                 }
             },
             {
-                "from": "Caserta",
-                "to": "Matera",
+                "from": "Reggio di Calabria",
+                "to": "Asti",
                 "merchandise": {
-                    "cpq": 8,
-                    "dzbflki": 11,
-                    "dxim": 8,
-                    "odvw": 6,
-                    "knoldl": 2,
-                    "rjvl": 15
+                    "fitoa": 8
                 }
             },
             {
-                "from": "Matera",
-                "to": "Carbonia-Iglesias",
+                "from": "Asti",
+                "to": "Firenze",
                 "merchandise": {
-                    "gkdohvybf": 6,
-                    "knoldl": 15,
-                    "xupf": 9,
-                    "wsjapkciz": 9,
-                    "omkaznrw": 12,
-                    "yduzyaoi": 15
+                    "zggd": 7,
+                    "gbppzvri": 5,
+                    "kkqzjhw": 8,
+                    "fjl": 10,
+                    "fitoa": 12
                 }
             },
             {
-                "from": "Carbonia-Iglesias",
-                "to": "Bergamo",
+                "from": "Firenze",
+                "to": "Pistoia",
                 "merchandise": {
-                    "dxim": 1,
-                    "gkdohvybf": 16,
-                    "knoldl": 7,
-                    "debykgzjo": 16,
-                    "rjvl": 8,
-                    "xupf": 18
+                    "ynxusag": 11,
+                    "ltvzrgl": 8,
+                    "jrpql": 18,
+                    "pkkr": 15,
+                    "kcy": 13
                 }
             },
             {
-                "from": "Bergamo",
-                "to": "Avellino",
+                "from": "Pistoia",
+                "to": "Rovigo",
                 "merchandise": {
-                    "knoldl": 14,
-                    "debykgzjo": 10,
-                    "xupf": 7,
-                    "kozumx": 4,
-                    "wsjapkciz": 3,
-                    "khmgyn": 2
-                }
-            },
-            {
-                "from": "Avellino",
-                "to": "Padova",
-                "merchandise": {
-                    "cpq": 13,
-                    "dzbflki": 17,
-                    "gkdohvybf": 16,
-                    "knoldl": 12,
-                    "xupf": 17,
-                    "kozumx": 10
+                    "wakqiq": 9,
+                    "gbppzvri": 3,
+                    "kkqzjhw": 3,
+                    "fjl": 11,
+                    "tvaex": 12
                 }
             }
         ]
@@ -431,81 +403,43 @@
         "id": "s7",
         "route": [
             {
-                "from": "Gorizia",
-                "to": "Reggio di Calabria",
+                "from": "Novara",
+                "to": "Asti",
                 "merchandise": {
-                    "cpq": 6,
-                    "dxim": 6,
-                    "gkdohvybf": 12,
-                    "khmgyn": 2,
-                    "zzcsgm": 12,
-                    "dzbflki": 12
+                    "ebkuc": 3,
+                    "ltvzrgl": 5,
+                    "vfpas": 16,
+                    "fjl": 11
                 }
             },
             {
-                "from": "Reggio di Calabria",
-                "to": "Catania",
+                "from": "Asti",
+                "to": "Perugia",
                 "merchandise": {
-                    "dxim": 5,
-                    "khmgyn": 4,
-                    "zzcsgm": 7,
-                    "dzbflki": 14,
-                    "rjvl": 6,
-                    "rmjtrp": 6
+                    "jtzd": 6,
+                    "wakqiq": 4,
+                    "cjqh": 2,
+                    "tvaex": 2
                 }
             },
             {
-                "from": "Catania",
-                "to": "Imperia",
+                "from": "Perugia",
+                "to": "Vibo Valentia",
                 "merchandise": {
-                    "cpq": 12,
-                    "dxim": 1,
-                    "bpmghkws": 13,
-                    "omkaznrw": 1,
-                    "xupf": 4
+                    "ebkuc": 3,
+                    "ltvzrgl": 1,
+                    "vfpas": 1,
+                    "fjl": 16
                 }
             },
             {
-                "from": "Imperia",
-                "to": "Roma",
+                "from": "Vibo Valentia",
+                "to": "Teramo",
                 "merchandise": {
-                    "dxim": 7,
-                    "gkdohvybf": 2,
-                    "rjvl": 9,
-                    "kozumx": 1,
-                    "rmjtrp": 4,
-                    "bpmghkws": 5
-                }
-            },
-            {
-                "from": "Roma",
-                "to": "Padova",
-                "merchandise": {
-                    "cpq": 11,
-                    "dxim": 5,
-                    "khmgyn": 1,
-                    "zzcsgm": 7,
-                    "dzbflki": 8,
-                    "lqp": 9
-                }
-            },
-            {
-                "from": "Padova",
-                "to": "Catanzaro",
-                "merchandise": {
-                    "omkaznrw": 13
-                }
-            },
-            {
-                "from": "Catanzaro",
-                "to": "Mantova",
-                "merchandise": {
-                    "dxim": 6,
-                    "dzbflki": 4,
-                    "kozumx": 5,
-                    "rmjtrp": 1,
-                    "omkaznrw": 12,
-                    "obgtldr": 6
+                    "ebkuc": 6,
+                    "ltvzrgl": 5,
+                    "vfpas": 25,
+                    "jwshtr": 8
                 }
             }
         ]
@@ -514,71 +448,52 @@
         "id": "s8",
         "route": [
             {
-                "from": "Agrigento",
-                "to": "Enna",
+                "from": "Gorizia",
+                "to": "Bergamo",
                 "merchandise": {
-                    "kozumx": 9,
-                    "cpq": 2
+                    "kcy": 11,
+                    "jwshtr": 8,
+                    "fitoa": 8,
+                    "fjl": 8,
+                    "rbdj": 11
                 }
             },
             {
-                "from": "Enna",
-                "to": "Carbonia-Iglesias",
-                "merchandise": {
-                    "kozumx": 2,
-                    "lqp": 4,
-                    "rmjtrp": 11,
-                    "yduzyaoi": 17,
-                    "dzbflki": 10,
-                    "bpmghkws": 17,
-                    "gkdohvybf": 7
-                }
-            },
-            {
-                "from": "Carbonia-Iglesias",
-                "to": "Catania",
-                "merchandise": {
-                    "kozumx": 7,
-                    "lqp": 1,
-                    "dzbflki": 2,
-                    "bpmghkws": 7,
-                    "gkdohvybf": 1,
-                    "wsjapkciz": 2,
-                    "zrk": 7,
-                    "khmgyn": 11,
-                    "obgtldr": 7
-                }
-            },
-            {
-                "from": "Catania",
+                "from": "Bergamo",
                 "to": "Caserta",
                 "merchandise": {
-                    "wsjapkciz": 4,
-                    "dxim": 10,
-                    "rjvl": 2
+                    "jwshtr": 8,
+                    "wakqiq": 5,
+                    "gbppzvri": 1,
+                    "fitoa": 14,
+                    "kkqzjhw": 7
                 }
             },
             {
                 "from": "Caserta",
-                "to": "Asti",
+                "to": "Parma",
                 "merchandise": {
-                    "gkdohvybf": 6,
-                    "omkaznrw": 4,
-                    "debykgzjo": 1,
-                    "knoldl": 6,
-                    "zzcsgm": 6
+                    "vfpas": 11,
+                    "imneaj": 8,
+                    "jrpql": 16,
+                    "tvaex": 13
                 }
             },
             {
-                "from": "Asti",
-                "to": "Pordenone",
+                "from": "Parma",
+                "to": "Pistoia",
                 "merchandise": {
-                    "kozumx": 11,
-                    "cpq": 4,
-                    "bpmghkws": 4,
-                    "khmgyn": 4,
-                    "omkaznrw": 10
+                    "jwshtr": 20,
+                    "ltvzrgl": 3,
+                    "kkqzjhw": 7,
+                    "imneaj": 12,
+                    "fjl": 5
                 }
+            },
+            {
+                "from": "Pistoia",
+                "to": "Ascoli Piceno",
+                "merchandise": {}
             }
         ]
     },
@@ -586,56 +501,52 @@
         "id": "s9",
         "route": [
             {
-                "from": "Carbonia-Iglesias",
-                "to": "Vicenza",
+                "from": "Reggio di Calabria",
+                "to": "Cuneo",
                 "merchandise": {
-                    "gkdohvybf": 14,
-                    "rmjtrp": 3,
-                    "debykgzjo": 14,
-                    "xupf": 8,
-                    "zrk": 21
+                    "ynxusag": 6,
+                    "gbppzvri": 10,
+                    "ebkuc": 15,
+                    "zggd": 8,
+                    "jrpql": 7
                 }
             },
             {
-                "from": "Vicenza",
-                "to": "Bolzano/Bozen",
+                "from": "Cuneo",
+                "to": "Alessandria",
                 "merchandise": {
-                    "cpq": 9,
-                    "odvw": 10,
-                    "bpmghkws": 15
+                    "zggd": 2,
+                    "jwshtr": 11,
+                    "pkkr": 6,
+                    "imneaj": 5,
+                    "rbdj": 9
                 }
             },
             {
-                "from": "Bolzano/Bozen",
-                "to": "Caserta",
+                "from": "Alessandria",
+                "to": "Bergamo",
+                "merchandise": {}
+            },
+            {
+                "from": "Bergamo",
+                "to": "Venezia",
                 "merchandise": {
-                    "dzbflki": 8,
-                    "dxim": 6,
-                    "kozumx": 11,
-                    "xupf": 4,
-                    "rjvl": 8
+                    "gbppzvri": 15,
+                    "kkqzjhw": 8,
+                    "kcy": 7,
+                    "tgzkoody": 6,
+                    "fitoa": 2
                 }
             },
             {
-                "from": "Caserta",
-                "to": "Crotone",
+                "from": "Venezia",
+                "to": "Vibo Valentia",
                 "merchandise": {
-                    "dxim": 5,
-                    "yduzyaoi": 7,
-                    "rjvl": 1,
-                    "rmjtrp": 7,
-                    "debykgzjo": 5
-                }
-            },
-            {
-                "from": "Crotone",
-                "to": "Novara",
-                "merchandise": {
-                    "rmjtrp": 12,
-                    "omkaznrw": 8,
-                    "gkdohvybf": 13,
-                    "lqp": 5,
-                    "obgtldr": 13
+                    "ebkuc": 17,
+                    "ltvzrgl": 14,
+                    "vfpas": 12,
+                    "pkkr": 7,
+                    "tgzkoody": 11
                 }
             }
         ]
@@ -644,61 +555,48 @@
         "id": "s10",
         "route": [
             {
-                "from": "Catanzaro",
-                "to": "Roma",
+                "from": "Reggio di Calabria",
+                "to": "Cuneo",
                 "merchandise": {
-                    "lqp": 4,
-                    "rmjtrp": 11,
-                    "yduzyaoi": 17,
-                    "dzbflki": 10,
-                    "kozumx": 2,
-                    "bpmghkws": 17,
-                    "gkdohvybf": 7
+                    "ynxusag": 6,
+                    "gbppzvri": 10,
+                    "ebkuc": 15,
+                    "zggd": 8
                 }
             },
             {
-                "from": "Roma",
-                "to": "Catania",
+                "from": "Cuneo",
+                "to": "Bari",
                 "merchandise": {
-                    "lqp": 1,
-                    "dzbflki": 2,
-                    "kozumx": 7,
-                    "bpmghkws": 7,
-                    "gkdohvybf": 1,
-                    "wsjapkciz": 2,
-                    "zrk": 7,
-                    "khmgyn": 11
+                    "zggd": 1,
+                    "jwshtr": 10,
+                    "pkkr": 6,
+                    "imneaj": 5
                 }
             },
             {
-                "from": "Catania",
-                "to": "Caserta",
+                "from": "Bari",
+                "to": "Bergamo",
+                "merchandise": {}
+            },
+            {
+                "from": "Bergamo",
+                "to": "La Spezia",
                 "merchandise": {
-                    "wsjapkciz": 4,
-                    "dxim": 10,
-                    "rjvl": 2
+                    "gbppzvri": 15,
+                    "kkqzjhw": 8,
+                    "kcy": 7,
+                    "tgzkoody": 6
                 }
             },
             {
-                "from": "Caserta",
-                "to": "Asti",
+                "from": "La Spezia",
+                "to": "Vibo Valentia",
                 "merchandise": {
-                    "gkdohvybf": 6,
-                    "omkaznrw": 4,
-                    "debykgzjo": 1,
-                    "knoldl": 6,
-                    "zzcsgm": 6
-                }
-            },
-            {
-                "from": "Asti",
-                "to": "Pordenone",
-                "merchandise": {
-                    "kozumx": 11,
-                    "bpmghkws": 4,
-                    "khmgyn": 4,
-                    "omkaznrw": 10,
-                    "cpq": 4
+                    "ebkuc": 17,
+                    "ltvzrgl": 14,
+                    "vfpas": 12,
+                    "pkkr": 7
                 }
             }
         ]
