@@ -15,7 +15,7 @@ from entities.coordinate_system import CoordinateSystem
 
 from pyspark.ml.clustering import KMeans, KMeansModel
 
-from utils.functions import get_matrix_path
+from utils.functions import get_coordinates_path
 
 
 # loading environment
@@ -74,7 +74,7 @@ def write_coordinates(actual_routes: list[ActualRoute], space: CoordinateSystem)
     header.extend(space.all_merch)
     header.extend(space.all_trip)
 
-    with open(get_matrix_path(), "w") as f:
+    with open(get_coordinates_path(), "w") as f:
         writer = csv.writer(f)
         writer.writerow(header)
         for ar in actual_routes:
@@ -104,7 +104,7 @@ def read_coordinates(spark):
 
     data = spark.read.option("header", True) \
         .option("inferSchema", True) \
-        .csv(get_matrix_path())
+        .csv(get_coordinates_path())
 
     input_cols = data.columns[1:]
     vec_assembler = VectorAssembler(inputCols = input_cols, outputCol = "features")
