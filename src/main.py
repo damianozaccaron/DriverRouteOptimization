@@ -67,10 +67,10 @@ def recommended_standard_route_generator(actual_routes: list[ActualRoute],
 
     spark.stop()
 
-def driver_preferences_generator():
+def driver_preferences_generator(actual_routes: list[ActualRoute]):
 
     # computing a dictionary with keys the names of the drivers and values list of ActualRoute
-    preferences_per_driver = get_drivers_preferences()
+    preferences_per_driver = get_drivers_preferences(actual_routes)
 
     # get similarity values for every driver for every standard route
     similarity_per_driver = get_similarity_per_driver(preferences_per_driver, standard_routes)
@@ -81,12 +81,12 @@ def driver_preferences_generator():
     json_writer(top_five_per_driver, get_second_output_path())
 
 start = int(round(time.time() * 1000))
-recommended_standard_route_generator(actual_routes=actual_routes, standard_routes=standard_routes)
+recommended_standard_route_generator(actual_routes, standard_routes)
 end = int(round(time.time() * 1000))
 print(f"\nfirst output in {end - start} milliseconds")
 
 start = int(round(time.time() * 1000))
-driver_preferences_generator()
+driver_preferences_generator(actual_routes)
 end = int(round(time.time() * 1000))
 print(f"\nsecond output in {end - start} milliseconds")
 

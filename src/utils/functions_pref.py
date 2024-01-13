@@ -1,20 +1,15 @@
 from collections import Counter
 import collections
-import json
 import statistics
-from utils.functions import get_ar_path  # list of actual routes
 from entities.actual_route import ActualRoute
 from entities.trip import Trip
 # import collections
 
 
-def get_actual_routes_per_driver():
-    with open(get_ar_path(), 'r') as json_file:
-        actual_route_data = json.load(json_file)
-
+def get_actual_routes_per_driver(actual_routes):
     routes_by_driver = {}
 
-    for route in actual_route_data:
+    for route in actual_routes:
         driver = ActualRoute(route).driver
         routes_by_driver.setdefault(driver, []).append(ActualRoute(route))
 

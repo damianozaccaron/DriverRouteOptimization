@@ -3,8 +3,8 @@ from entities.standard_route import StandardRoute
 from utils.functions_pref import get_actual_routes_per_driver
 
 
-def get_drivers_preferences() -> dict:
-    actual_routes_per_driver = get_actual_routes_per_driver()
+def get_drivers_preferences(actual_routes) -> dict:
+    actual_routes_per_driver = get_actual_routes_per_driver(actual_routes)
     preferences_per_driver = {}
     for driver_name in actual_routes_per_driver.keys():
         driver_data = actual_routes_per_driver[driver_name]
