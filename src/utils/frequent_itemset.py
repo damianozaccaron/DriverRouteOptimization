@@ -21,7 +21,7 @@ def second_hash_pair(n1, n2, n_buckets):
     return (hash((n1, n2))) % n_buckets
 
 
-def pcy_basket(basket: list, n_buckets: int, pairs_hashtable: dict, second_pairs_hashtable: dict, singletons: dict):
+def pcy_basket(basket: list, n_buckets: int, pairs_hashtable: dict, second_pairs_hashtable: dict, singletons: dict, comb):
     """Does the first pass of the PCY for a single basket, its only use is to modify its parent's dictionaries"""
 
     "count frequency of the items"
@@ -29,26 +29,26 @@ def pcy_basket(basket: list, n_buckets: int, pairs_hashtable: dict, second_pairs
         singletons[item] = singletons.get(item, 0) + 1
 
     "creates the couples with itertools (tuple) and adds them to a dictionary with the respective count"
-    for key in itertools.combinations(singletons, 2):
+    for key in itertools.combinations(singletons, comb):
         "Applying hash function"
         hash_value = hash_pair(key[0], key[1], n_buckets)
         "If the hash value is present we add to its count"
         pairs_hashtable[hash_value] = pairs_hashtable.get(hash_value, 0) + 1
 
-    for key in itertools.combinations(singletons, 2):
+    for key in itertools.combinations(singletons, comb):
         "Applying hash function"
         hash_value = second_hash_pair(key[0], key[1], n_buckets)
         "If the hash value is present we add to its count"
         second_pairs_hashtable[hash_value] = second_pairs_hashtable.get(hash_value, 0) + 1
 
 
-def run_pcy(baskets: list[list[str or tuple]], n_buckets, t_hold, start=time.time()):
+def run_pcy(baskets: list[list[str or tuple]], n_buckets: int, t_hold: float, start=time.time(), comb=2):
     singletons = {}
     pairs_count_hash = {}
     second_pairs_count_hash = {}
 
     for item in baskets:
-        pcy_basket(item, n_buckets, pairs_count_hash, second_pairs_count_hash, singletons)
+        pcy_basket(item, n_buckets, pairs_count_hash, second_pairs_count_hash, singletons, comb=comb)
 
         """if len(item) == 0:
             baskets.remove(item)
@@ -103,37 +103,12 @@ def run_pcy(baskets: list[list[str or tuple]], n_buckets, t_hold, start=time.tim
     for item in temp:
         del frequent_pairs[item]
 
+    if frequent_pairs:
+        # print(frequent_pairs)
+        pass
+
+
     "Timestamp"
     print('Generated frequent pairs in: ', time.time() - start, 'seconds')
 
     return frequent_pairs
-
-
-"prove"
-"import data for a specific driver"
-'''data = trips.import_data('actual.json', 'N71YE')
-
-num_buckets = 30  # look into this
-support_threshold = 0.2
-'''
-
-"""# frequent itemset cities
-x = run_pcy(trips.extract_destinations(data), n_buckets=num_buckets, t_hold=support_threshold, start=time.time())
-print(x)
-print('len: ', len(x))
-
-# frequent itemset trips, probably needs lower threshold than cities
-y = run_pcy(trips.extract_trips_path(data), n_buckets=num_buckets, t_hold=support_threshold, start=time.time())
-print(y)
-print('len: ', len(y))
-
-# frequent itemset merchandise, lower threshold
-z = run_pcy(merch.extract_merchandise_type(data), n_buckets=num_buckets, t_hold=support_threshold, start=time.time())
-print(z)
-print('len: ', len(z))"""
-'''
-# frequent itemset associating city - trip
-luciano = run_pcy(trips.extract_trips_path(data), n_buckets=200, t_hold=0.2, start=time.time())
-print(luciano)
-print('len: ', len(luciano))
-'''
