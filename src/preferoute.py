@@ -39,21 +39,24 @@ def preferoute_similarity(route: StandardRoute, prefe: Preferences, weights: lis
     den = sum(prefe.freq_trip[trip] for trip in prefe.freq_trip.keys())
     for trip in route.trip_without_merch():
         if trip in prefe.freq_trip.keys():
-            sim[3] += prefe.freq_trip[trip] / den
+            val = prefe.freq_trip[trip] / den
+            sim[3] += val
 
     # 5. city frequent itemset
     sim.insert(4, 0)
     den = sum(prefe.freq_itemset_city[key] for key in prefe.freq_itemset_city.keys())
     for city_combo in generate_2_tuples(route.extract_city()):
         if city_combo in prefe.freq_itemset_city.keys():
-            sim[4] += prefe.freq_itemset_city[city_combo]
+            val = prefe.freq_itemset_city[city_combo] / den
+            sim[4] += val
 
     # 6. trip frequent itemset
     sim.insert(5, 0)
     den = sum(prefe.freq_itemset_trip[key] for key in prefe.freq_itemset_trip.keys())
     for trip_combo in generate_2_tuples(route.trip_without_merch()):
         if trip_combo in prefe.freq_itemset_trip.keys():
-            sim[5] += prefe.freq_itemset_trip[trip_combo]
+            val = prefe.freq_itemset_trip[trip_combo] / den
+            sim[5] += val
 
     # 7. avg n trip
     sim.insert(6, max(1 - 2*(abs(len(route.route) - prefe.n_trip)/(len(route.route) + prefe.n_trip)), 0))
@@ -94,7 +97,6 @@ def preferoute_similarity(route: StandardRoute, prefe: Preferences, weights: lis
     for i in range(len(sim)):
         similarity += sim[i] * standardized_weights[i]
 
-    print(f"sr_id: {route.id}, similarity vector: {sim}")
     return similarity
 
 
