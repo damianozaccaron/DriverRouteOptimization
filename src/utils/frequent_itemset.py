@@ -1,5 +1,6 @@
 import time
 import itertools
+
 '''
 import merch 
 import trips
@@ -7,12 +8,13 @@ import trips
 # import trips
 
 '''
+
+
 def hash_pair(n1, n2, n_buckets):
     """Generates a basic hash function starting from string or tuple"""
-    
+
     # The hash function is the modulo of the sum of the total ASCII values of the parameters divided by the number of buckets
     return (hash((n1, n2)) * hash((n1[0], n2[0]))) % n_buckets
-
 
 
 def second_hash_pair(n1, n2, n_buckets):
@@ -21,7 +23,8 @@ def second_hash_pair(n1, n2, n_buckets):
     return (hash((n1, n2))) % n_buckets
 
 
-def pcy_basket(basket: list, n_buckets: int, pairs_hashtable: dict, second_pairs_hashtable: dict, singletons: dict, comb):
+def pcy_basket(basket: list, n_buckets: int, pairs_hashtable: dict, second_pairs_hashtable: dict, singletons: dict,
+               comb):
     """Does the first pass of the PCY for a single basket, its only use is to modify its parent's dictionaries"""
 
     "count frequency of the items"
@@ -82,7 +85,7 @@ def run_pcy(baskets: list[list[str or tuple]], n_buckets: int, t_hold: float, st
     "we only keep the pairs that have frequent singletons and belong to a frequent bucket"
     candidate_pairs = {}
     for i in range(0, len(frequent_singletons)):
-        for j in range(i+1, len(frequent_singletons)):
+        for j in range(i + 1, len(frequent_singletons)):
             "we find out if the pair belongs to a frequent bucket"
             hash_value = hash_pair(frequent_singletons[i], frequent_singletons[j], n_buckets)
             second_hash_value = second_hash_pair(frequent_singletons[i], frequent_singletons[j], n_buckets)
@@ -107,8 +110,7 @@ def run_pcy(baskets: list[list[str or tuple]], n_buckets: int, t_hold: float, st
         # print(frequent_pairs)
         pass
 
-
     "Timestamp"
-    print('Generated frequent pairs in: ', time.time() - start, 'seconds')
+    # print('Generated frequent pairs in: ', time.time() - start, 'seconds')
 
     return frequent_pairs
