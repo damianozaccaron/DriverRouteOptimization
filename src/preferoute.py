@@ -17,10 +17,10 @@ def preferoute_similarity(route: StandardRoute, prefe: Preferences, weights: lis
 
     # 1. city frequency
     sim.insert(0, 0)
-    route_len = len(route.extract_city())
+    den = sum(prefe.freq_city[city] for city in prefe.freq_city.keys())
     for city in route.extract_city():
         if city in prefe.freq_city.keys():
-            val = prefe.freq_city[city] / route_len
+            val = prefe.freq_city[city] / den
             sim[0] += val
 
     # 2. start frequency
