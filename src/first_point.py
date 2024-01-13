@@ -13,7 +13,7 @@ from entities.standard_route import StandardRoute
 from entities.actual_route import ActualRoute
 from entities.coordinate_system import CoordinateSystem
 
-from pyspark.ml.clustering import KMeans
+from pyspark.ml.clustering import KMeans, KMeansModel
 
 from utils.functions import get_matrix_path
 
@@ -43,7 +43,7 @@ def parameters_extraction(standard_routes: list[StandardRoute]) -> dict:
         merch_counter_prov = 0
         for trip in sr.route:
             merch_counter_prov += len(trip.merchandise.item)
-        merch_counter += merch_counter_prov / len(trip.city_from)
+            merch_counter += merch_counter_prov / len(trip.city_from)
     parameters["trips_per_route"] = round(trip_counter / len(standard_routes))
     parameters["merch_per_trip"] = round(merch_counter / len(standard_routes))
     return parameters
@@ -114,7 +114,7 @@ def read_coordinates(spark):
     return(final_data)
 
 
-def create_clusters(actual_routes:list[ActualRoute], n_standard_route: int, space: CoordinateSystem, spark) -> KMeans:
+def create_clusters(actual_routes:list[ActualRoute], n_standard_route: int, space: CoordinateSystem, spark) -> KMeansModel:
 
     write_coordinates(actual_routes = actual_routes, space = space)
 
@@ -129,7 +129,7 @@ def create_clusters(actual_routes:list[ActualRoute], n_standard_route: int, spac
     return model
 
 
-def build_centers(model: KMeans, space: CoordinateSystem) -> list:
+def build_centers(model: KMeansModel, space: CoordinateSystem) -> list:
 
     cluster_centers = []
     centers = model.clusterCenters()
@@ -225,7 +225,7 @@ def normalize_cluster_centers(cluster_centers: list, actual_routes: list[ActualR
     return normalized_centers
 
 
-def build_result(normalized_centers: list, actual_routes: list[ActualRoute], model: KMeans, spark) -> None:
+def build_result(normalized_centers: list, actual_routes: list[ActualRoute], model: KMeansModel, spark):
     from pyspark.sql.functions import col
 
     rec_routes = []

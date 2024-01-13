@@ -83,7 +83,10 @@ def get_matrix_path() -> str:
     return "src/data/{run_id}/matrix.csv".format(run_id = run_id)
 
 def get_first_output_path() -> str:
-    return "src/data/{run_id}/recStandard.json".format(run_id = run_id)
+    return "src/output/{run_id}/recStandard.json".format(run_id = run_id)
+
+def get_second_output_path() -> str:
+    return "src/output/{run_id}/driver.json".format(run_id = run_id)
 
 
 
