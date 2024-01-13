@@ -1,9 +1,11 @@
+from collections import Counter
+import collections
 import json
 import statistics
 from utils.functions import get_ar_path  # list of actual routes
 from entities.actual_route import ActualRoute
 from entities.trip import Trip
-import collections
+# import collections
 
 
 def get_actual_routes_per_driver():

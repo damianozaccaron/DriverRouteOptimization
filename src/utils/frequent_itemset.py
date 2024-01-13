@@ -109,6 +109,6 @@ def run_pcy(baskets: list[list[str or tuple]], n_buckets: int, t_hold: float, st
 
 
     "Timestamp"
-    print('Generated frequent pairs in: ', time.time() - start, 'seconds')
+    # print('Generated frequent pairs in: ', time.time() - start, 'seconds')
 
     return frequent_pairs
