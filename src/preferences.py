@@ -1,3 +1,4 @@
+import collections
 import time
 import utils.frequent_itemset as frequent_itemset
 import utils.functions_pref as d
@@ -30,20 +31,35 @@ class Preferences:
         # self.freq_itemset_per_city = freq_merch_per_trip  # dict(key = tuple(tuple), value = int)
 
     def update_pref(self):
-        self.freq_city = sorted(self.freq_city.items(), key=lambda item: item[1], reverse=True)[0:math.ceil(self.n_trip)]
-        self.freq_start = sorted(self.freq_start.items(), key=lambda item: item[1], reverse=True)[0:math.ceil(self.n_trip)]
-        self.freq_finish = sorted(self.freq_finish.items(), key=lambda item: item[1], reverse=True)[0:math.ceil(self.n_trip)]
-        self.freq_trip = sorted(self.freq_trip.items(), key=lambda item: item[1], reverse=True)[0:math.ceil(self.n_trip)]
-        self.freq_itemset_city = sorted(self.freq_itemset_city.items(), key=lambda item: item[1],
+        freq_city = sorted(self.freq_city.items(), key=lambda item: item[1], reverse=True)[0:math.ceil(self.n_trip)]
+        freq_start = sorted(self.freq_start.items(), key=lambda item: item[1], reverse=True)[0:math.ceil(self.n_trip)]
+        freq_finish = sorted(self.freq_finish.items(), key=lambda item: item[1], reverse=True)[0:math.ceil(self.n_trip)]
+        freq_trip = sorted(self.freq_trip.items(), key=lambda item: item[1], reverse=True)[0:math.ceil(self.n_trip)]
+        freq_itemset_city = sorted(self.freq_itemset_city.items(), key=lambda item: item[1],
                                         reverse=True)[0:math.ceil(self.n_trip)]
-        self.freq_itemset_trip = sorted(self.freq_itemset_trip.items(), key=lambda item: item[1],
+        freq_itemset_trip = sorted(self.freq_itemset_trip.items(), key=lambda item: item[1],
                                         reverse=True)[0:math.ceil(self.n_trip)]
-
-        self.n_merch = sorted(self.n_merch, key=lambda item: item[1], reverse=True)[0:math.ceil(self.type_merch_avg)]
-        self.freq_itemset_per_trip = sorted(self.freq_itemset_per_trip.items(), key=lambda item: item[1],
+        freq_itemset_per_trip = sorted(self.freq_itemset_per_trip.items(), key=lambda item: item[1],
                                             reverse=True)[0:math.ceil(self.type_merch_avg)]
-
+        print("before: ", self.n_merch)
+        self.n_merch = sorted(self.n_merch, key=lambda item: item[1], reverse=True)[0:math.ceil(self.type_merch_avg)]
+        print("after: ", self.n_merch)
+        self.freq_city = self.tuple_to_dict(freq_city)
+        self.freq_start = self.tuple_to_dict(freq_start)
+        self.freq_finish = self.tuple_to_dict(freq_finish)
+        self.freq_trip = self.tuple_to_dict(freq_trip)
+        self.freq_itemset_city = self.tuple_to_dict(freq_itemset_city)
+        self.freq_itemset_trip = self.tuple_to_dict(freq_itemset_trip)
+        self.freq_itemset_per_trip = self.tuple_to_dict(freq_itemset_per_trip)
+        
         return self
+    
+    def tuple_to_dict(self, data: list) -> dict:
+        return_obj = {}
+        for d in data:
+            return_obj[d[0]] = d[1]
+        return return_obj
+        
 
 
 

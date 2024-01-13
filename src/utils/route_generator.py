@@ -402,5 +402,3 @@ def data_generation():
 
     # write actual routes on a json file
     json_writer(actual_routes, get_ar_path())
-
-    return drivers

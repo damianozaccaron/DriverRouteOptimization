@@ -12,7 +12,7 @@ from preferences import Preferences
 global_start = int(round(time.time() * 1000))
 save_run_parameters()
 start = int(round(time.time() * 1000))
-drivers = data_generation()
+data_generation()
 end = int(round(time.time() * 1000))
 print(f"routes generated in {end - start} milliseconds\n")
 
@@ -20,12 +20,21 @@ standard_routes = get_standard_routes()
 actual_routes = get_actual_routes()
 
 # computing a dictionary with keys the names of the drivers and values list of ActualRoute
-actual_routes_dict = get_actual_routes_per_driver()
-data_driver = actual_routes_dict[extract_drivers(actual_routes_dict)[0]]
+actual_routes_per_driver = get_actual_routes_per_driver()
+preferences_per_driver = {}
+for driver_name in actual_routes_per_driver.keys():
+    driver_data = actual_routes_per_driver[driver_name]
+    preferences_per_driver[driver_name] = Preferences(driver_data, 0.05, 1000).update_pref()
 
-pref = Preferences(data_driver, 0.05, 1000).update_pref()
-print(pref.freq_itemset_trip)
+from preferoute import preferoute_similarity
+similarity_per_driver = {}
+for driver_name in preferences_per_driver.keys():
+    driver_preferences = preferences_per_driver[driver_name]
+    similarity_per_driver[driver_name] = {}
+    for sr in standard_routes:
+        similarity_per_driver[driver_name][sr.id] = preferoute_similarity(sr, driver_preferences)
 
+print(similarity_per_driver)
 
 # Function: first output generator
 
@@ -75,6 +84,6 @@ def recommended_standard_route_generator(actual_routes: list[ActualRoute],
     spark.stop()
 
 
-recommended_standard_route_generator(actual_routes=actual_routes, standard_routes=standard_routes)
+# recommended_standard_route_generator(actual_routes=actual_routes, standard_routes=standard_routes)
 global_end = int(round(time.time() * 1000))
 print(f"total time execution: {global_end - global_start} milliseconds\n")
