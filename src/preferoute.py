@@ -26,28 +26,31 @@ def preferoute_similarity(route: StandardRoute, prefe: Preferences, weights: lis
     # 2. start frequency
     sim.insert(1, 0)
     if route.extract_city()[0] in prefe.freq_start.keys():
-        sim[1] = prefe.freq_start[route.extract_city()[0]]
+        sim[1] = 1
         
 
     # 3. finish frequency
     sim.insert(2, 0)
     if route.extract_city()[-1] in prefe.freq_finish.keys():
-        sim[2] = prefe.freq_finish[route.extract_city()[-1]]
+        sim[2] = 1
 
     # 4. trip frequency
     sim.insert(3, 0)
+    den = sum(prefe.freq_trip[trip] for trip in prefe.freq_trip.keys())
     for trip in route.trip_without_merch():
         if trip in prefe.freq_trip.keys():
-            sim[3] += prefe.freq_trip[trip]
+            sim[3] += prefe.freq_trip[trip] / den
 
     # 5. city frequent itemset
     sim.insert(4, 0)
+    den = sum(prefe.freq_itemset_city[key] for key in prefe.freq_itemset_city.keys())
     for city_combo in generate_2_tuples(route.extract_city()):
         if city_combo in prefe.freq_itemset_city.keys():
             sim[4] += prefe.freq_itemset_city[city_combo]
 
     # 6. trip frequent itemset
     sim.insert(5, 0)
+    den = sum(prefe.freq_itemset_trip[key] for key in prefe.freq_itemset_trip.keys())
     for trip_combo in generate_2_tuples(route.trip_without_merch()):
         if trip_combo in prefe.freq_itemset_trip.keys():
             sim[5] += prefe.freq_itemset_trip[trip_combo]
