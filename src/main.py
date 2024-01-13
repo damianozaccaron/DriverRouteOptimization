@@ -1,12 +1,11 @@
 # imports
 import time
-from entities.actual_route import ActualRoute
 from entities.standard_route import StandardRoute
 from entities.actual_route import ActualRoute
 from utils.functions import get_actual_routes, save_run_parameters, get_standard_routes, json_writer
 from utils.route_generator import data_generation
-from utils.functions_pref import get_actual_routes_per_driver, extract_drivers, extract_destinations
-from preferences import Preferences
+from utils.functions_pref import get_actual_routes_per_driver, extract_drivers
+from entities.preferences import Preferences
 
 
 global_start = int(round(time.time() * 1000))
@@ -33,6 +32,9 @@ for driver_name in preferences_per_driver.keys():
     similarity_per_driver[driver_name] = {}
     for sr in standard_routes:
         similarity_per_driver[driver_name][sr.id] = preferoute_similarity(sr, driver_preferences)
+
+# pref = Preferences(data_driver, 0.1, 1000).update_pref()
+# print(pref.freq_itemset_trip)
 
 print(similarity_per_driver)
 

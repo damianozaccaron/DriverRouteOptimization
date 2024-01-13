@@ -2,7 +2,7 @@
 # FILE TEMPORANEO DOVE DEPOSITO LA FUNZIONE PER DAMIANO ZZ
 
 from entities.standard_route import StandardRoute
-from preferences import Preferences
+from src.entities.preferences import Preferences
 
 
 def preferoute_similarity(route: StandardRoute, prefe: Preferences, weights: list = [1]*10) -> float:

@@ -5,6 +5,7 @@ import utils.functions_pref as d
 import math
 from utils.functions_pref import extract_trips
 from entities.actual_route import ActualRoute
+from collections import Counter
 import os
 
 
@@ -12,7 +13,7 @@ class Preferences:
     """contains the preferences of each driver"""
 
     def __init__(self, data: list[ActualRoute], threshold: float, buckets: int):
-        self.freq_city = d.pass_through_city_count(extract_trips(data))  # dict(key = string, value = int), lista di città per cui è passato spesso
+        self.freq_city = d.total_city_counter(d.start_finish_count(data,0), d.pass_through_city_count(extract_trips(data))) # dict(key = string, value = int), lista di città per cui è passato spesso
         self.freq_start = d.start_finish_count(data, 0)  # dict(key = string, value = int), lista di città da cui è partito spesso
         self.freq_finish = d.start_finish_count(data)  # dict(key = string, value = int), lista di città in cui è arrivato spesso
         self.freq_trip = d.trip_count(extract_trips(data))  # dict(key = tuple, value = int), lista di trip effettuati spesso
@@ -31,26 +32,16 @@ class Preferences:
         # self.freq_itemset_per_city = freq_merch_per_trip  # dict(key = tuple(tuple), value = int)
 
     def update_pref(self):
-        freq_city = sorted(self.freq_city.items(), key=lambda item: item[1], reverse=True)[0:math.ceil(self.n_trip)]
-        freq_start = sorted(self.freq_start.items(), key=lambda item: item[1], reverse=True)[0:math.ceil(self.n_trip)]
-        freq_finish = sorted(self.freq_finish.items(), key=lambda item: item[1], reverse=True)[0:math.ceil(self.n_trip)]
-        freq_trip = sorted(self.freq_trip.items(), key=lambda item: item[1], reverse=True)[0:math.ceil(self.n_trip)]
-        freq_itemset_city = sorted(self.freq_itemset_city.items(), key=lambda item: item[1],
+        self.freq_city = self.freq_city.most_common(math.ceil(self.n_trip))
+        self.freq_start = self.freq_start.most_common(math.ceil(self.n_trip))
+        self.freq_finish = self.freq_finish.most_common(math.ceil(self.n_trip))
+        self.freq_trip = self.freq_trip.most_common(math.ceil(self.n_trip))
+        self.freq_itemset_city = sorted(self.freq_itemset_city.items(), key=lambda item: item[1],
                                         reverse=True)[0:math.ceil(self.n_trip)]
-        freq_itemset_trip = sorted(self.freq_itemset_trip.items(), key=lambda item: item[1],
-                                        reverse=True)[0:math.ceil(self.n_trip)]
-        freq_itemset_per_trip = sorted(self.freq_itemset_per_trip.items(), key=lambda item: item[1],
+
+        self.n_merch = self.n_merch.most_common(math.ceil(self.type_merch_avg))
+        self.freq_itemset_per_trip = sorted(self.freq_itemset_per_trip.items(), key=lambda item: item[1],
                                             reverse=True)[0:math.ceil(self.type_merch_avg)]
-        print("before: ", self.n_merch)
-        self.n_merch = sorted(self.n_merch, key=lambda item: item[1], reverse=True)[0:math.ceil(self.type_merch_avg)]
-        print("after: ", self.n_merch)
-        self.freq_city = self.tuple_to_dict(freq_city)
-        self.freq_start = self.tuple_to_dict(freq_start)
-        self.freq_finish = self.tuple_to_dict(freq_finish)
-        self.freq_trip = self.tuple_to_dict(freq_trip)
-        self.freq_itemset_city = self.tuple_to_dict(freq_itemset_city)
-        self.freq_itemset_trip = self.tuple_to_dict(freq_itemset_trip)
-        self.freq_itemset_per_trip = self.tuple_to_dict(freq_itemset_per_trip)
         
         return self
     
