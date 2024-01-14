@@ -55,7 +55,7 @@ def save_run_parameters():
         "ROUTES_PER_DRIVER": routes_per_driver
     }
 
-    json_writer(run_params, "src/data/{run_id}/run_params.json".format(run_id = run_id))
+    json_writer(run_params, "src/data/run_params{run_id}.json".format(run_id = run_id))
 
 def get_standard_routes() -> list[StandardRoute]:
     with open(get_sr_path(), 'r') as json_file:
@@ -68,25 +68,25 @@ def get_actual_routes() -> list[ActualRoute]:
     return [ActualRoute(route_data_item) for route_data_item in actual_route_data]
 
 def get_sr_path() -> str:
-    return "src/data/{run_id}/standard.json".format(run_id = run_id)
+    return "data/standard{run_id}.json".format(run_id = run_id)
 
 def get_ar_path() -> str:
-    return "src/data/{run_id}/actual.json".format(run_id = run_id)
+    return "data/actual{run_id}.json".format(run_id = run_id)
 
 def get_centers_path() -> str:
-    return "src/data/{run_id}/cluster_centers.json".format(run_id = run_id)
+    return "src/data/cluster_centers{run_id}.json".format(run_id = run_id)
 
 def get_norm_centers_path() -> str:
-    return "src/data/{run_id}/normalized_centers.json".format(run_id = run_id)
+    return "src/data/normalized_centers{run_id}.json".format(run_id = run_id)
 
-def get_matrix_path() -> str:
-    return "src/data/{run_id}/matrix.csv".format(run_id = run_id)
+def get_coordinates_path() -> str:
+    return "src/data/coordinates{run_id}.csv".format(run_id = run_id)
 
 def get_first_output_path() -> str:
-    return "src/output/{run_id}/recStandard.json".format(run_id = run_id)
+    return "output/recStandard{run_id}.json".format(run_id = run_id)
 
 def get_second_output_path() -> str:
-    return "src/output/{run_id}/driver.json".format(run_id = run_id)
+    return "output/driver{run_id}.json".format(run_id = run_id)
 
 
 
