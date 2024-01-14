@@ -264,7 +264,7 @@ def generate_trips(trips: list[tuple], pref: Preferences) -> dict:
     return result
 
 
-actual_routes_dict = get_actual_routes_per_driver(get_actual_routes())
+"""actual_routes_dict = get_actual_routes_per_driver(get_actual_routes())
 
 result_def = []
 for driver in extract_drivers(actual_routes_dict):
@@ -273,4 +273,4 @@ for driver in extract_drivers(actual_routes_dict):
 
 print(len(extract_drivers(actual_routes_dict)))
 
-json_writer(result_def, get_third_output_path())
+json_writer(result_def, get_third_output_path())"""

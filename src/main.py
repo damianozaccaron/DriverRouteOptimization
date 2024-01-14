@@ -6,9 +6,8 @@ from second_point import get_drivers_preferences, get_similarity_per_driver, get
 from utils.functions import (get_actual_routes, get_first_output_path, get_second_output_path, get_third_output_path,
                              save_run_parameters, get_standard_routes, json_writer)
 from utils.route_generator import data_generation
-from utils.functions_pref import get_actual_routes_per_driver, extract_drivers
 from entities.preferences import Preferences
-# from third_point import generate_trips, generate_path
+from third_point import generate_trips, generate_path
 
 
 global_start = int(round(time.time() * 1000))
@@ -18,9 +17,19 @@ data_generation()
 end = int(round(time.time() * 1000))
 print(f"routes generated in {end - start} milliseconds\n")
 
+
+start = int(round(time.time() * 1000))
 standard_routes = get_standard_routes()
 actual_routes = get_actual_routes()
+end = int(round(time.time() * 1000))
+print(f"data fetched in {end - start} milliseconds\n")
 
+
+start = int(round(time.time() * 1000))
+# computing a dictionary with keys the names of the drivers and values list of ActualRoute
+preferences_per_driver = get_drivers_preferences(actual_routes)
+end = int(round(time.time() * 1000))
+print(f"preferences generated in {end - start} milliseconds\n")
 
 # Function: first output generator
 
@@ -70,13 +79,10 @@ def recommended_standard_route_generator(actual_routes: list[ActualRoute],
     spark.stop()
 
 
-def driver_preferences_generator(actual_routes: list[ActualRoute]):
-
-    # computing a dictionary with keys the names of the drivers and values list of ActualRoute
-    preferences_per_driver = get_drivers_preferences(actual_routes)
+def driver_preferences_generator(pref_dict: dict[str, Preferences]):
 
     # get similarity values for every driver for every standard route
-    similarity_per_driver = get_similarity_per_driver(preferences_per_driver, standard_routes)
+    similarity_per_driver = get_similarity_per_driver(pref_dict, standard_routes)
 
     # for each driver sort similarity and write results
     top_five_per_driver = get_top_five_per_driver(similarity_per_driver)
@@ -84,18 +90,13 @@ def driver_preferences_generator(actual_routes: list[ActualRoute]):
     json_writer(top_five_per_driver, get_second_output_path())
 
 
-"""def driver_ideal_route():
-
-    actual_routes_dict = get_actual_routes_per_driver(get_actual_routes())
-
+def driver_ideal_route(pref_dict: dict[str, Preferences]):
     result = []
-    for driver in extract_drivers(actual_routes_dict):
 
-        pref = Preferences(actual_routes_dict[driver], 0.05, 1000)
+    for driver in pref_dict:
+        result.append(generate_trips(generate_path(pref_dict[driver]), pref_dict[driver]))
 
-        result.append(generate_trips(generate_path(pref), pref))
-
-    json_writer(result, get_third_output_path())"""
+    json_writer(result, get_third_output_path())
 
 
 start = int(round(time.time() * 1000))
@@ -104,12 +105,12 @@ end = int(round(time.time() * 1000))
 print(f"\nfirst output in {end - start} milliseconds")
 
 start = int(round(time.time() * 1000))
-driver_preferences_generator(actual_routes)
+driver_preferences_generator(preferences_per_driver)
 end = int(round(time.time() * 1000))
 print(f"\nsecond output in {end - start} milliseconds")
 
 start = int(round(time.time() * 1000))
-driver_ideal_route()
+driver_ideal_route(preferences_per_driver)
 end = int(round(time.time() * 1000))
 print(f"\nthird output in {end - start} milliseconds")
 

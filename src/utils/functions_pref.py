@@ -3,12 +3,18 @@ import statistics
 from entities.actual_route import ActualRoute
 from entities.trip import Trip
 
-def get_actual_routes_per_driver(actual_routes: list[ActualRoute]) -> dict[str, list[ActualRoute]]:
+
+def get_actual_routes_per_driver(actual_routes: list[ActualRoute], driver: str = "") -> dict[str, list[ActualRoute]]:
     routes_by_driver = {}
 
-    for route in actual_routes:
-        driver = route.driver
-        routes_by_driver.setdefault(driver, []).append(route)
+    if driver == "":
+        for route in actual_routes:
+            driver = route.driver
+            routes_by_driver.setdefault(driver, []).append(route)
+
+    else:
+        for route in actual_routes:
+            routes_by_driver.setdefault(driver, []).append(route)
 
     return routes_by_driver
 

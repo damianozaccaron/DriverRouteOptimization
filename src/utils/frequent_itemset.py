@@ -47,11 +47,9 @@ def pcy_basket(basket: list, n_buckets: int, pairs_hashtable: dict, second_pairs
 
 def run_pcy(baskets: list[list[str or tuple]], n_buckets: int, t_hold: float, start=time.time(), comb=2):
     frequent_pairs = {}
-    count = 1
 
     while not frequent_pairs:
 
-        print(t_hold, ' - ', count)
         singletons = {}
         pairs_count_hash = {}
         second_pairs_count_hash = {}
@@ -119,6 +117,5 @@ def run_pcy(baskets: list[list[str or tuple]], n_buckets: int, t_hold: float, st
         # print('Generated frequent pairs in: ', time.time() - start, 'seconds')
 
         t_hold = t_hold * 1/2
-        count += 1
 
     return frequent_pairs

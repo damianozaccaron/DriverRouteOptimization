@@ -24,6 +24,7 @@ drivers_count = int(os.environ.get("DRIVERS_COUNT", 10))
 # number of routes for each driver
 routes_per_driver = int(os.environ.get("ROUTES_PER_DRIVER", 15))
 
+
 def json_writer(objects, file_path: str):
     """
     Writes a list of objects to a JSON file.

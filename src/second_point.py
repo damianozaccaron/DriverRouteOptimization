@@ -4,12 +4,20 @@ from entities.standard_route import StandardRoute
 from utils.functions_pref import get_actual_routes_per_driver
 
 
-def get_drivers_preferences(actual_routes: list[ActualRoute]) -> dict[str, Preferences]:
-    actual_routes_per_driver = get_actual_routes_per_driver(actual_routes)
+def get_drivers_preferences(actual_routes: list[ActualRoute], driver: str = "") -> dict[str, Preferences]:
     preferences_per_driver = {}
-    for driver_name in actual_routes_per_driver.keys():
-        driver_data = actual_routes_per_driver[driver_name]
-        preferences_per_driver[driver_name] = Preferences(driver_data, 0.05, 1000)
+
+    if driver == "":
+        actual_routes_per_driver = get_actual_routes_per_driver(actual_routes)
+        for driver_name in actual_routes_per_driver.keys():
+            driver_data = actual_routes_per_driver[driver_name]
+            preferences_per_driver[driver_name] = Preferences(driver_data, 0.05, 1000)
+
+    else:
+        actual_routes_per_driver = get_actual_routes_per_driver(actual_routes, driver)
+        for driver_name in actual_routes_per_driver.keys():
+            driver_data = actual_routes_per_driver[driver_name]
+            preferences_per_driver[driver_name] = Preferences(driver_data, 0.05, 1000)
 
     return preferences_per_driver
 
