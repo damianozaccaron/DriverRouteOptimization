@@ -13,7 +13,7 @@ class Preferences:
     """contains the preferences of each driver"""
 
     def __init__(self, data: list[ActualRoute], threshold: float, buckets: int):
-        self.freq_city_total = d.total_city_counter(d.start_finish_count(data,0), d.pass_through_city_count(extract_trips(data))) # dict(key = string, value = int), lista di città per cui è passato spesso
+        self.freq_city_total = d.total_city_counter(d.start_finish_count(data, 0), d.pass_through_city_count(extract_trips(data))) # dict(key = string, value = int), lista di città per cui è passato spesso
         self.freq_start_total = d.start_finish_count(data, 0)  # dict(key = string, value = int), lista di città da cui è partito spesso
         self.freq_finish_total = d.start_finish_count(data)  # dict(key = string, value = int), lista di città in cui è arrivato spesso
         self.freq_trip_total = d.trip_count(extract_trips(data))  # dict(key = tuple, value = int), lista di trip effettuati spesso
@@ -42,9 +42,9 @@ class Preferences:
         # self.freq_itemset_per_city = freq_merch_per_trip  # dict(key = tuple(tuple), value = int)
 
     def update_pref(self):
-        freq_city = self.freq_city_total.most_common(math.ceil(self.n_trip))
-        freq_start = self.freq_start_total.most_common(math.ceil(self.n_trip))
-        freq_finish = self.freq_finish_total.most_common(math.ceil(self.n_trip))
+        freq_city = self.freq_city_total.most_common(math.ceil(self.n_trip) + 1)
+        freq_start = self.freq_start_total.most_common(math.ceil(self.n_trip) + 1)
+        freq_finish = self.freq_finish_total.most_common(math.ceil(self.n_trip) + 1)
         freq_trip = self.freq_trip_total.most_common(math.ceil(self.n_trip))
         freq_itemset_city = sorted(self.freq_itemset_city_total.items(), key=lambda item: item[1],
                                         reverse=True)[0:math.ceil(self.n_trip)]

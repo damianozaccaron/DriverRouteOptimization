@@ -232,8 +232,7 @@ def build_result(normalized_centers: list, actual_routes: list[ActualRoute], mod
     data = read_coordinates(spark)
 
     for index, center in enumerate(normalized_centers):
-        rsr = {}
-        rsr["id"] = 's' + str(center["pred"] + 1)
+        rsr = {"id": 's' + str(center["pred"] + 1)}
         route = []
         
         i = 0
@@ -308,8 +307,6 @@ def build_result(normalized_centers: list, actual_routes: list[ActualRoute], mod
         rec_routes.append(rsr)
     return rec_routes
             
-
-
 
 def merch_per_city_counter(actual_routes: list[ActualRoute], space: CoordinateSystem, t_hold_n: int = None, t_hold_q: int = None) -> dict:
 

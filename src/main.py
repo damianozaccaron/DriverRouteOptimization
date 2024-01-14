@@ -92,6 +92,7 @@ def driver_preferences_generator():
         top_five_per_driver.append(top_five)
     json_writer(top_five_per_driver, get_second_output_path())
 
+
 start = int(round(time.time() * 1000))
 recommended_standard_route_generator(actual_routes=actual_routes, standard_routes=standard_routes)
 end = int(round(time.time() * 1000))
