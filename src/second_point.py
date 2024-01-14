@@ -1,9 +1,10 @@
+from entities.actual_route import ActualRoute
 from entities.preferences import Preferences
 from entities.standard_route import StandardRoute
 from utils.functions_pref import get_actual_routes_per_driver
 
 
-def get_drivers_preferences(actual_routes) -> dict:
+def get_drivers_preferences(actual_routes: list[ActualRoute]) -> dict[str, Preferences]:
     actual_routes_per_driver = get_actual_routes_per_driver(actual_routes)
     preferences_per_driver = {}
     for driver_name in actual_routes_per_driver.keys():
@@ -12,7 +13,8 @@ def get_drivers_preferences(actual_routes) -> dict:
 
     return preferences_per_driver
 
-def get_similarity_per_driver(preferences_per_driver: dict, standard_routes: list[StandardRoute]) -> dict:
+def get_similarity_per_driver(preferences_per_driver: dict[str, Preferences],
+                              standard_routes: list[StandardRoute]) -> dict[str, dict[str, float]]:
     similarity_per_driver = {}
     from preferoute import preferoute_similarity
     for driver_name in preferences_per_driver.keys():
@@ -22,7 +24,7 @@ def get_similarity_per_driver(preferences_per_driver: dict, standard_routes: lis
             similarity_per_driver[driver_name][sr.id] = preferoute_similarity(sr, driver_preferences)
     return similarity_per_driver
 
-def get_top_five_per_driver(similarity_per_driver) -> list:
+def get_top_five_per_driver(similarity_per_driver: dict[str, dict[str, float]]) -> list[dict[str, str]]:
     top_five_per_driver = []
     for driver_name in similarity_per_driver:
         driver_similarities = similarity_per_driver[driver_name]

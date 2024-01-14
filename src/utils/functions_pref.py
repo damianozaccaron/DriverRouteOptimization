@@ -1,17 +1,14 @@
-from collections import Counter
 import collections
 import statistics
 from entities.actual_route import ActualRoute
 from entities.trip import Trip
-# import collections
 
-
-def get_actual_routes_per_driver(actual_routes):
+def get_actual_routes_per_driver(actual_routes: list[ActualRoute]) -> dict[str, list[ActualRoute]]:
     routes_by_driver = {}
 
     for route in actual_routes:
-        driver = ActualRoute(route).driver
-        routes_by_driver.setdefault(driver, []).append(ActualRoute(route))
+        driver = route.driver
+        routes_by_driver.setdefault(driver, []).append(route)
 
     return routes_by_driver
 
