@@ -53,7 +53,7 @@ def mean_trip(var: list[ActualRoute]):
 
 
 def pass_through_city_count(trips: list[Trip]):
-    """computes how many times a city has been visited in total, excluding starting and ending point"""
+    """computes how many times a city has been visited in total, excluding starting point"""
     result = [item.city_to for item in trips]
 
     return collections.Counter(result)

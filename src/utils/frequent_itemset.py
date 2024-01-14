@@ -46,71 +46,79 @@ def pcy_basket(basket: list, n_buckets: int, pairs_hashtable: dict, second_pairs
 
 
 def run_pcy(baskets: list[list[str or tuple]], n_buckets: int, t_hold: float, start=time.time(), comb=2):
-    singletons = {}
-    pairs_count_hash = {}
-    second_pairs_count_hash = {}
-
-    for item in baskets:
-        pcy_basket(item, n_buckets, pairs_count_hash, second_pairs_count_hash, singletons, comb=comb)
-
-        """if len(item) == 0:
-            baskets.remove(item)
-            continue
-"""
-    "remove singletons that are not frequent"
-    frequent_single_items = {}
-    for key in singletons.items():
-        if key[1] >= len(baskets) * t_hold:
-            frequent_single_items[key[0]] = key[1]
-
-    "creates a list containing only the names of the frequent items (remove the count)"
-    frequent_singletons = [item for item in frequent_single_items]
-
-    # BETWEEN PASSES
-    bitmap = [0] * n_buckets  # bitmap that will summarise which baskets have the minimum support
-    "transform into a bit vector with value 1 if the count is over the threshold"
-    for key in sorted(pairs_count_hash.keys()):
-        if pairs_count_hash[key] > len(baskets) * t_hold:
-            bitmap[key] = 1
-    # print(sum(bitmap))
-
-    bitmap2 = [0] * n_buckets  # bitmap that will summarise which baskets have the minimum support
-    "transform into a bit vector with value 1 if the count is over the threshold"
-    for key in sorted(second_pairs_count_hash.keys()):
-        if second_pairs_count_hash[key] > len(baskets) * t_hold:
-            bitmap2[key] = 1
-    # print(sum(bitmap2))
-
-    # PASS 2
-    "we only keep the pairs that have frequent singletons and belong to a frequent bucket"
-    candidate_pairs = {}
-    for i in range(0, len(frequent_singletons)):
-        for j in range(i + 1, len(frequent_singletons)):
-            "we find out if the pair belongs to a frequent bucket"
-            hash_value = hash_pair(frequent_singletons[i], frequent_singletons[j], n_buckets)
-            second_hash_value = second_hash_pair(frequent_singletons[i], frequent_singletons[j], n_buckets)
-            if bitmap[hash_value] > 0 and bitmap2[second_hash_value] > 0:
-                "if it belongs to a frequent bucket we consider it as a candidate"
-                candidate_pair = (frequent_singletons[i], frequent_singletons[j])
-                candidate_pairs[candidate_pair] = candidate_pairs.get(candidate_pair, 0) + 1
-
-    "now we have all the candidate pairs, we want to count how much they appear together in the same basket"
     frequent_pairs = {}
-    for key in candidate_pairs:
+    count = 1
+
+    while not frequent_pairs:
+
+        print(t_hold, ' - ', count)
+        singletons = {}
+        pairs_count_hash = {}
+        second_pairs_count_hash = {}
+
         for item in baskets:
-            if key[0] in item and key[1] in item:
-                frequent_pairs[(key[0], key[1])] = frequent_pairs.get((key[0], key[1]), 0) + 1
+            pcy_basket(item, n_buckets, pairs_count_hash, second_pairs_count_hash, singletons, comb=comb)
 
-    "We cancel entries that are not actually frequent"
-    temp = [item[0] for item in frequent_pairs.items() if item[1] < len(baskets) * t_hold]
-    for item in temp:
-        del frequent_pairs[item]
+            """if len(item) == 0:
+                baskets.remove(item)
+                continue
+    """
+        "remove singletons that are not frequent"
+        frequent_single_items = {}
+        for key in singletons.items():
+            if key[1] >= len(baskets) * t_hold:
+                frequent_single_items[key[0]] = key[1]
 
-    if frequent_pairs:
-        # print(frequent_pairs)
-        pass
+        "creates a list containing only the names of the frequent items (remove the count)"
+        frequent_singletons = [item for item in frequent_single_items]
 
-    "Timestamp"
-    # print('Generated frequent pairs in: ', time.time() - start, 'seconds')
+        # BETWEEN PASSES
+        bitmap = [0] * n_buckets  # bitmap that will summarise which baskets have the minimum support
+        "transform into a bit vector with value 1 if the count is over the threshold"
+        for key in sorted(pairs_count_hash.keys()):
+            if pairs_count_hash[key] > len(baskets) * t_hold:
+                bitmap[key] = 1
+        # print(sum(bitmap))
+
+        bitmap2 = [0] * n_buckets  # bitmap that will summarise which baskets have the minimum support
+        "transform into a bit vector with value 1 if the count is over the threshold"
+        for key in sorted(second_pairs_count_hash.keys()):
+            if second_pairs_count_hash[key] > len(baskets) * t_hold:
+                bitmap2[key] = 1
+        # print(sum(bitmap2))
+
+        # PASS 2
+        "we only keep the pairs that have frequent singletons and belong to a frequent bucket"
+        candidate_pairs = {}
+        for i in range(0, len(frequent_singletons)):
+            for j in range(i + 1, len(frequent_singletons)):
+                "we find out if the pair belongs to a frequent bucket"
+                hash_value = hash_pair(frequent_singletons[i], frequent_singletons[j], n_buckets)
+                second_hash_value = second_hash_pair(frequent_singletons[i], frequent_singletons[j], n_buckets)
+                if bitmap[hash_value] > 0 and bitmap2[second_hash_value] > 0:
+                    "if it belongs to a frequent bucket we consider it as a candidate"
+                    candidate_pair = (frequent_singletons[i], frequent_singletons[j])
+                    candidate_pairs[candidate_pair] = candidate_pairs.get(candidate_pair, 0) + 1
+
+        "now we have all the candidate pairs, we want to count how much they appear together in the same basket"
+        for key in candidate_pairs:
+            for item in baskets:
+                if key[0] in item and key[1] in item:
+                    frequent_pairs[(key[0], key[1])] = frequent_pairs.get((key[0], key[1]), 0) + 1
+
+        "We cancel entries that are not actually frequent"
+        temp = [item[0] for item in frequent_pairs.items() if item[1] < len(baskets) * t_hold]
+        for item in temp:
+            del frequent_pairs[item]
+
+        if frequent_pairs:
+            # print(frequent_pairs)
+            pass
+
+        "Timestamp"
+        # print('Generated frequent pairs in: ', time.time() - start, 'seconds')
+
+        t_hold = t_hold * 1/2
+        count += 1
 
     return frequent_pairs

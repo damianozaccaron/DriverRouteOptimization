@@ -1,102 +1,52 @@
 [
     {
-        "driver": "9C44W",
+        "driver": "4XW2D",
         "routes": [
-            "s1",
-            "s8",
-            "s3",
-            "s5",
-            "s9"
-        ]
-    },
-    {
-        "driver": "TK32H",
-        "routes": [
-            "s9",
-            "s7",
-            "s3",
-            "s4",
+            "s17",
+            "s78",
+            "s77",
+            "s37",
             "s1"
         ]
     },
     {
-        "driver": "KK5HH",
+        "driver": "X3ZLB",
         "routes": [
-            "s1",
-            "s7",
-            "s2",
-            "s3",
-            "s8"
+            "s78",
+            "s17",
+            "s55",
+            "s16",
+            "s60"
         ]
     },
     {
-        "driver": "2A2K0",
+        "driver": "G0XV8",
         "routes": [
-            "s8",
-            "s10",
-            "s5",
-            "s4",
-            "s3"
-        ]
-    },
-    {
-        "driver": "W3EO8",
-        "routes": [
-            "s1",
-            "s8",
-            "s4",
-            "s7",
-            "s3"
-        ]
-    },
-    {
-        "driver": "L9KOG",
-        "routes": [
+            "s17",
             "s6",
-            "s8",
-            "s7",
-            "s9",
-            "s3"
+            "s78",
+            "s16",
+            "s39"
         ]
     },
     {
-        "driver": "8CLBU",
+        "driver": "MHDGK",
         "routes": [
-            "s10",
-            "s7",
-            "s6",
-            "s3",
-            "s1"
+            "s78",
+            "s60",
+            "s16",
+            "s55",
+            "s17"
         ]
     },
     {
-        "driver": "D6JG1",
+        "driver": "070W0",
         "routes": [
-            "s1",
-            "s2",
-            "s10",
-            "s3",
-            "s4"
-        ]
-    },
-    {
-        "driver": "CMA7V",
-        "routes": [
-            "s2",
-            "s7",
-            "s4",
-            "s3",
-            "s5"
-        ]
-    },
-    {
-        "driver": "A2A0O",
-        "routes": [
-            "s4",
-            "s1",
-            "s5",
-            "s6",
-            "s3"
+            "s78",
+            "s37",
+            "s55",
+            "s13",
+            "s16"
         ]
     }
 ]

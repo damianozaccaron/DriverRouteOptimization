@@ -308,12 +308,11 @@ def build_result(normalized_centers: list, actual_routes: list[ActualRoute], mod
     return rec_routes
             
 
-
-
-def merch_per_city_counter(actual_routes: list[ActualRoute], space: CoordinateSystem, t_hold_n: int = None, t_hold_q: int = None) -> dict:
+def merch_per_city_counter(actual_routes: list[ActualRoute], space: CoordinateSystem, t_hold_n: int = None, t_hold_q: int = None) \
+        -> dict[str, dict[str, list[int, int]]]:
 
     result = {}
-    counter = {}
+
     for city in space.all_city_vec:
         counter = {merch: [0, 0] for ar in actual_routes for merch in ar.extract_merch().item}
         for ar in actual_routes:
@@ -332,4 +331,5 @@ def merch_per_city_counter(actual_routes: list[ActualRoute], space: CoordinateSy
             threshold_value = np.percentile(counts, t_hold_q)
             counter = {merch: [count, quantity] for merch, (count, quantity) in counter.items() if count >= threshold_value}
         result[city] = counter
+
     return result

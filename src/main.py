@@ -3,10 +3,12 @@ import time
 from entities.standard_route import StandardRoute
 from entities.actual_route import ActualRoute
 from second_point import get_drivers_preferences, get_similarity_per_driver, get_top_five_per_driver
-from utils.functions import get_actual_routes, get_first_output_path, get_second_output_path, save_run_parameters, get_standard_routes, json_writer
+from utils.functions import (get_actual_routes, get_first_output_path, get_second_output_path, get_third_output_path,
+                             save_run_parameters, get_standard_routes, json_writer)
 from utils.route_generator import data_generation
 from utils.functions_pref import get_actual_routes_per_driver, extract_drivers
 from entities.preferences import Preferences
+# from third_point import generate_trips, generate_path
 
 
 global_start = int(round(time.time() * 1000))
@@ -67,6 +69,7 @@ def recommended_standard_route_generator(actual_routes: list[ActualRoute],
 
     spark.stop()
 
+
 def driver_preferences_generator(actual_routes: list[ActualRoute]):
 
     # computing a dictionary with keys the names of the drivers and values list of ActualRoute
@@ -81,6 +84,20 @@ def driver_preferences_generator(actual_routes: list[ActualRoute]):
     json_writer(top_five_per_driver, get_second_output_path())
 
 
+"""def driver_ideal_route():
+
+    actual_routes_dict = get_actual_routes_per_driver(get_actual_routes())
+
+    result = []
+    for driver in extract_drivers(actual_routes_dict):
+
+        pref = Preferences(actual_routes_dict[driver], 0.05, 1000)
+
+        result.append(generate_trips(generate_path(pref), pref))
+
+    json_writer(result, get_third_output_path())"""
+
+
 start = int(round(time.time() * 1000))
 recommended_standard_route_generator(actual_routes, standard_routes)
 end = int(round(time.time() * 1000))
@@ -90,6 +107,11 @@ start = int(round(time.time() * 1000))
 driver_preferences_generator(actual_routes)
 end = int(round(time.time() * 1000))
 print(f"\nsecond output in {end - start} milliseconds")
+
+start = int(round(time.time() * 1000))
+driver_ideal_route()
+end = int(round(time.time() * 1000))
+print(f"\nthird output in {end - start} milliseconds")
 
 global_end = int(round(time.time() * 1000))
 print(f"\ntotal time execution: {global_end - global_start} milliseconds")

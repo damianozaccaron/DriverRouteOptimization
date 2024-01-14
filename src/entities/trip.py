@@ -9,7 +9,7 @@ class Trip:
         self.merchandise = Merchandise(data.get('merchandise', {1: 3}))
 
     def __str__(self):
-        return f'city_from:{self.city_from}, city_to: {self.city_to}, {self.merchandise}'
+        return f'city_from: {self.city_from}, city_to: {self.city_to}, {self.merchandise} \n'
 
     def __repr__(self):
         return str(self)

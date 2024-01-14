@@ -82,15 +82,20 @@ def get_norm_centers_path() -> str:
 def get_coordinates_path() -> str:
     return "src/data/coordinates{run_id}.csv".format(run_id = run_id)
 
+
 def get_first_output_path() -> str:
     return "output/recStandard{run_id}.json".format(run_id = run_id)
+
 
 def get_second_output_path() -> str:
     return "output/driver{run_id}.json".format(run_id = run_id)
 
 
+def get_third_output_path() -> str:
+    return "output/ideal_route.json".format(run_id=run_id)
 
 # something maybe useful for distance
+
 
 def same_trip(trip_1: Trip, trip_2: Trip) -> int:
     if trip_1.city_from == trip_2.city_from and trip_1.city_to == trip_2.city_to:

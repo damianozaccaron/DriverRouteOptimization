@@ -2,8 +2,12 @@ from entities.preferences import Preferences
 from entities.actual_route import ActualRoute
 from entities.trip import Trip
 from utils.functions_pref import get_actual_routes_per_driver, extract_drivers
+from utils.functions import get_actual_routes
 from itertools import chain
 from operator import xor
+import random
+from utils.functions import json_writer, get_third_output_path
+import copy
 
 
 def generate_path(pref: Preferences) -> list[tuple]:
@@ -231,10 +235,42 @@ def generate_path(pref: Preferences) -> list[tuple]:
     return freq_city_result
 
 
-actual_routes_dict = get_actual_routes_per_driver()
-data_driver = actual_routes_dict[extract_drivers(actual_routes_dict)[0]]
+def generate_merch(trip: tuple, pref: Preferences) -> dict:
+    """Attaches the merch to the trip"""
 
-pref = Preferences(data_driver, 0.05, 1000).update_pref()
-print(generate_path(pref))
+    if trip[1] in pref.n_merch_per_city:
+        deep = copy.deepcopy(pref.n_merch_per_city)
+        for (key, value) in deep[trip[1]].items():
+            deep[trip[1]][key] = value[1]
 
-# generate_path(pref)
+        return deep[trip[1]]
+
+    else:
+        merch_types = random.sample(list(pref.n_merch.keys()), k=round(pref.type_merch_avg))
+        mean_for_item = round(pref.n_merch_per_route/pref.type_merch_avg)
+        if mean_for_item - 5 >= 0:
+            return {item: random.randint(mean_for_item - 5, mean_for_item + 5) for item in merch_types}
+        else:
+            return {item: random.randint(0, mean_for_item + 5) for item in merch_types}
+
+
+def generate_trips(trips: list[tuple], pref: Preferences) -> dict:
+    driver = pref.driver
+    route = []
+    result = {'driver': driver, 'route': route}
+    for trip in trips:
+        route.append({"from": trip[0], "to": trip[1], "merchandise": generate_merch(trip, pref)})
+
+    return result
+
+
+actual_routes_dict = get_actual_routes_per_driver(get_actual_routes())
+
+result_def = []
+for driver in extract_drivers(actual_routes_dict):
+    pref = Preferences(actual_routes_dict[driver], 0.05, 1000)
+    result_def.append(generate_trips(generate_path(pref), pref))
+
+print(len(extract_drivers(actual_routes_dict)))
+
+json_writer(result_def, get_third_output_path())

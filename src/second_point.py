@@ -9,20 +9,24 @@ def get_drivers_preferences(actual_routes: list[ActualRoute]) -> dict[str, Prefe
     preferences_per_driver = {}
     for driver_name in actual_routes_per_driver.keys():
         driver_data = actual_routes_per_driver[driver_name]
-        preferences_per_driver[driver_name] = Preferences(driver_data, 0.05, 1000).update_pref()
+        preferences_per_driver[driver_name] = Preferences(driver_data, 0.05, 1000)
 
     return preferences_per_driver
+
 
 def get_similarity_per_driver(preferences_per_driver: dict[str, Preferences],
                               standard_routes: list[StandardRoute]) -> dict[str, dict[str, float]]:
     similarity_per_driver = {}
+    weight_list = [3, 3, 3, 10, 5, 10, 10, 1, 2, 1]  # weights to compute distance
+
     from preferoute import preferoute_similarity
     for driver_name in preferences_per_driver.keys():
         driver_preferences = preferences_per_driver[driver_name]
         similarity_per_driver[driver_name] = {}
         for sr in standard_routes:
-            similarity_per_driver[driver_name][sr.id] = preferoute_similarity(sr, driver_preferences)
+            similarity_per_driver[driver_name][sr.id] = preferoute_similarity(sr, driver_preferences, weights=weight_list)
     return similarity_per_driver
+
 
 def get_top_five_per_driver(similarity_per_driver: dict[str, dict[str, float]]) -> list[dict[str, str]]:
     top_five_per_driver = []
