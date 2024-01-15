@@ -27,7 +27,7 @@ def get_similarity_per_driver(preferences_per_driver: dict[str, Preferences],
     similarity_per_driver = {}
     weight_list = [3, 3, 3, 10, 5, 10, 10, 1, 2, 1]  # weights to compute distance
 
-    from preferoute import preferoute_similarity
+    from utils.preferoute import preferoute_similarity
     for driver_name in preferences_per_driver.keys():
         driver_preferences = preferences_per_driver[driver_name]
         similarity_per_driver[driver_name] = {}
