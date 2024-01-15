@@ -14,8 +14,6 @@ if not all_or_one:
     driver_name = input("Select driver: ")
     preferences_per_driver = get_drivers_preferences(actual_routes, str(driver_name))
 
-start = int(round(time.time() * 1000))
-
 
 def driver_preferences_generator(pref_dict: dict[str, Preferences]):
 
