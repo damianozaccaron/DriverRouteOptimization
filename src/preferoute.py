@@ -1,6 +1,3 @@
-
-# FILE TEMPORANEO DOVE DEPOSITO LA FUNZIONE PER DAMIANO ZZ
-
 from entities.standard_route import StandardRoute
 from entities.preferences import Preferences
 

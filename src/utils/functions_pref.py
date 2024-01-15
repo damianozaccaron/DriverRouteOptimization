@@ -14,7 +14,8 @@ def get_actual_routes_per_driver(actual_routes: list[ActualRoute], driver: str =
 
     else:
         for route in actual_routes:
-            routes_by_driver.setdefault(driver, []).append(route)
+            if driver == route.driver:
+                routes_by_driver.setdefault(driver, []).append(route)
 
     return routes_by_driver
 

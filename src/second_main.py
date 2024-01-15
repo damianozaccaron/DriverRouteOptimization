@@ -1,18 +1,20 @@
 import time
-from entities.actual_route import ActualRoute
 from entities.preferences import Preferences
 from second_point import get_drivers_preferences, get_similarity_per_driver, get_top_five_per_driver
 from utils.functions import (get_actual_routes, get_second_output_path, get_standard_routes, json_writer)
 
-start = int(round(time.time() * 1000))
 standard_routes = get_standard_routes()
 actual_routes = get_actual_routes()
+all_or_one = int(input("Type 1 to compute the output for every driver in the database, 0 to obtain data for a single driver: "))
+start = int(round(time.time() * 1000))
 
-preferences_per_driver = get_drivers_preferences(actual_routes)
+if all_or_one:
+    preferences_per_driver = get_drivers_preferences(actual_routes)
+if not all_or_one:
+    driver_name = input("Select driver: ")
+    preferences_per_driver = get_drivers_preferences(actual_routes, str(driver_name))
 
-"""if we want to only get the data for a single driver:
-preferences_per_driver = get_drivers_preferences(actual_routes, 'driver_name')
-"""
+start = int(round(time.time() * 1000))
 
 
 def driver_preferences_generator(pref_dict: dict[str, Preferences]):
