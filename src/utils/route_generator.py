@@ -277,23 +277,6 @@ def single_ar_generator(sr, province_set, merchandise):
         updated_trips.insert(0, first_trip)
         updated_trips[1]["from"] = updated_trips[0]["to"]
 
-    # Add or remove new trips (maybe)
-    # TODO WATCHOUT !!! THIS CODE GENERATES ERRORS (es. SAME CITY IN FROM AND TO)
-    # ar_copy = ar.copy()
-    # j = 0
-    # for i, step in enumerate(ar_copy):
-    #     output_randomizer = randomizer()
-    #     if output_randomizer < 1:
-    #         ar.pop(i+j)
-    #         j -= 1
-    #     if output_randomizer > 1: 
-    #         new_trip = trip_generator(province_set, merchandise, step["to"], max(n_obj + randomizer(), 1))
-    #         while new_trip["to"] == ar[i+j]["to"]:
-    #             new_trip = trip_generator(province_set, merchandise, step["to"], max(n_obj + randomizer(), 1))
-    #         ar.insert(i+j, new_trip)
-    #         ar[i+j]["from"] = new_trip["to"]
-    #         j += 1
-
     return updated_trips
 
 
