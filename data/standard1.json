@@ -3,6 +3,7 @@
         "id": "s1",
         "route": [
             {
+<<<<<<< HEAD
                 "from": "Pisa",
                 "to": "Massa-Carrara",
                 "merchandise": {
@@ -55,6 +56,63 @@
                     "ilcf": 7,
                     "plfpj": 10,
                     "eywc": 10
+=======
+                "from": "Ancona",
+                "to": "Firenze",
+                "merchandise": {
+                    "owykzkk": 7,
+                    "cjgk": 4,
+                    "ykspt": 3,
+                    "wrogg": 4,
+                    "pwcb": 4,
+                    "dttugyiu": 8
+                }
+            },
+            {
+                "from": "Firenze",
+                "to": "Reggio nell'Emilia",
+                "merchandise": {
+                    "fho": 10,
+                    "lod": 3,
+                    "zggsuhoc": 4,
+                    "kfr": 8,
+                    "wctz": 10,
+                    "kat": 3,
+                    "swdqx": 10
+                }
+            },
+            {
+                "from": "Reggio nell'Emilia",
+                "to": "Foggia",
+                "merchandise": {
+                    "yurlq": 3,
+                    "pwcb": 6,
+                    "dttugyiu": 8,
+                    "odfq": 9,
+                    "rtwon": 6
+                }
+            },
+            {
+                "from": "Foggia",
+                "to": "Lodi",
+                "merchandise": {
+                    "swdqx": 6,
+                    "tprrhfv": 4,
+                    "mnmcwronj": 2,
+                    "cjgk": 3,
+                    "ykspt": 5
+                }
+            },
+            {
+                "from": "Lodi",
+                "to": "Ancona",
+                "merchandise": {
+                    "swdqx": 1,
+                    "kgrvzgyvw": 10,
+                    "wiokasagy": 2,
+                    "efrgjfv": 7,
+                    "owykzkk": 9
+>>>>>>> 20ab3de (training test)
                 }
             }
         ]
@@ -63,6 +121,7 @@
         "id": "s2",
         "route": [
             {
+<<<<<<< HEAD
                 "from": "Lodi",
                 "to": "Piacenza",
                 "merchandise": {
@@ -119,6 +178,47 @@
                     "yxeojq": 10,
                     "jckbzuzdx": 3,
                     "gtbv": 4
+=======
+                "from": "Ascoli Piceno",
+                "to": "Terni",
+                "merchandise": {
+                    "tem": 7,
+                    "tprrhfv": 8,
+                    "odfq": 2,
+                    "mnmcwronj": 3
+                }
+            },
+            {
+                "from": "Terni",
+                "to": "Catania",
+                "merchandise": {
+                    "eotfsg": 4,
+                    "kfr": 8,
+                    "efrgjfv": 10,
+                    "swdqx": 5
+                }
+            },
+            {
+                "from": "Catania",
+                "to": "Torino",
+                "merchandise": {
+                    "kgrvzgyvw": 1,
+                    "fho": 9,
+                    "zkivbm": 1,
+                    "ykspt": 7,
+                    "efrgjfv": 1
+                }
+            },
+            {
+                "from": "Torino",
+                "to": "Barletta-Andria-Trani",
+                "merchandise": {
+                    "wrogg": 2,
+                    "msgq": 10,
+                    "eafbk": 8,
+                    "wiokasagy": 8,
+                    "mlbo": 10
+>>>>>>> 20ab3de (training test)
                 }
             }
         ]
@@ -127,6 +227,7 @@
         "id": "s3",
         "route": [
             {
+<<<<<<< HEAD
                 "from": "Enna",
                 "to": "Grosseto",
                 "merchandise": {
@@ -179,6 +280,47 @@
                     "rwnuao": 1,
                     "vlirisp": 9,
                     "ilcf": 7
+=======
+                "from": "Verbano-Cusio-Ossola",
+                "to": "La Spezia",
+                "merchandise": {
+                    "kgrvzgyvw": 7,
+                    "eafbk": 2,
+                    "mnmcwronj": 2,
+                    "efrgjfv": 5,
+                    "kfr": 6
+                }
+            },
+            {
+                "from": "La Spezia",
+                "to": "Firenze",
+                "merchandise": {
+                    "msgq": 3,
+                    "kfr": 8,
+                    "tprrhfv": 7
+                }
+            },
+            {
+                "from": "Firenze",
+                "to": "Enna",
+                "merchandise": {
+                    "zkivbm": 7,
+                    "msgq": 4,
+                    "kgrvzgyvw": 7,
+                    "pwcb": 2,
+                    "mlbo": 8
+                }
+            },
+            {
+                "from": "Enna",
+                "to": "Prato",
+                "merchandise": {
+                    "owykzkk": 5,
+                    "zkivbm": 4,
+                    "tprrhfv": 5,
+                    "eotfsg": 8,
+                    "wrogg": 8
+>>>>>>> 20ab3de (training test)
                 }
             }
         ]
@@ -188,6 +330,7 @@
         "route": [
             {
                 "from": "Alessandria",
+<<<<<<< HEAD
                 "to": "Enna",
                 "merchandise": {
                     "jckbzuzdx": 10,
@@ -265,6 +408,73 @@
                     "btn": 7,
                     "plfpj": 5,
                     "jckbzuzdx": 6
+=======
+                "to": "Firenze",
+                "merchandise": {
+                    "odfq": 5,
+                    "tem": 4,
+                    "kgrvzgyvw": 9,
+                    "uez": 1,
+                    "pwcb": 7
+                }
+            },
+            {
+                "from": "Firenze",
+                "to": "Pordenone",
+                "merchandise": {
+                    "tem": 6,
+                    "eqbsmskq": 1,
+                    "wiokasagy": 4,
+                    "lod": 8,
+                    "rtwon": 7,
+                    "cjgk": 10
+                }
+            },
+            {
+                "from": "Pordenone",
+                "to": "Foggia",
+                "merchandise": {
+                    "owykzkk": 7,
+                    "zhuodnsj": 5,
+                    "zggsuhoc": 9,
+                    "wiokasagy": 3,
+                    "ykspt": 4,
+                    "eqbsmskq": 3,
+                    "dttugyiu": 3
+                }
+            },
+            {
+                "from": "Foggia",
+                "to": "Asti",
+                "merchandise": {
+                    "uez": 9,
+                    "rtwon": 8,
+                    "dttugyiu": 3,
+                    "efrgjfv": 3,
+                    "eafbk": 7,
+                    "eqbsmskq": 4,
+                    "fho": 6
+                }
+            },
+            {
+                "from": "Asti",
+                "to": "Isernia",
+                "merchandise": {
+                    "tem": 2,
+                    "swdqx": 9,
+                    "kat": 6
+                }
+            },
+            {
+                "from": "Isernia",
+                "to": "La Spezia",
+                "merchandise": {
+                    "odfq": 3,
+                    "lod": 7,
+                    "tprrhfv": 3,
+                    "zkivbm": 7,
+                    "rtwon": 1
+>>>>>>> 20ab3de (training test)
                 }
             }
         ]
@@ -273,6 +483,7 @@
         "id": "s5",
         "route": [
             {
+<<<<<<< HEAD
                 "from": "Enna",
                 "to": "Massa-Carrara",
                 "merchandise": {
@@ -315,6 +526,72 @@
                     "plfpj": 9,
                     "yxeojq": 5,
                     "rrlgimi": 7
+=======
+                "from": "Ascoli Piceno",
+                "to": "Ferrara",
+                "merchandise": {
+                    "msgq": 2,
+                    "zggsuhoc": 7,
+                    "zkivbm": 10,
+                    "kgrvzgyvw": 10,
+                    "dttugyiu": 4
+                }
+            },
+            {
+                "from": "Ferrara",
+                "to": "Bergamo",
+                "merchandise": {
+                    "kat": 5,
+                    "eqbsmskq": 2,
+                    "odfq": 5,
+                    "pwcb": 3
+                }
+            },
+            {
+                "from": "Bergamo",
+                "to": "Catania",
+                "merchandise": {
+                    "mnmcwronj": 4,
+                    "wctz": 8,
+                    "tem": 9,
+                    "wiokasagy": 10,
+                    "cjgk": 4
+                }
+            },
+            {
+                "from": "Catania",
+                "to": "Vicenza",
+                "merchandise": {
+                    "eqbsmskq": 10,
+                    "dttugyiu": 1,
+                    "wctz": 5,
+                    "efrgjfv": 5,
+                    "zhuodnsj": 7,
+                    "kat": 1,
+                    "zggsuhoc": 9
+                }
+            },
+            {
+                "from": "Vicenza",
+                "to": "Barletta-Andria-Trani",
+                "merchandise": {
+                    "kat": 3,
+                    "kgrvzgyvw": 5,
+                    "efrgjfv": 8,
+                    "fho": 2,
+                    "wiokasagy": 1,
+                    "eotfsg": 2,
+                    "ykspt": 10
+                }
+            },
+            {
+                "from": "Barletta-Andria-Trani",
+                "to": "Rimini",
+                "merchandise": {
+                    "eafbk": 8,
+                    "kgrvzgyvw": 2,
+                    "owykzkk": 10
+>>>>>>> 20ab3de (training test)
                 }
             }
         ]
@@ -323,6 +600,7 @@
         "id": "s6",
         "route": [
             {
+<<<<<<< HEAD
                 "from": "Prato",
                 "to": "Taranto",
                 "merchandise": {
@@ -365,6 +643,67 @@
                     "rrlgimi": 4,
                     "gdpzybkv": 1,
                     "zefpjz": 8
+=======
+                "from": "Ferrara",
+                "to": "Bari",
+                "merchandise": {
+                    "rtwon": 7,
+                    "eotfsg": 7,
+                    "kfr": 5,
+                    "owykzkk": 2,
+                    "eafbk": 2,
+                    "dttugyiu": 7,
+                    "pwcb": 8
+                }
+            },
+            {
+                "from": "Bari",
+                "to": "Cagliari",
+                "merchandise": {
+                    "kat": 8,
+                    "wrogg": 4,
+                    "msgq": 9,
+                    "fho": 3,
+                    "wctz": 5,
+                    "kgrvzgyvw": 5
+                }
+            },
+            {
+                "from": "Cagliari",
+                "to": "Catania",
+                "merchandise": {
+                    "wctz": 6,
+                    "odfq": 1,
+                    "yurlq": 5,
+                    "dttugyiu": 5,
+                    "tprrhfv": 8,
+                    "wrogg": 5,
+                    "eotfsg": 1
+                }
+            },
+            {
+                "from": "Catania",
+                "to": "Barletta-Andria-Trani",
+                "merchandise": {
+                    "yurlq": 4,
+                    "wrogg": 1,
+                    "eafbk": 2,
+                    "dttugyiu": 5,
+                    "wctz": 3
+                }
+            },
+            {
+                "from": "Barletta-Andria-Trani",
+                "to": "Vicenza",
+                "merchandise": {
+                    "cjgk": 5,
+                    "pwcb": 6,
+                    "dttugyiu": 10,
+                    "zggsuhoc": 3,
+                    "kfr": 6,
+                    "rtwon": 3,
+                    "uez": 9
+>>>>>>> 20ab3de (training test)
                 }
             }
         ]
@@ -373,6 +712,7 @@
         "id": "s7",
         "route": [
             {
+<<<<<<< HEAD
                 "from": "Enna",
                 "to": "Sondrio",
                 "merchandise": {
@@ -432,6 +772,46 @@
                     "kbwrlbnf": 5,
                     "gdpzybkv": 1,
                     "gtbv": 2
+=======
+                "from": "Asti",
+                "to": "Enna",
+                "merchandise": {
+                    "pwcb": 9,
+                    "tem": 8,
+                    "mnmcwronj": 1
+                }
+            },
+            {
+                "from": "Enna",
+                "to": "Milano",
+                "merchandise": {
+                    "eotfsg": 1,
+                    "pwcb": 2,
+                    "mlbo": 8
+                }
+            },
+            {
+                "from": "Milano",
+                "to": "Novara",
+                "merchandise": {
+                    "zggsuhoc": 9,
+                    "mlbo": 8,
+                    "tprrhfv": 6,
+                    "msgq": 8,
+                    "rtwon": 4
+                }
+            },
+            {
+                "from": "Novara",
+                "to": "Terni",
+                "merchandise": {
+                    "fho": 1,
+                    "zhuodnsj": 4,
+                    "rtwon": 10,
+                    "cjgk": 7,
+                    "kat": 6,
+                    "efrgjfv": 8
+>>>>>>> 20ab3de (training test)
                 }
             }
         ]
@@ -440,6 +820,7 @@
         "id": "s8",
         "route": [
             {
+<<<<<<< HEAD
                 "from": "Enna",
                 "to": "Modena",
                 "merchandise": {
@@ -493,6 +874,60 @@
                     "rwnuao": 3,
                     "gtbv": 6,
                     "zefpjz": 3
+=======
+                "from": "Ponte della Priula",
+                "to": "Catania",
+                "merchandise": {
+                    "dttugyiu": 3,
+                    "cjgk": 8,
+                    "kat": 4,
+                    "kfr": 3,
+                    "zggsuhoc": 4
+                }
+            },
+            {
+                "from": "Catania",
+                "to": "Bari",
+                "merchandise": {
+                    "lod": 4,
+                    "ykspt": 1,
+                    "swdqx": 6,
+                    "efrgjfv": 8,
+                    "cjgk": 1,
+                    "zkivbm": 10,
+                    "eotfsg": 3
+                }
+            },
+            {
+                "from": "Bari",
+                "to": "Caserta",
+                "merchandise": {
+                    "dttugyiu": 1,
+                    "eotfsg": 2,
+                    "wrogg": 6,
+                    "zkivbm": 10,
+                    "eafbk": 1
+                }
+            },
+            {
+                "from": "Caserta",
+                "to": "Lecco",
+                "merchandise": {
+                    "uez": 2,
+                    "kat": 7,
+                    "wiokasagy": 8,
+                    "odfq": 5,
+                    "fho": 8
+                }
+            },
+            {
+                "from": "Lecco",
+                "to": "Novara",
+                "merchandise": {
+                    "pwcb": 5,
+                    "rtwon": 4,
+                    "kfr": 5
+>>>>>>> 20ab3de (training test)
                 }
             }
         ]
@@ -501,6 +936,7 @@
         "id": "s9",
         "route": [
             {
+<<<<<<< HEAD
                 "from": "Rimini",
                 "to": "Barletta-Andria-Trani",
                 "merchandise": {
@@ -540,6 +976,89 @@
                     "plfpj": 3,
                     "ilcf": 6,
                     "vlirisp": 5
+=======
+                "from": "Novara",
+                "to": "Reggio nell'Emilia",
+                "merchandise": {
+                    "tem": 4,
+                    "wrogg": 6,
+                    "cjgk": 8,
+                    "rtwon": 1,
+                    "zhuodnsj": 8,
+                    "zggsuhoc": 1,
+                    "eotfsg": 7
+                }
+            },
+            {
+                "from": "Reggio nell'Emilia",
+                "to": "Ascoli Piceno",
+                "merchandise": {
+                    "kgrvzgyvw": 4,
+                    "wrogg": 9,
+                    "wiokasagy": 5,
+                    "tprrhfv": 8,
+                    "zkivbm": 8,
+                    "kat": 10,
+                    "tem": 5
+                }
+            },
+            {
+                "from": "Ascoli Piceno",
+                "to": "Bari",
+                "merchandise": {
+                    "swdqx": 4,
+                    "wctz": 8,
+                    "kgrvzgyvw": 10,
+                    "tprrhfv": 5,
+                    "eqbsmskq": 6
+                }
+            },
+            {
+                "from": "Bari",
+                "to": "Ponte della Priula",
+                "merchandise": {
+                    "odfq": 1,
+                    "eafbk": 10,
+                    "zkivbm": 1,
+                    "owykzkk": 5,
+                    "cjgk": 7,
+                    "pwcb": 4,
+                    "zggsuhoc": 8
+                }
+            },
+            {
+                "from": "Ponte della Priula",
+                "to": "Valle d'Aosta",
+                "merchandise": {
+                    "dttugyiu": 1,
+                    "uez": 4,
+                    "efrgjfv": 6,
+                    "tem": 9,
+                    "mnmcwronj": 4,
+                    "wctz": 9
+                }
+            },
+            {
+                "from": "Valle d'Aosta",
+                "to": "Carbonia-Iglesias",
+                "merchandise": {
+                    "mnmcwronj": 9,
+                    "eafbk": 5,
+                    "zkivbm": 9,
+                    "tem": 7
+                }
+            },
+            {
+                "from": "Carbonia-Iglesias",
+                "to": "Reggio nell'Emilia",
+                "merchandise": {
+                    "kfr": 10,
+                    "zhuodnsj": 9,
+                    "fho": 1,
+                    "wiokasagy": 9,
+                    "lod": 4,
+                    "mlbo": 2
+>>>>>>> 20ab3de (training test)
                 }
             }
         ]
@@ -548,6 +1067,7 @@
         "id": "s10",
         "route": [
             {
+<<<<<<< HEAD
                 "from": "Alessandria",
                 "to": "Prato",
                 "merchandise": {
@@ -6102,6 +6622,62 @@
                     "eywc": 3,
                     "dfhr": 3,
                     "gdpzybkv": 7
+=======
+                "from": "Trapani",
+                "to": "Oristano",
+                "merchandise": {
+                    "dttugyiu": 2,
+                    "eqbsmskq": 6,
+                    "eafbk": 10,
+                    "lod": 2,
+                    "owykzkk": 4
+                }
+            },
+            {
+                "from": "Oristano",
+                "to": "Rimini",
+                "merchandise": {
+                    "odfq": 10,
+                    "eotfsg": 1,
+                    "eqbsmskq": 1,
+                    "dttugyiu": 6,
+                    "cjgk": 3,
+                    "kfr": 4,
+                    "zggsuhoc": 6
+                }
+            },
+            {
+                "from": "Rimini",
+                "to": "Bergamo",
+                "merchandise": {
+                    "uez": 9,
+                    "swdqx": 1,
+                    "zkivbm": 4
+                }
+            },
+            {
+                "from": "Bergamo",
+                "to": "Campobasso",
+                "merchandise": {
+                    "rtwon": 8,
+                    "wiokasagy": 8,
+                    "mlbo": 6,
+                    "tem": 8,
+                    "zkivbm": 5,
+                    "lod": 8
+                }
+            },
+            {
+                "from": "Campobasso",
+                "to": "Ancona",
+                "merchandise": {
+                    "kgrvzgyvw": 7,
+                    "owykzkk": 8,
+                    "rtwon": 7,
+                    "tprrhfv": 6,
+                    "wiokasagy": 8,
+                    "dttugyiu": 10
+>>>>>>> 20ab3de (training test)
                 }
             }
         ]

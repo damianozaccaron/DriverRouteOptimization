@@ -4,7 +4,6 @@
 # imports for functions 
 from utils.functions import get_actual_routes, save_run_parameters, get_standard_routes, get_coordinates_path
 from utils.route_generator import data_generation
-from preferoute import preferoute_similarity
 from entities.coordinate_system import CoordinateSystem
 from entities.standard_route import StandardRoute
 from entities.actual_route import ActualRoute
@@ -13,7 +12,7 @@ from entities.actual_route import ActualRoute
 import time
 import random
 import os
-
+import numpy as np
 
 # functions:
 
@@ -62,6 +61,16 @@ def recommended_standard_route_generator_check(actual_routes: list[ActualRoute],
     # convert normalized centers in recommended standard route
     recommended_standard_route = build_result(normalized_centers=norm_centers, actual_routes=actual_routes_train,
                                               model=model, spark=spark)
+        
+    rec_sr = []
+    for rsr in recommended_standard_route:
+        rec_sr.append(StandardRoute(rsr))
+
+    #writing data for rsr
+    write_coordinates(actual_routes = rec_sr, space = space)
+
+    # reading data for rsr
+    rec_as_point = read_coordinates(spark)
 
     # writing data of original standard route
     write_coordinates(actual_routes = standard_routes, space = space)
@@ -73,21 +82,39 @@ def recommended_standard_route_generator_check(actual_routes: list[ActualRoute],
     write_coordinates(actual_routes=actual_routes_test, space=space)
 
     # compute the distance between test set and rec_sr
-    dist = distance_from_centers(cluster_centers = centers, spark = spark)
+    dist = distance_from_centers(cluster_centers = rec_as_point, spark = spark)
 
     # compute the distance between test set and sr
     dist_origin = distance_from_sr(standard_routes = sr_data, spark = spark)
 
-    print(dist/dist_origin)
+    print("\n\n -------- \n RESULTS: \n -------- \n")
+
+    ratio = [0] * len(dist)
+    for i, dist in enumerate(dist):
+        if dist == 0:
+            print("There is a perfect recommended standard route")
+            ratio[i] = None
+        else:
+            ratio[i] = dist_origin[i]/dist 
+            print(ratio[i])
+    
+    ratio = np.array([r for r in ratio if r])
+    mean_ratio = np.exp(np.mean(np.log(ratio)))
+    print("Mean of ratios: ", mean_ratio)
+    pss = np.count_nonzero(ratio == 0)
+    print("Perfect Standard Route executed: ", pss)
+    ratio_diff_from_zero = ratio[ratio != 0]
+    mean_ratio_d = np.exp(np.mean(np.log(ratio_diff_from_zero)))
+    print("Mean of ratio except perfect standard route: ", mean_ratio_d)
+    
 
     spark.stop()
 
-    return recommended_standard_route
+
 
 import math
 def distance_from_centers(cluster_centers, spark):
     from first_point import read_coordinates
-    from pyspark.sql.functions import col
     from pyspark.sql.types import StructType, StructField, FloatType
     from pyspark.ml.feature import VectorAssembler
     from pyspark.ml.linalg import DenseVector
@@ -95,14 +122,15 @@ def distance_from_centers(cluster_centers, spark):
 
     data = read_coordinates(spark)
     
-    field_names = cluster_centers[0].keys()
-    schema = StructType([StructField(field, FloatType(), True) for field in field_names])
-    cluster_centers = spark.createDataFrame([{field: float(value) if isinstance(value, (int, float)) else value for field, value in d.items()} for d in cluster_centers], schema=schema)
+    # field_names = cluster_centers[0].keys()
+    # schema = StructType([StructField(field, FloatType(), True) for field in field_names])
+    # cluster_centers = spark.createDataFrame([{field: float(value) if isinstance(value, (int, float)) else value for field, value in d.items()} for d in cluster_centers], schema=schema)
     
-    feature_cols = cluster_centers.columns[1:]
-    vec_assembler = VectorAssembler(inputCols=feature_cols, outputCol="features")
-    df = vec_assembler.transform(cluster_centers)   
-    df = df.select("pred", "features")
+    # print(cluster_centers.columns)
+    # feature_cols = cluster_centers.columns[1:]
+    # vec_assembler = VectorAssembler(inputCols=feature_cols, outputCol="features")
+    # df = vec_assembler.transform(cluster_centers)   
+    df = cluster_centers.select("id", "features")
 
     feature_cols = data.columns[1:]
     vect_assembler = VectorAssembler(inputCols=feature_cols, outputCol="data_features")
@@ -111,49 +139,48 @@ def distance_from_centers(cluster_centers, spark):
 
     dist = []
     for point in data.select("data_features").collect():
-        all_dist = []
+        min_dist = -1
         for center in df.select("features").collect():
             dense_center = DenseVector(center)
             dense_point = DenseVector(point)
             a_center = np.array(dense_center)[0]
             a_point = np.array(dense_point)[0][:math.floor(len(data.select("data_features").collect()[0][0])/2)]
-            single_dist = euclidean_distance_udf(a_center, a_point)
-            all_dist.append(single_dist)
-        min_distance = min(all_dist)
-        dist.append(min_distance)
-    
-    print(dist)
+            if min_dist == -1:
+                min_dist = euclidean_distance_udf(a_center, a_point)
+            else:
+                min_dist = min(min_dist, euclidean_distance_udf(a_center, a_point))
+        dist.append(min_dist)
+    return(dist)
 
 
 def distance_from_sr(standard_routes, spark):
     from first_point import read_coordinates
-    from pyspark.sql.functions import col
-    from pyspark.sql.types import StructType, StructField, FloatType
     from pyspark.ml.feature import VectorAssembler
     from pyspark.ml.linalg import DenseVector
     import numpy as np
 
     data = read_coordinates(spark)
     df = standard_routes
+    
     feature_cols = data.columns[1:]
     vect_assembler = VectorAssembler(inputCols=feature_cols, outputCol="data_features")
     data = vect_assembler.transform(data)   
     data = data.select("id", "data_features")
-
+    
     dist = []
     for point in data.select("data_features").collect():
-        all_dist = []
+        min_dist = None
         for center in df.select("features").collect():
             dense_center = DenseVector(center)
             dense_point = DenseVector(point)
             a_center = np.array(dense_center)[0]
             a_point = np.array(dense_point)[0][:math.floor(len(data.select("data_features").collect()[0][0])/2)]
-            single_dist = euclidean_distance_udf(a_center, a_point)
-            all_dist.append(single_dist)
-        min_distance = min(all_dist)
-        dist.append(min_distance)
-    
-    print(dist)
+            if not min_dist:
+                min_dist = euclidean_distance_udf(a_center, a_point)
+            else:
+                min_dist = min(min_dist, euclidean_distance_udf(a_center, a_point))
+        dist.append(min_dist)
+    return(dist)
 
 
 
@@ -164,23 +191,18 @@ def euclidean_distance_udf(point, fixed_point):
 
 
 import csv
-
-def write_coordinates(actual_routes: list[ActualRoute], space: CoordinateSystem):
+def write_coordinates(actual_routes: list[StandardRoute], space: CoordinateSystem):
     header: list[str] = []
     header.append("id")
     header.extend(space.all_city_vec)
     header.extend(space.all_merch)
     header.extend(space.all_trip)
 
-    # Check if the file already exists
-    file_exists = os.path.exists(get_coordinates_path())
-
-    with open(get_coordinates_path(), "a" if file_exists else "w") as f:
+    with open(get_coordinates_path(), "w") as f:
         writer = csv.writer(f)
 
-        # Write the header only if the file is newly created
-        if not file_exists:
-            writer.writerow(header)
+        # Write the header
+        writer.writerow(header)
 
         for ar in actual_routes:
             row_result = []
@@ -200,7 +222,6 @@ def write_coordinates(actual_routes: list[ActualRoute], space: CoordinateSystem)
             for trip in space.all_trip:
                 row_result.append(10 if trip in actual_route_trips else 0)
             writer.writerow(row_result)
-
 
 # NON FUNZIONA DIO CANE
 # def between_and_within_var(model, spark):
