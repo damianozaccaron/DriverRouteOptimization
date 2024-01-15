@@ -11,13 +11,13 @@ def get_drivers_preferences(actual_routes: list[ActualRoute], driver: str = "") 
         actual_routes_per_driver = get_actual_routes_per_driver(actual_routes)
         for driver_name in actual_routes_per_driver.keys():
             driver_data = actual_routes_per_driver[driver_name]
-            preferences_per_driver[driver_name] = Preferences(driver_data, 0.05, 1000)
+            preferences_per_driver[driver_name] = Preferences(driver_data, 0.2, 1000)
 
     else:
         actual_routes_per_driver = get_actual_routes_per_driver(actual_routes, driver)
         driver_data = actual_routes_per_driver[driver]
         print(driver)
-        preferences_per_driver[driver] = Preferences(driver_data, 0.05, 1000)
+        preferences_per_driver[driver] = Preferences(driver_data, 0.2, 1000)
         print(preferences_per_driver)
 
     return preferences_per_driver
@@ -37,13 +37,11 @@ def get_similarity_per_driver(preferences_per_driver: dict[str, Preferences],
     return similarity_per_driver
 
 
-def get_top_five_per_driver(similarity_per_driver: dict[str, dict[str, float]]) -> list[dict[str, str]]:
+def get_top_five_per_driver(similarity_per_driver: dict[str, dict[str, float]]) -> list[dict[str, list[str]]]:
     top_five_per_driver = []
     for driver_name in similarity_per_driver:
         driver_similarities = similarity_per_driver[driver_name]
         sorted_sim = sorted(driver_similarities.items(), key = lambda x: x[1], reverse = True)[:5]
-        top_five = {}
-        top_five["driver"] = driver_name
-        top_five["routes"] = [route[0] for route in sorted_sim]
+        top_five = {"driver": driver_name, "routes": [route[0] for route in sorted_sim]}
         top_five_per_driver.append(top_five)
     return top_five_per_driver

@@ -2,7 +2,7 @@ import random
 from entities.actual_route import ActualRoute
 from entities.standard_route import StandardRoute
 from second_point import get_drivers_preferences, get_similarity_per_driver
-from preferoute import preferoute_similarity
+from utils.preferoute import preferoute_similarity
 from third_point import generate_trips, generate_path
 from entities.preferences import Preferences
 from utils.functions import get_actual_routes, get_standard_routes
