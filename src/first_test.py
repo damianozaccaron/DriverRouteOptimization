@@ -80,7 +80,7 @@ def recommended_standard_route_generator_check(actual_routes: list[ActualRoute],
     write_coordinates(actual_routes=actual_routes_test, space=space)
 
     # compute the distance between test set and rec_sr
-    dist = distance_from_centers(cluster_centers = rec_as_point, spark = spark)
+    dist = distance_from_centers(cluster_centers = centers, spark = spark)
 
     # compute the distance between test set and sr
     dist_origin = distance_from_sr(standard_routes = sr_data, spark = spark)
@@ -90,17 +90,17 @@ def recommended_standard_route_generator_check(actual_routes: list[ActualRoute],
     ratio = [0] * len(dist)
     for i, dist in enumerate(dist):
         if dist == 0:
-            print("There is a perfect recommended standard route")
+            # print("There is a perfect recommended standard route")
             ratio[i] = None
         else:
             ratio[i] = dist_origin[i]/dist 
-            print(ratio[i])
+            # print(ratio[i])
     
     ratio = np.array([r for r in ratio if r])
     mean_ratio = np.exp(np.mean(np.log(ratio)))
     print("Mean of ratios: ", mean_ratio)
     pss = np.count_nonzero(ratio == 0)
-    print("Perfect Standard Route executed: ", pss)
+    # print("Perfect Standard Route executed: ", pss)
     ratio_diff_from_zero = ratio[ratio != 0]
     mean_ratio_d = np.exp(np.mean(np.log(ratio_diff_from_zero)))
     print("Mean of ratio except perfect standard route: ", mean_ratio_d)
@@ -109,9 +109,8 @@ def recommended_standard_route_generator_check(actual_routes: list[ActualRoute],
     spark.stop()
 
 
-
 import math
-def distance_from_centers(cluster_centers, spark):
+def distance_from_rec_sr(cluster_centers, spark):
     from first_point import read_coordinates
     from pyspark.ml.feature import VectorAssembler
     from pyspark.ml.linalg import DenseVector
@@ -140,6 +139,46 @@ def distance_from_centers(cluster_centers, spark):
                 min_dist = min(min_dist, euclidean_distance_udf(a_center, a_point))
         dist.append(min_dist)
     return(dist)
+
+
+def distance_from_centers(cluster_centers, spark):
+    from first_point import read_coordinates
+    from pyspark.sql.types import StructType, StructField, FloatType
+    from pyspark.ml.feature import VectorAssembler
+    from pyspark.ml.linalg import DenseVector
+    import numpy as np
+
+    data = read_coordinates(spark)
+    
+    field_names = cluster_centers[0].keys()
+    schema = StructType([StructField(field, FloatType(), True) for field in field_names])
+    cluster_centers = spark.createDataFrame([{field: float(value) if isinstance(value, (int, float)) else value for field, value in d.items()} for d in cluster_centers], schema=schema)
+    
+    feature_cols = cluster_centers.columns[1:]
+    vec_assembler = VectorAssembler(inputCols=feature_cols, outputCol="features")
+    df = vec_assembler.transform(cluster_centers)   
+    df = df.select("pred", "features")
+
+    feature_cols = data.columns[1:]
+    vect_assembler = VectorAssembler(inputCols=feature_cols, outputCol="data_features")
+    data = vect_assembler.transform(data)   
+    data = data.select("id", "data_features")
+
+    dist = []
+    for point in data.select("data_features").collect():
+        min_dist = -1
+        for center in df.select("features").collect():
+            dense_center = DenseVector(center)
+            dense_point = DenseVector(point)
+            a_center = np.array(dense_center)[0]
+            a_point = np.array(dense_point)[0][:math.floor(len(data.select("data_features").collect()[0][0])/2)]
+            if min_dist == -1:
+                min_dist = euclidean_distance_udf(a_center, a_point)
+            else:
+                min_dist = min(min_dist, euclidean_distance_udf(a_center, a_point))
+        dist.append(min_dist)
+    return(dist)
+
 
 
 def distance_from_sr(standard_routes, spark):
@@ -213,12 +252,12 @@ def write_coordinates(actual_routes: list[StandardRoute], space: CoordinateSyste
             writer.writerow(row_result)
 
 
-global_start = int(round(time.time() * 1000))
-save_run_parameters()
-start = int(round(time.time() * 1000))
-data_generation()
-end = int(round(time.time() * 1000))
-print(f"routes generated in {end - start} milliseconds\n")
+# global_start = int(round(time.time() * 1000))
+# save_run_parameters()
+# start = int(round(time.time() * 1000))
+# data_generation()
+# end = int(round(time.time() * 1000))
+# print(f"routes generated in {end - start} milliseconds\n")
 
 standard_routes = get_standard_routes()
 actual_routes = get_actual_routes()
@@ -226,12 +265,12 @@ actual_routes = get_actual_routes()
 
 # Test cluster for first point
 
-start = int(round(time.time() * 1000))
+# start = int(round(time.time() * 1000))
 rec_standard_routes = recommended_standard_route_generator_check(actual_routes = actual_routes, standard_routes = standard_routes)
-end = int(round(time.time() * 1000))
-print(f"recommended standard routes generated in {end - start} milliseconds\n")
+# end = int(round(time.time() * 1000))
+# print(f"recommended standard routes generated in {end - start} milliseconds\n")
 
-global_end = int(round(time.time() * 1000))
-print(f"total time execution: {global_end - global_start} milliseconds\n")
+# global_end = int(round(time.time() * 1000))
+# print(f"total time execution: {global_end - global_start} milliseconds\n")
 
 
