@@ -11,11 +11,11 @@ from third_point import generate_trips, generate_path
 
 
 global_start = int(round(time.time() * 1000))
-save_run_parameters()
-start = int(round(time.time() * 1000))
-data_generation()
-end = int(round(time.time() * 1000))
-print(f"routes generated in {end - start} milliseconds\n")
+# save_run_parameters()
+# start = int(round(time.time() * 1000))
+# data_generation()
+# end = int(round(time.time() * 1000))
+# print(f"routes generated in {end - start} milliseconds\n")
 
 
 start = int(round(time.time() * 1000))
