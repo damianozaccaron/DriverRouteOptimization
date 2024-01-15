@@ -108,7 +108,6 @@ def extract_trips_path(var: list[ActualRoute]):
 
         Its output is a list of lists of tuples"""
     res = [act_route.trip_without_merch() for act_route in var]
-
     return res
 
 

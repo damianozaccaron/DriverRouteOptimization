@@ -1,13 +1,12 @@
-
 # FILE TEMPORANEO DOVE DEPOSITO LA FUNZIONE PER DAMIANO ZZ
 
 from entities.standard_route import StandardRoute
 from entities.preferences import Preferences
 
 
-def preferoute_similarity(route: StandardRoute, prefe: Preferences, weights: list = [1]*10) -> float:
+def preferoute_similarity(route: StandardRoute, prefe: Preferences, weights: list = [1] * 10) -> float:
     '''
-    calculate a sort of similarity between a Standard (or Actual, as child class) route and a preference of a driver
+    calculate a similarity between a Standard (or Actual, as child class) route and a preference of a driver
     can choose a weight vector, default all one
     auto standardized weight
     '''
@@ -27,7 +26,6 @@ def preferoute_similarity(route: StandardRoute, prefe: Preferences, weights: lis
     sim.insert(1, 0)
     if route.extract_city()[0] in prefe.freq_start.keys():
         sim[1] = 1
-        
 
     # 3. finish frequency
     sim.insert(2, 0)
@@ -59,21 +57,21 @@ def preferoute_similarity(route: StandardRoute, prefe: Preferences, weights: lis
             sim[5] += val
 
     # 7. avg n trip
-    sim.insert(6, max(1 - 2*(abs(len(route.route) - prefe.n_trip)/(len(route.route) + prefe.n_trip)), 0))
+    sim.insert(6, min(max(1 - 2 * (abs(len(route.route) - prefe.n_trip) / (len(route.route) + prefe.n_trip)), 0), 1))
 
     # 8. avg n merch items
     avg_merch_n = 0
     for trip in route.route:
         avg_merch_n += len(trip.merchandise.item)
-    avg_merch_n = avg_merch_n/len(route.route)
-    sim.insert(7, max(1 - 2*(abs(avg_merch_n - prefe.type_merch_avg)/(avg_merch_n + prefe.type_merch_avg)), 0))
+    avg_merch_n = avg_merch_n / len(route.route)
+    sim.insert(7, min(max(1 - 2 * (abs(avg_merch_n - prefe.type_merch_avg) / (avg_merch_n + prefe.type_merch_avg)), 0), 1))
 
     # 9. merch frequency
     sim.insert(8, 0)
-    route_quantity = sum(route.extract_merch().quantity)
+    den = sum([prefe.n_merch[key] for key in prefe.n_merch.keys()])
     for merch in route.extract_merch().item:
         if merch in prefe.n_merch:
-            val = prefe.n_merch[merch] / route_quantity
+            val = prefe.n_merch[merch] / den
             sim[8] += val
 
     # 10. avg total merch per trip
@@ -81,18 +79,18 @@ def preferoute_similarity(route: StandardRoute, prefe: Preferences, weights: lis
     for quantity_merch in route.extract_merch().quantity:
         avg_merch_quantity += quantity_merch
     avg_merch_quantity = avg_merch_quantity / len(route.extract_merch().quantity)
-    sim.insert(9, max(1 - (abs(avg_merch_quantity - prefe.n_merch_per_route) / (avg_merch_quantity + prefe.n_merch_per_route)), 0))
+    sim.insert(9, min(max(1 - (
+                abs(avg_merch_quantity - prefe.n_merch_per_route) / (avg_merch_quantity + prefe.n_merch_per_route)), 0), 1))
 
     # 11. merch frequent itemset per trip
-    #sim[10] = 0
+    # sim[10] = 0
 
-        
     # return weighted mean (after standardizing weights)
     total_weight = sum(weights)
     standardized_weights = []
     for weight in weights:
-        standardized_weights.append(weight/total_weight)
-    
+        standardized_weights.append(weight / total_weight)
+
     similarity = 0
     for i in range(len(sim)):
         similarity += sim[i] * standardized_weights[i]

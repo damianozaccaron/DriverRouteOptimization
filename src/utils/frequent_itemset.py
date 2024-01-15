@@ -57,7 +57,7 @@ def run_pcy(baskets: list[list[str or tuple]], n_buckets: int, t_hold: float, st
         for item in baskets:
             pcy_basket(item, n_buckets, pairs_count_hash, second_pairs_count_hash, singletons, comb=comb)
 
-            """if len(item) == 0:
+        """if len(item) == 0:
                 baskets.remove(item)
                 continue
     """

@@ -1,16 +1,22 @@
 import time
-from utils.functions import (get_actual_routes, get_third_output_path, get_standard_routes, json_writer)
+from utils.functions import (get_actual_routes, get_third_output_path, json_writer)
 from entities.preferences import Preferences
 from third_point import generate_trips, generate_path
 from second_point import get_drivers_preferences
 
-start = int(round(time.time() * 1000))
+
 actual_routes = get_actual_routes()
+
+all_or_one = int(input("Type 1 to compute the output for every driver in the database, 0 to obtain data for a single driver: "))
+start = int(round(time.time() * 1000))
 preferences_per_driver = get_drivers_preferences(actual_routes)
 
-"""if we want to only get the data for a single driver:
-preferences_per_driver = get_drivers_preferences(actual_routes, 'driver_name')
-"""
+if all_or_one:
+    preferences_per_driver = get_drivers_preferences(actual_routes)
+if not all_or_one:
+    driver_name = input("Select driver: ")
+    start = int(round(time.time() * 1000))
+    preferences_per_driver = get_drivers_preferences(actual_routes, str(driver_name))
 
 
 def driver_ideal_route(pref_dict: dict[str, Preferences]):

@@ -42,8 +42,6 @@ class Preferences:
                                        reverse=True)[0:math.ceil(self.type_merch_avg)]
         self.n_merch = self.n_merch.most_common(math.ceil(self.type_merch_avg * 2))
 
-        # self.n_merch_per_city = merch_per_city_counter
-
         self.freq_city = self.tuple_to_dict(self.freq_city)
         self.freq_start = self.tuple_to_dict(self.freq_start)
         self.freq_finish = self.tuple_to_dict(self.freq_finish)
