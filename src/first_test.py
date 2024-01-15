@@ -252,25 +252,15 @@ def write_coordinates(actual_routes: list[StandardRoute], space: CoordinateSyste
             writer.writerow(row_result)
 
 
-# global_start = int(round(time.time() * 1000))
-# save_run_parameters()
-# start = int(round(time.time() * 1000))
-# data_generation()
-# end = int(round(time.time() * 1000))
-# print(f"routes generated in {end - start} milliseconds\n")
-
 standard_routes = get_standard_routes()
 actual_routes = get_actual_routes()
 
 
 # Test cluster for first point
 
-# start = int(round(time.time() * 1000))
+start = int(round(time.time() * 1000))
 rec_standard_routes = recommended_standard_route_generator_check(actual_routes = actual_routes, standard_routes = standard_routes)
-# end = int(round(time.time() * 1000))
-# print(f"recommended standard routes generated in {end - start} milliseconds\n")
-
-# global_end = int(round(time.time() * 1000))
-# print(f"total time execution: {global_end - global_start} milliseconds\n")
+end = int(round(time.time() * 1000))
+print(f"recommended standard routes generated in {end - start} milliseconds\n")
 
 

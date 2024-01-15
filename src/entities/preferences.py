@@ -26,8 +26,6 @@ class Preferences:
                                                           start=time.time())  # dict(key = tuple, value = int), freq itemset di città
         self.freq_itemset_trip = frequent_itemset.run_pcy(d.extract_trips_path(data), n_buckets=buckets, t_hold=threshold,
                                                           start=time.time())  # dict(key = tuple(tuple), value = int), freq itemset di trip
-        self.freq_itemset_per_trip = frequent_itemset.run_pcy(d.extract_merchandise_type(extract_trips(data)),
-                                                              n_buckets=buckets, t_hold=threshold, start=time.time())   # dict(key = tuple(tuple), value = int), freq itemset di
         self.n_merch = d.count_merch(d.extract_merchandise_type(extract_trips(data)))  # dict(key = string, value = int), lista di merci che ha portato spesso
 
         self.freq_city = self.freq_city.most_common(math.ceil(self.n_trip) * 2)
@@ -38,8 +36,6 @@ class Preferences:
                                    reverse=True)[0:math.ceil(self.n_trip)]
         self.freq_itemset_trip = sorted(self.freq_itemset_trip.items(), key=lambda item: item[1],
                                    reverse=True)[0:math.ceil(self.n_trip)]
-        self.freq_itemset_per_trip = sorted(self.freq_itemset_per_trip.items(), key=lambda item: item[1],
-                                       reverse=True)[0:math.ceil(self.type_merch_avg)]
         self.n_merch = self.n_merch.most_common(math.ceil(self.type_merch_avg * 2))
 
         self.freq_city = self.tuple_to_dict(self.freq_city)
@@ -48,7 +44,6 @@ class Preferences:
         self.freq_trip = self.tuple_to_dict(self.freq_trip)
         self.freq_itemset_city = self.tuple_to_dict(self.freq_itemset_city)
         self.freq_itemset_trip = self.tuple_to_dict(self.freq_itemset_trip)
-        self.freq_itemset_per_trip = self.tuple_to_dict(self.freq_itemset_per_trip)
         self.n_merch = self.tuple_to_dict(self.n_merch)
 
         freq_dest = d.pass_through_city_count(extract_trips(data)).most_common(math.ceil(self.n_trip) * 2)
@@ -64,63 +59,10 @@ class Preferences:
 
         self.n_merch_per_city = merch_per_city_counter(data, city_set, t_hold_n=math.ceil(self.type_merch_avg))
 
-        """ self.freq_city = {}
-        self.freq_start = {}
-        self.freq_finish = {}
-        self.freq_trip = {}
-        self.freq_itemset_city = {}
-        self.freq_itemset_trip = {}
-        self.freq_itemset_per_trip = {}
-        self.n_merch = {}"""
 
-    """def update_pref(self):
-        freq_city = self.freq_city_total.most_common(math.ceil(self.n_trip) + 1)
-        freq_start = self.freq_start_total.most_common(math.ceil(self.n_trip) + 1)
-        freq_finish = self.freq_finish_total.most_common(math.ceil(self.n_trip) + 1)
-        freq_trip = self.freq_trip_total.most_common(math.ceil(self.n_trip))
-        freq_itemset_city = sorted(self.freq_itemset_city_total.items(), key=lambda item: item[1],
-                                        reverse=True)[0:math.ceil(self.n_trip)]
-        freq_itemset_trip = sorted(self.freq_itemset_trip_total.items(), key=lambda item: item[1],
-                                        reverse=True)[0:math.ceil(self.n_trip)]
-        freq_itemset_per_trip = sorted(self.freq_itemset_per_trip_total.items(), key=lambda item: item[1],
-                                            reverse=True)[0:math.ceil(self.type_merch_avg)]
-        n_merch = self.n_merch_total.most_common(math.ceil(self.type_merch_avg))
-
-        self.n_merch_per_city = merch_per_city_counter
-
-        
-        self.freq_city = self.tuple_to_dict(freq_city)
-        self.freq_start = self.tuple_to_dict(freq_start)
-        self.freq_finish = self.tuple_to_dict(freq_finish)
-        self.freq_trip = self.tuple_to_dict(freq_trip)
-        self.freq_itemset_city = self.tuple_to_dict(freq_itemset_city)
-        self.freq_itemset_trip = self.tuple_to_dict(freq_itemset_trip)
-        self.freq_itemset_per_trip = self.tuple_to_dict(freq_itemset_per_trip)
-        self.n_merch = self.tuple_to_dict(n_merch)
-        return self"""
-
-    """def freq_itemset_city_merch(self, actual_routes: list[ActualRoute], space: CoordinateSystem,
-                                t_hold_n: int = None, t_hold_q: int = None) -> dict:"""
-
-    
     def tuple_to_dict(self, data: list) -> dict:
         return_obj = {}
         for d in data:
             return_obj[d[0]] = d[1]
         return return_obj
-        
 
-
-
-"""start = time.time()
-output = 5
-
-drivers = d.extract_drivers(d.import_data_prov(get_ar_path()))
-drivers_pref = [0] * len(drivers)
-
-for i, driver in enumerate(drivers):
-    prov_data = d.import_data(get_ar_path(), driver)
-    drivers_pref[i] = Preferences(prov_data).output()
-
-print(drivers_pref[0])
-print(time.time() - start)"""
