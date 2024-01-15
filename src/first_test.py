@@ -79,6 +79,9 @@ def recommended_standard_route_generator_check(actual_routes: list[ActualRoute],
     # writing coordinates of test acutal routes
     write_coordinates(actual_routes=actual_routes_test, space=space)
 
+    # index calculator
+    index_calculator(model, spark)
+
     # compute the distance between test set and rec_sr
     dist = distance_from_centers(cluster_centers = centers, spark = spark)
 
@@ -107,6 +110,47 @@ def recommended_standard_route_generator_check(actual_routes: list[ActualRoute],
     
 
     spark.stop()
+
+
+def index_calculator(model, spark):
+    from pyspark.ml.evaluation import ClusteringEvaluator
+    from first_point import read_coordinates
+
+    test_data = read_coordinates(spark)
+
+    predictions = model.transform(test_data)
+    # Evaluate clustering by computing Silhouette score
+    evaluator = ClusteringEvaluator()
+
+    silhouette = evaluator.evaluate(predictions)
+    # value close to 1 means that the clustering is good
+    print("Silhouette with squared euclidean distance = " + str(silhouette))
+
+    # Calculate Davies-Bouldin Index using sklearn
+    from sklearn.metrics import davies_bouldin_score
+
+    # Convert the PySpark DataFrame to a Pandas DataFrame
+    predictions_pandas = predictions.select("prediction").toPandas()
+
+    # Calculate Davies-Bouldin Index
+    davies_bouldin = davies_bouldin_score(predictions_pandas.values, predictions_pandas["prediction"].values)
+    print(f"Davies-Bouldin Index: {davies_bouldin}")
+
+    # Calculate Calinski-Harabasz Index using sklearn
+    from sklearn.metrics import calinski_harabasz_score
+
+    # Convert the PySpark DataFrame to a Pandas DataFrame
+    predictions_pandas = predictions.select("prediction").toPandas()
+
+    # Convert features to NumPy array
+    features_array = np.array(predictions.select("features").rdd.map(lambda row: row.features.toArray()).collect())
+    
+    # Convert features_array to a 2D NumPy array
+    features_array_2d = np.array(features_array)
+
+    # Calculate Calinski-Harabasz Index
+    calinski_harabasz = calinski_harabasz_score(features_array_2d, predictions_pandas["prediction"].values)
+    print(f"Calinski-Harabasz Index: {calinski_harabasz}")
 
 
 import math

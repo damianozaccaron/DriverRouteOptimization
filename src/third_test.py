@@ -52,4 +52,4 @@ def mean_variation(test_result: dict):
 actual_routes = get_actual_routes()
 actual_routes_train = random.sample(actual_routes, round(len(actual_routes) * 0.8))
 
-mean_variation(data_adaptation(actual_routes_train, actual_routes))
+print(mean_variation(data_adaptation(actual_routes_train, actual_routes)))
