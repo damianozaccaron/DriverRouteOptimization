@@ -149,14 +149,3 @@ def mean_quantities(trips: list[Trip]):
     res = [sum(list(item.values())) for item in extract_merchandise(trips)]
     return statistics.mean(res)
 
-
-"""def extract_merch_city(var):
-    similar to extract_merch_type, but it returns a tuple containing merch type AND the city it was delivered to.
-
-    Returns a list of lists of tuples
-    prov = [(item['to'], item["merchandise"]) for item in extract_trips(var)]
-    res = []
-    for element in prov:
-        res.append([(element[0], item) for item in element[1].keys()])
-
-    return res"""

@@ -1,14 +1,6 @@
 import time
 import itertools
 
-'''
-import merch 
-import trips
-# import merch
-# import trips
-
-'''
-
 
 def hash_pair(n1, n2, n_buckets):
     """Generates a basic hash function starting from string or tuple"""
@@ -57,10 +49,6 @@ def run_pcy(baskets: list[list[str or tuple]], n_buckets: int, t_hold: float, st
         for item in baskets:
             pcy_basket(item, n_buckets, pairs_count_hash, second_pairs_count_hash, singletons, comb=comb)
 
-        """if len(item) == 0:
-                baskets.remove(item)
-                continue
-    """
         "remove singletons that are not frequent"
         frequent_single_items = {}
         for key in singletons.items():
@@ -76,14 +64,12 @@ def run_pcy(baskets: list[list[str or tuple]], n_buckets: int, t_hold: float, st
         for key in sorted(pairs_count_hash.keys()):
             if pairs_count_hash[key] > len(baskets) * t_hold:
                 bitmap[key] = 1
-        # print(sum(bitmap))
 
         bitmap2 = [0] * n_buckets  # bitmap that will summarise which baskets have the minimum support
         "transform into a bit vector with value 1 if the count is over the threshold"
         for key in sorted(second_pairs_count_hash.keys()):
             if second_pairs_count_hash[key] > len(baskets) * t_hold:
                 bitmap2[key] = 1
-        # print(sum(bitmap2))
 
         # PASS 2
         "we only keep the pairs that have frequent singletons and belong to a frequent bucket"
@@ -110,11 +96,7 @@ def run_pcy(baskets: list[list[str or tuple]], n_buckets: int, t_hold: float, st
             del frequent_pairs[item]
 
         if frequent_pairs:
-            # print(frequent_pairs)
             pass
-
-        "Timestamp"
-        # print('Generated frequent pairs in: ', time.time() - start, 'seconds')
 
         t_hold = t_hold * 1/2
 
