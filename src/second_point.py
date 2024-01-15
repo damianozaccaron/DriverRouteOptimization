@@ -25,6 +25,8 @@ def get_drivers_preferences(actual_routes: list[ActualRoute], driver: str = "") 
 
 def get_similarity_per_driver(preferences_per_driver: dict[str, Preferences],
                               standard_routes: list[StandardRoute]) -> dict[str, dict[str, float]]:
+    if len(standard_routes) < 5:
+        raise ValueError("Minimum 5 standard routes needed to compute the recommended routes")
     similarity_per_driver = {}
     weight_list = [3, 3, 3, 10, 5, 10, 10, 1, 2, 1]  # weights to compute distance
 

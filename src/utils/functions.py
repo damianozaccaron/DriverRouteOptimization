@@ -93,7 +93,7 @@ def get_second_output_path() -> str:
 
 
 def get_third_output_path() -> str:
-    return "output/ideal_route.json".format(run_id=run_id)
+    return "output/perfectRoute{run_id}.json".format(run_id=run_id)
 
 # something maybe useful for distance
 
