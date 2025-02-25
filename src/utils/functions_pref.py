@@ -148,4 +148,3 @@ def mean_quantities(trips: list[Trip]):
 
     res = [sum(list(item.values())) for item in extract_merchandise(trips)]
     return statistics.mean(res)
-
