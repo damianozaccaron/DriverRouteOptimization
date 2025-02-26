@@ -85,15 +85,15 @@ def get_coordinates_path() -> str:
 
 
 def get_first_output_path() -> str:
-    return "output/recStandard{run_id}.json".format(run_id = run_id)
+    return "output/newStandardRoutes{run_id}.json".format(run_id = run_id)
 
 
 def get_second_output_path() -> str:
-    return "output/driver{run_id}.json".format(run_id = run_id)
+    return "output/bestStandard{run_id}.json".format(run_id = run_id)
 
 
 def get_third_output_path() -> str:
-    return "output/perfectRoute{run_id}.json".format(run_id=run_id)
+    return "output/idealRoute{run_id}.json".format(run_id=run_id)
 
 # something maybe useful for distance
 
